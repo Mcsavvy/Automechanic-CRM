@@ -4,7 +4,7 @@ import UserModel from './user';
 
 interface ILogDocument extends IBaseDocument {
   description: string;
-  action: string;
+  action: 'create' | 'update' | 'delete'; // The action carried out
   target: string; // The model affected
   targetId: mongoose.Types.ObjectId; // The id of the model affected
   loggerId: mongoose.Types.ObjectId; // The id of the user who carried the action
