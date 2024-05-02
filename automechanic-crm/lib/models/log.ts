@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { getBaseSchema, IBaseDocument } from './base';
-import User from './user';
+import UserModel from './user';
 
 interface ILogDocument extends IBaseDocument {
   description: string;
@@ -16,7 +16,7 @@ const LogSchema = getBaseSchema().add({
   action: { type: String, required: true },
   target: { type: String, required: true },
   targetId: { type: mongoose.Types.ObjectId, required: true },
-  loggerId: { type: mongoose.Types.ObjectId, required: true, ref: User },
+  loggerId: { type: mongoose.Types.ObjectId, required: true, ref: UserModel },
 });
 
 

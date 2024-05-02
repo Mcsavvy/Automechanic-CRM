@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { getBaseSchema, IBaseDocument } from './base';
-import Job from './job';
-import Mechanic from './mechanic';
+import JobModel from './job';
+import MechanicModel from './mechanic';
 
 interface IServiceDocument extends IBaseDocument {
   title: string;
@@ -18,8 +18,8 @@ const ServiceSchema = getBaseSchema().add({
   description: { type: String, required: true },
   discount: { type: String, required: true },
   isCompleted: { types: Boolean, default: false },
-  jobId: { type: mongoose.Types.ObjectId, required: true, ref: Job },
-  mechanicId: { type: mongoose.Types.ObjectId, required: true, ref: Mechanic },
+  jobId: { type: mongoose.Types.ObjectId, required: true, ref: JobModel },
+  mechanicId: { type: mongoose.Types.ObjectId, required: true, ref: MechanicModel },
 });
 
 
