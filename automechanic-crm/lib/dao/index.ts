@@ -1,4 +1,4 @@
-import connect from "../config/db";
+import connect from "@/lib/config/db";
 import UserDAO from "./user";
 
 connect()
