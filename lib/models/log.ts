@@ -12,7 +12,7 @@ interface ILogDocument extends IBaseDocument {
 }
 
 const LogSchema = getBaseSchema().add({
-  description: { type: String, required: true },
+  description: { type: String, required: true, default: ''},
   action: { type: String, required: true },
   target: { type: String, required: true },
   targetId: { type: mongoose.Types.ObjectId, required: true },
