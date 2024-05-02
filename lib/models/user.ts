@@ -7,6 +7,8 @@ interface IUserDocument extends IBaseDocument {
   phone: string;
   email: string;
   password: string;
+
+  fullName(): string;
 }
 
 const UserSchema = getBaseSchema().add({
@@ -17,4 +19,7 @@ const UserSchema = getBaseSchema().add({
   password: { type: String, required: true },
 });
 
+UserSchema.methods.fullName = function() {
+  return this.firstName + ' ' + this.lastName;
+}
 export default mongoose.model<IUserDocument>("User", UserSchema);
