@@ -3,8 +3,8 @@ import mongoose, { Mongoose } from 'mongoose';
 let db: Mongoose | null = null;
 
 export default async function connect(): Promise<Mongoose> {
-  const dbUri: string | undefined = process.env.DB_URL
-  console.log(dbUri)
+  const dbUri: string | undefined = process.env.MONGODB_URI;
+  console.log('Connecting to database:', dbUri);
   if (db) {
     return db;
   }
