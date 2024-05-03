@@ -14,7 +14,8 @@ const CustomerSchema = getBaseSchema().add({
   phone: { type: String, required: true },
   email: { type: String, required: true },
 });
+CustomerSchema.methods.fullName = function() {
+  return this.firstName + ' ' + this.lastName;
 
-
-
+}
 export default defineModel<ICustomerDocument>("Customer", CustomerSchema);

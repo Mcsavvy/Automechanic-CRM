@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import User from "../models/user";
+import UserModel from "../models/user";
 import {
     validateEmail,
     validateFirstName,
@@ -40,11 +40,11 @@ async function addUser({
     phone = validatePhoneNumber(phone);
     password = validatePassword(password);
 
-    if ((await User.countDocuments({ email, isDeleted: false }).exec()) > 0) {
+    if ((await UserModel.countDocuments({ email, isDeleted: false }).exec()) > 0) {
         throw new Error("User with email already exists");
     }
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({
+    const user = new UserModel({
         firstName,
         lastName,
         email,
@@ -80,10 +80,10 @@ async function updateUser(
         : undefined;
     const passwordHash = password ? await bcrypt.hash(password, 10) : undefined;
 
-    if (email && (await User.countDocuments({ email, _id: {"$ne": id}, isDeleted: false }).exec()) > 0) {
+    if (email && (await UserModel.countDocuments({ email, _id: {"$ne": id}, isDeleted: false }).exec()) > 0) {
         throw new Error("User with email already exists");
     }
-    const user = await User.findOne({_id: id, isDeleted: false });
+    const user = await UserModel.findOne({_id: id, isDeleted: false });
     if (!user) {
         throw new Error("User not found");
     }
@@ -119,13 +119,13 @@ async function updateUser(
         target: "User",
         targetId: user._id,
         loggerId: user._id,
-        details: payload,
+        details,
     });
     return user;
 }
 
 async function deleteUser(id: mongoose.Types.ObjectId) {
-    const user = await User.findOneAndUpdate(
+    const user = await UserModel.findOneAndUpdate(
         { _id: id, isDeleted: false },
         { isDeleted: true },
         { new: true }
@@ -143,7 +143,7 @@ async function deleteUser(id: mongoose.Types.ObjectId) {
 }
 
 async function authenticateUser(email: string, password: string) {
-    const user = await User.findOne({ email, isDeleted: false});
+    const user = await UserModel.findOne({ email, isDeleted: false});
     if (!user) {
         throw new Error("User not found");
     }

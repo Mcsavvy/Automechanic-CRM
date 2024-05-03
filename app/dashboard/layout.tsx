@@ -24,7 +24,7 @@ export default function DashboardLayout({
                 }
                 <div className="flex flex-row justify-center items-center p-[10px] gap-[10px] text-lg font-bold my-[20px]">
                     <FaCar />
-                    <h2>Isaac's Auto</h2>
+                    <h2>Isaac&apos;s Auto</h2>
                 </div>
                 <ul className="flex flex-col p-[10px] gap-[20px]">
                     <li>

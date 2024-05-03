@@ -1,4 +1,3 @@
-import mongoose from 'mongoose';
 import { getBaseSchema, IBaseDocument, defineModel } from './base';
 
 interface IUserDocument extends IBaseDocument {
