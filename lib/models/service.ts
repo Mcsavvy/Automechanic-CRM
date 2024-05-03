@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { getBaseSchema, IBaseDocument } from './base';
+import { defineModel, getBaseSchema, IBaseDocument } from './base';
 import JobModel from './job';
 import MechanicModel from './mechanic';
 
@@ -24,4 +24,4 @@ const ServiceSchema = getBaseSchema().add({
 
 
 
-export default mongoose.model<IServiceDocument>("Service", ServiceSchema);
+export default defineModel<IServiceDocument>("Service", ServiceSchema);

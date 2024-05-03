@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { getBaseSchema, IBaseDocument } from './base';
+import { getBaseSchema, IBaseDocument, defineModel } from './base';
 import CustomerModel from './customer';
 import VehicleModel from './vehicle';
 
@@ -20,4 +20,4 @@ const JobSchema = getBaseSchema().add({
 
 
 
-export default mongoose.model<IJobDocument>("Job", JobSchema);
+export default defineModel<IJobDocument>("Job", JobSchema);

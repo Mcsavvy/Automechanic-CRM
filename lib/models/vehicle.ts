@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { getBaseSchema, IBaseDocument } from './base';
+import { defineModel, getBaseSchema, IBaseDocument } from './base';
 import CustomerModel from './customer';
 
 interface IVehicleDocument extends IBaseDocument {
@@ -17,4 +17,4 @@ const VehicleSchema = getBaseSchema().add({
 });
 
 
-export default mongoose.model<IVehicleDocument>("Vehicle", VehicleSchema);
+export default defineModel<IVehicleDocument>("Vehicle", VehicleSchema);

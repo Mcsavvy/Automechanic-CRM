@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { getBaseSchema, IBaseDocument } from './base';
+import { getBaseSchema, IBaseDocument, defineModel } from './base';
 import UserModel from './user';
 
 interface ILogDocument extends IBaseDocument {
@@ -25,4 +25,4 @@ const LogSchema = getBaseSchema().add({
 
 
 
-export default mongoose.model<ILogDocument>("Log", LogSchema);
+export default defineModel<ILogDocument>("Log", LogSchema);

@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { getBaseSchema, IBaseDocument } from './base';
+import { getBaseSchema, IBaseDocument , defineModel} from './base';
 
 interface ICustomerDocument extends IBaseDocument {
   firstName: string;
@@ -17,4 +17,4 @@ const CustomerSchema = getBaseSchema().add({
 
 
 
-export default mongoose.model<ICustomerDocument>("Customer", CustomerSchema);
+export default defineModel<ICustomerDocument>("Customer", CustomerSchema);

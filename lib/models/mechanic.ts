@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { getBaseSchema, IBaseDocument } from './base';
+import { defineModel, getBaseSchema, IBaseDocument } from './base';
 
 interface IMechanicDocument extends IBaseDocument {
   name: string;
@@ -13,4 +13,4 @@ const MechanicSchema = getBaseSchema().add({
 
 
 
-export default mongoose.model<IMechanicDocument>("Mechanic", MechanicSchema);
+export default defineModel<IMechanicDocument>("Mechanic", MechanicSchema);

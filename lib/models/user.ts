@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { getBaseSchema, IBaseDocument } from './base';
+import { getBaseSchema, IBaseDocument, defineModel } from './base';
 
 interface IUserDocument extends IBaseDocument {
   firstName: string;
@@ -22,4 +22,5 @@ const UserSchema = getBaseSchema().add({
 UserSchema.methods.fullName = function() {
   return this.firstName + ' ' + this.lastName;
 }
-export default mongoose.model<IUserDocument>("User", UserSchema);
+
+export default defineModel<IUserDocument>("User", UserSchema);

@@ -15,3 +15,7 @@ export const getBaseSchema = () => {
     isDeleted: { type: Boolean, default: false },
   });
 }
+
+export const defineModel = <T extends IBaseDocument>(name: string, schema: Schema) => {
+  return mongoose.models[name] as mongoose.Model<T> || mongoose.model<T>(name, schema);
+}
