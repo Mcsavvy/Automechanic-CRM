@@ -140,7 +140,7 @@ async function authenticateUser(email: string, password: string) {
     const token = jwt.sign({ id: user._id.toHexString() }, process.env.JWT_SECRET as string, {
         expiresIn: process.env.JWT_EXPIRY,
     });
-    return token;
+    return { token, user };
 }
 
 const UserDAO = {
