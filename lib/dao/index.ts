@@ -1,11 +1,14 @@
-import connect from "@/lib/config/db";
+import connect from "@/lib/dbConnect";
 import UserDAO from "./user";
+import LogDAO from "./log";
 
 connect()
 
 
 const DAO = {
-    User: UserDAO
+    User: UserDAO,
+    Log: LogDAO,
 }
 
 export default DAO
+export { UserDAO, LogDAO}
