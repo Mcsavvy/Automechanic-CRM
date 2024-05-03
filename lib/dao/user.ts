@@ -83,23 +83,37 @@ async function updateUser(
     if (email && (await User.countDocuments({ email, _id: {"$ne": id}, isDeleted: false }).exec()) > 0) {
         throw new Error("User with email already exists");
     }
-
-    const payload: any = {};
-    if (firstName) payload.firstName = firstName;
-    if (lastName) payload.lastName = lastName;
-    if (email) payload.email = email;
-    if (phone) payload.phone = phone;
-    if (passwordHash) payload.password = passwordHash;
-
-    const user = await User.findOneAndUpdate({ _id: id, isDeleted: false }, payload, {
-        new: true,
-    });
+    const user = await User.findOne({_id: id, isDeleted: false });
     if (!user) {
         throw new Error("User not found");
     }
-    if (!payload) {
-        return user;
+    const details: updateUserParams = {};
+    const payload: any = {};
+    if (firstName){
+         payload.firstName = firstName
+         details.firstName = user.firstName
+
+    };
+    if (lastName) {
+        payload.lastName = lastName;
+        details.lastName = user.lastName;
     }
+    if (email) {
+        payload.email = email;
+        details.email = user.email;
+    }
+    if (phone) {
+        payload.phone = phone;
+        details.phone = user.phone;
+    }
+    if (passwordHash) {
+        payload.password = passwordHash;
+        details.password = user.password
+    }
+    if (!payload) return user;
+
+    Object.assign(user, payload);
+    await user.save();
     LogDAO.logModification({
         description: `User ${user.fullName()} updated`,
         target: "User",
