@@ -13,7 +13,19 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      colors: {
+        "custom-gray": "#fafafa",
+      },
     },
+  },
+  variants: {
+    backgroundColor: ['responsive', 'hover', 'focus', 'active'],
+    textColor: ['responsive', 'hover', 'focus', 'active'],
+    transitionProperty: ['responsive', 'hover', 'focus', 'active'],
+    transitionDuration: ['responsive', 'hover', 'focus', 'active'],
+    transitionTimingFunction: ['responsive', 'hover', 'focus', 'active'],
+    scale: ['responsive', 'hover', 'focus', 'active'],
+    zIndex: ['responsive', 'hover', 'focus', 'active'],
   },
   plugins: [],
 };
