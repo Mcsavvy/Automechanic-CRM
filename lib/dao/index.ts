@@ -13,4 +13,4 @@ const DAO = {
 }
 
 export default DAO
-// export { UserDAO, LogDAO,}
+export { UserDAO, LogDAO, CustomerDAO}

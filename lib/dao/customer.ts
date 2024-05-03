@@ -32,7 +32,7 @@ async function addCustomer (userId: mongoose.Types.ObjectId, customerData: creat
     });
     await customer.save();
     LogDAO.logCreation({
-        description: `Customer ${customer.fullName()} created`,
+        description: `Customer ${customer.email} created`,
         target: "Customer",
         targetId: customer._id,
         loggerId: userId,
@@ -40,12 +40,15 @@ async function addCustomer (userId: mongoose.Types.ObjectId, customerData: creat
     return customer;
 
 }
-async function listCustomers( params: updateCustomerParams) {
-    const query = { isDeleted: false, ...params };
+async function listCustomers( params: updateCustomerParams, internal : boolean = false) {
+    let query = { isDeleted: false, ...params}
+    if (internal) {
+        query.isDeleted = true;
+    }
     return await CustomerModel.find(query).lean().exec();
 }
 
-async function updateCustomer (userId: mongoose.Types.ObjectId, customerId: mongoose.Types.ObjectId, params: updateCustomerParams){
+async function updateCustomer (userId: mongoose.Types.ObjectId, customerId: mongoose.Types.ObjectId, params: updateCustomerParams, internal: boolean = false){
     const firstName = params.firstName
         ? validateFirstName(params.firstName)
         : undefined;
@@ -54,7 +57,11 @@ async function updateCustomer (userId: mongoose.Types.ObjectId, customerId: mong
         : undefined;
     const email = params.email ? validateEmail(params.email) : undefined;
     const phone = params.phone ? validatePhoneNumber(params.phone) : undefined;
-    const customer = await CustomerModel.findById(customerId);
+    let query = { _id: customerId, isDeleted: false };
+    if (internal) {
+        query.isDeleted = true;
+    }
+    const customer = await CustomerModel.findOne(query);
     if (!customer) {
         throw new Error("Customer not found");
     }
@@ -82,7 +89,7 @@ async function updateCustomer (userId: mongoose.Types.ObjectId, customerId: mong
     Object.assign(customer, payload);
     await customer.save();
     LogDAO.logModification({
-        description: `User ${customer.fullName()} updated`,
+        description: `User ${customer.email} updated`,
         target: "User",
         targetId: customer._id,
         loggerId: userId,
@@ -92,7 +99,7 @@ async function updateCustomer (userId: mongoose.Types.ObjectId, customerId: mong
 }
 
 
-async function deleteCustomers (userId: mongoose.Types.ObjectId, id: mongoose.Types.ObjectId) {
+async function deleteCustomer (userId: mongoose.Types.ObjectId, id: mongoose.Types.ObjectId) {
     const customer = await CustomerModel.findOneAndUpdate(
         { _id: id, isDeleted: false },
         { isDeleted: true },
@@ -102,7 +109,7 @@ async function deleteCustomers (userId: mongoose.Types.ObjectId, id: mongoose.Ty
         throw new Error("Customer not found");
     }
     LogDAO.logDeletion({
-        description: `Customer ${customer.fullName()} deleted`,
+        description: `Customer ${customer.email} deleted`,
         target: "Customer",
         targetId: customer._id,
         loggerId: userId,
@@ -110,8 +117,11 @@ async function deleteCustomers (userId: mongoose.Types.ObjectId, id: mongoose.Ty
     return customer;
 }
 
-async function getCustomer(id: mongoose.Types.ObjectId, params: updateCustomerParams) {
+async function getCustomer(id: mongoose.Types.ObjectId, params: updateCustomerParams, internal: boolean = false) {
     let query = { _id: id, isDeleted: false };
+    if (internal) {
+        query.isDeleted = true;
+    }
     if (params) {
         query = { ...query, ...params };
     }
@@ -124,7 +134,7 @@ const CustomerDAO = {
     addCustomer,
     listCustomers,
     updateCustomer,
-    deleteCustomers,
+    deleteCustomer,
     getCustomer
 }
 
