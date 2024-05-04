@@ -8,11 +8,16 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        'body': ['Lato', 'sans-serif'],
+        'heading': ['Nunito', 'sans-serif'],
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      scrollbar: ['rounded'],
       colors: {
         "custom-gray": "#fafafa",
       },
@@ -27,6 +32,8 @@ const config: Config = {
     scale: ['responsive', 'hover', 'focus', 'active'],
     zIndex: ['responsive', 'hover', 'focus', 'active'],
   },
-  plugins: [],
+  plugins: [
+    require('tailwind-scrollbar'),
+  ],
 };
 export default config;
