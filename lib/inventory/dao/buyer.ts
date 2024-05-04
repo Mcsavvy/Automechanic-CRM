@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import BuyerModel from '../models/buyer';
-import order from '../models/order';
+import OrderModel from '../models/order';
 
 interface Buyer {
     name: string;
@@ -68,7 +68,7 @@ async function updateBuyer(id: mongoose.Types.ObjectId, params: OBuyer, buyerDat
 }
 
 async function deleteBuyer(id: mongoose.Types.ObjectId) {
-    const count = await order.countDocuments({ buyerId: id, $or: [{ status: 'pending' }, { status: 'error' }, { amountPaid: { $gt: 0 } }] });
+    const count = await OrderModel.countDocuments({ buyerId: id, $or: [{ status: 'pending' }, { status: 'error' }, { amountPaid: { $gt: 0 } }] });
     if (count > 0) {
         throw new Error("Buyer can't be deleted as he has pending business here")
     }

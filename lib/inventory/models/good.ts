@@ -6,7 +6,7 @@ interface IGoodDocument extends IBaseDocument {
   qty: number;
   description: string
   minQty: number;
-  productId: number;
+  productId: string;
 }
 
 const GoodSchema = getBaseSchema().add({
@@ -15,6 +15,6 @@ const GoodSchema = getBaseSchema().add({
     qty: { type: Number, required: true },
     description: { type: String, required: true },
     minQty: { type: Number, required: true },
-    productId: { type: Number, required: true },
+    productId: { type: String, required: true },
 })
 export default defineModel<IGoodDocument>("Good", GoodSchema);
