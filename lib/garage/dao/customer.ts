@@ -6,7 +6,7 @@ import {
     validatePhoneNumber,
 } from "../common/validation";
 import mongoose, { mongo } from "mongoose";
-import LogDAO from "./log";
+import LogDAO from "../../common/dao/log";
 
 interface createCustomerParams {
     firstName: string;

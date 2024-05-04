@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { defineModel, getBaseSchema, IBaseDocument } from './base';
+import { defineModel, getBaseSchema, IBaseDocument } from '../../common/models/base';
 import JobModel from './job';
 import MechanicModel from './mechanic';
 

@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { getBaseSchema, IBaseDocument , defineModel} from './base';
+import { getBaseSchema, IBaseDocument , defineModel} from '../../common/models/base';
 
 interface ICustomerDocument extends IBaseDocument {
   firstName: string;

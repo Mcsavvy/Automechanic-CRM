@@ -9,7 +9,7 @@ import {
     validatePhoneNumber,
 } from "../common/validation";
 import mongoose from "mongoose";
-import LogDAO from "../../garage/dao/log";
+import LogDAO from "./log";
 
 interface createUserParams {
     firstName: string;

@@ -1,6 +1,6 @@
 import connect from "@/lib/dbConnect";
 import UserDAO from "../../common/dao/user";
-import LogDAO from "./log";
+import LogDAO from "../../common/dao/log";
 import CustomerDAO from "./customer";
 
 connect()
