@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import UserModel from "../models/user";
+import UserModel from "../garage/models/user";
 import {
     validateEmail,
     validateFirstName,
@@ -9,7 +9,7 @@ import {
     validatePhoneNumber,
 } from "../common/validation";
 import mongoose from "mongoose";
-import LogDAO from "./log";
+import LogDAO from "../../garage/dao/log";
 
 interface createUserParams {
     firstName: string;
