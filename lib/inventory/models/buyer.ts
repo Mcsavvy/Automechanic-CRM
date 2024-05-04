@@ -8,7 +8,7 @@ interface IBuyerDocument extends IBaseDocument {
 
 const BuyerSchema = getBaseSchema().add({
   name: { type: String, required: true },
-  phone: { type: String, required: true },
-  email: { type: String, required: true },
+  phone: { type: String, required: true, unique: true },
+  email: { type: String, required: true, unique: true },
 })
 export default defineModel<IBuyerDocument>("Buyer", BuyerSchema);
