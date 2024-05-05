@@ -52,7 +52,7 @@ async function deleteOrderItem(id: mongoose.Types.ObjectId) {
         throw new Error("OrderItem not found");
     }
     await orderItem.populate('orderId');
-    const order = orderItem.orderId
+    const order = orderItem.orderId as any;
     if (['pending', 'paid', 'error'].includes(order?.status)) {
         throw new Error("Cannot delete this orderItem. A transaction is still ongoing");
     }

@@ -78,3 +78,12 @@ async function getOrders(filters?: OOrder, page: number = 1, limit: number = 30)
     const prev = page > 1 ? page - 1 : null;
     return { orders, next, prev };
 }
+
+
+export default {
+    addOrder,
+    updateOrder,
+    deleteOrder,
+    getOrder,
+    getOrders
+}
