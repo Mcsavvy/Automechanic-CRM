@@ -47,10 +47,16 @@ async function addOrderItem(orderId: mongoose.Types.ObjectId, goodId: mongoose.T
 }
 
 async function deleteOrderItem(id: mongoose.Types.ObjectId) {
-    const orderItem = await OrderItemModel.findByIdAndDelete(id);
+    const orderItem = await OrderItemModel.findById(id);
     if (!orderItem) {
         throw new Error("OrderItem not found");
     }
+    await orderItem.populate('orderId');
+    const order = orderItem.orderId as any;
+    if (['pending', 'paid', 'error'].includes(order?.status)) {
+        throw new Error("Cannot delete this orderItem. A transaction is still ongoing");
+    }
+    await orderItem.deleteOne();
     return orderItem;
 
 }
@@ -63,8 +69,9 @@ async function updateOrderItem(id: mongoose.Types.ObjectId, params: OOrderItem) 
     return orderItem;
 }
 
-export default {
+const OrderItemDAO = {
     addOrderItem,
     deleteOrderItem,
     updateOrderItem
 }
+export default OrderItemDAO
