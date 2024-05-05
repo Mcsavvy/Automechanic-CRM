@@ -95,7 +95,8 @@ async function getInvoices(buyerId: mongoose.Types.ObjectId) {
         invoices.push(invoice);
     })
 }
-export default { 
+const InvoiceDAO = { 
     getInvoice,
     getInvoices 
 }
+export default InvoiceDAO;

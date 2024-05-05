@@ -79,11 +79,12 @@ async function deleteGood(id: mongoose.Types.ObjectId) {
     }
     return good;
 }
- export default {
+const GoodDAO = {
     addGood,
     getGood,
     getGoods,
     restockGood,
     updateGood,
     deleteGood
- }
+}
+ export default GoodDAO;

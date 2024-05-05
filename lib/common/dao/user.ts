@@ -1,13 +1,13 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import UserModel from "../garage/models/user";
+import UserModel from "@/lib/common/models/user";
 import {
     validateEmail,
     validateFirstName,
     validateLastName,
     validatePassword,
     validatePhoneNumber,
-} from "../common/validation";
+} from "@/lib/common/validation";
 import mongoose from "mongoose";
 import LogDAO from "./log";
 

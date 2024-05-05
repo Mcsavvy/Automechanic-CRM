@@ -79,10 +79,11 @@ async function deleteBuyer(id: mongoose.Types.ObjectId) {
     return buyer;
 }
 
-export default {
+const BuyerDAO = {
     addBuyer,
     getBuyers,
     getBuyer,
     updateBuyer,
     deleteBuyer
 }
+export default BuyerDAO

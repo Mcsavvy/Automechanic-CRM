@@ -80,10 +80,11 @@ async function getOrders(filters?: OOrder, page: number = 1, limit: number = 30)
 }
 
 
-export default {
+const OrderDAO = {
     addOrder,
     updateOrder,
     deleteOrder,
     getOrder,
     getOrders
 }
+export default OrderDAO

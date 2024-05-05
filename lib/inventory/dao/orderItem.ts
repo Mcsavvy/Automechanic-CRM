@@ -69,8 +69,9 @@ async function updateOrderItem(id: mongoose.Types.ObjectId, params: OOrderItem) 
     return orderItem;
 }
 
-export default {
+const OrderItemDAO = {
     addOrderItem,
     deleteOrderItem,
     updateOrderItem
 }
+export default OrderItemDAO
