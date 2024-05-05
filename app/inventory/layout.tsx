@@ -45,7 +45,7 @@ export default function DashboardLayout({
                     }
                 </div>
             </header>
-            <nav className={`top-[60px] relative h-[calc(100vh-60px)] bg-white w-[220px] flex flex-col flex-shrink-0 transition-all duration-300 ease-in-out ${menu ? 'left-0' : '-left-[220px]'} border-r border-[var(--pri-600)] border-1 shadow-md text-[var(--neu-800)] font-heading`}>
+            <nav className={`top-[60px] relative h-[calc(100vh-60px)] bg-[var(--neu-100)] w-[220px] flex flex-col flex-shrink-0 transition-all duration-300 ease-in-out ${menu ? 'left-0' : '-left-[220px]'} border-r border-[var(--neu-600)] border-1 shadow-lg text-[var(--neu-900)] font-heading`}>
                 {menu ?
                     <HiOutlineMenuAlt3 onClick={toggleMenu} className="absolute top-2 right-[-40px] cursor-pointer text-[24px] text-[var(--pri-800)] transition active:scale-95 duration-200 ease-in z-10" />
                     :
@@ -53,7 +53,7 @@ export default function DashboardLayout({
                 }
                 <ul className="flex flex-col p-[10px] py-[30px] gap-[15px] overflow-y-auto scrollbar-thin">
                     <li >
-                        <h3 className="relative flex pl-[10px] pr-[10px] flex-row text-[15px] font-[200px] justify-between items-center cursor-pointer text-[var(--pri-800)]">
+                        <h3 className="relative flex pl-[10px] pr-[10px] flex-row text-[15px] font-[200px] justify-between items-center cursor-pointer text-[var(--neu-700)]">
                             Analytics
                         </h3>
                         <ul className="flex flex-col">
@@ -61,7 +61,7 @@ export default function DashboardLayout({
                         </ul>
                     </li>
                     <li >
-                        <h3 className="relative flex pl-[10px] pr-[10px] cursor-pointer flex-row text-[15px] justify-start items-center text-[var(--pri-800)]">
+                        <h3 className="relative flex pl-[10px] pr-[10px] cursor-pointer flex-row text-[15px] justify-start items-center text-[var(--neu-700)]">
                             Invoices
                         </h3>
                         <ul className="flex flex-col">
@@ -71,7 +71,7 @@ export default function DashboardLayout({
                         </ul>
                     </li>
                     <li >
-                        <h3 className="relative flex pl-[10px] pr-[10px] cursor-pointer flex-row text-[15px] justify-start items-center text-[var(--pri-800)]">
+                        <h3 className="relative flex pl-[10px] pr-[10px] cursor-pointer flex-row text-[15px] justify-start items-center text-[var(--neu-700)]">
                             Stock
                         </h3>
                         <ul className="flex flex-col">
@@ -81,7 +81,7 @@ export default function DashboardLayout({
                         </ul>
                     </li>
                     <li >
-                        <h3 className="relative pl-[10px] pr-[10px] flex cursor-pointer flex-row text-[15px] justify-start items-center text-[var(--pri-800)]">
+                        <h3 className="relative pl-[10px] pr-[10px] flex cursor-pointer flex-row text-[15px] justify-start items-center text-[var(--neu-700)]">
                             Customers
                         </h3>
                         <ul className="flex flex-col">
@@ -96,7 +96,7 @@ export default function DashboardLayout({
                     <h3 className="text-[16px] w-full font-medium flex flex-row gap-[10px] items-center justify-start hover:bg-[var(--neu-200)] hover:text-black transition-all duration-200 ease-in active:scale-95 cursor-pointer px-5 py-1"><MdLogout /></h3>
                 </div>
             </nav>
-            <main className={`relative top-[60px] flex flex-column ${menu ? 'w-[calc(100vw-220px)]' : 'w-[100vw]'} bg-[var(--neu-100)] ${menu ? 'left-0' : '-left-[220px]'} flex-grow h-[calc(100vh-60px)] overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out font-body`}>
+            <main className={`relative top-[60px] flex flex-column ${menu ? 'w-[calc(100vw-220px)]' : 'w-[100vw]'} bg-white ${menu ? 'left-0' : '-left-[220px]'} flex-grow h-[calc(100vh-60px)] overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out font-body`}>
                 {children}
             </main>
         </div>
