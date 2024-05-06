@@ -1,4 +1,4 @@
-import connect from "@/lib/dbConnect";
+import connect from "../../dbConnect";
 import UserDAO from "../../common/dao/user";
 import LogDAO from "../../common/dao/log";
 import CustomerDAO from "./customer";

@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { getBaseSchema, IBaseDocument , defineModel} from '@/lib/common/models/base';
+import { getBaseSchema, IBaseDocument , defineModel} from '../../common/models/base';
 import GoodModel from './good';
 import OrderModel from './order';
 
@@ -13,10 +13,10 @@ interface IOrderItemDocument extends IBaseDocument {
 }
 
 const OrderItemSchema = getBaseSchema().add({
-    qty: { type: Number, required: true, default: 1 },
+    qty: { type: Number, required: true, default: () => 1},
     sellingPrice: { type: Number, required: true },
     costPrice: { type: Number, required: true },
-    discount: { type: Number, required: true, default: 0 },
+    discount: { type: Number, required: true, default: () => 0 },
     orderId: { type: mongoose.Types.ObjectId, required: true, ref: OrderModel },
     goodId: { type: mongoose.Types.ObjectId, required: true, ref: GoodModel},
 })

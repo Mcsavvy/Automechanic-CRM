@@ -17,7 +17,7 @@ const ServiceSchema = getBaseSchema().add({
   title: { type: String, required: true },
   description: { type: String, required: true },
   discount: { type: String, required: true },
-  isCompleted: { types: Boolean, default: false },
+  isCompleted: { types: Boolean, default: Boolean},
   jobId: { type: mongoose.Types.ObjectId, required: true, ref: JobModel },
   mechanicId: { type: mongoose.Types.ObjectId, required: true, ref: MechanicModel },
 });
