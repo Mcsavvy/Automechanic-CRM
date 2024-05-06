@@ -26,7 +26,7 @@ export default function DashboardLayout({
     }
     return (
         <div className="fixed flex flex-row items-center justify-start top-0 left-0">
-            <header className="fixed top-0 h-[60px] w-screen border-b border-[var(--pri-600)]-500 bg-[var(--neu-100)] overflow-visible z-[1]">
+            <header className="fixed top-0 h-[60px] w-screen border-b border-[var(--pri-600)]-500 bg-[var(--neu-100)] overflow-visible z-[10]">
                 <div className="absolute right-[30px] top-[10px] overflow-visible flex flex-col items-end justify-start">
                     <h2 onClick={toggleApp} className="cursor-pointer font-heading text-[13px] font-semibold flex flex-grow-0 w-auto h-[40px] flex-row gap-[8px] rounded-xl bg-[var(--neu-200)] text-black px-4 py-2 items-center jusitify-start">
                         { currApp === 'Inventory' ? 
@@ -36,7 +36,7 @@ export default function DashboardLayout({
                         {currApp}
                     </h2>
                     {app &&
-                        <ul className="flex flex-row gap-[15px] mt-[10px] bg-[var(--neu-300)] p-3 rounded-lg">
+                        <ul className="flex flex-row gap-[15px] mt-[10px] bg-[var(--neu-300)] p-3 rounded-lg z-10">
                         <li onClick={() => changeApp('Inventory')} className="cursor-pointer text-[var(--pri-600)] text-[12px] flex flex-col w-[70px] justify-center items-center gap-[8px] p-3 rounded-md bg-[var(--neu-100)] hover:bg-[var(--neu-700)] hover:text-[var(--pri-100)] transition-all duration-200 ease-in active:scale-95">
                             <FaStoreAlt className="text-[20px]"/>Inventory</li>
                         <li onClick={() => changeApp('Garage')} className="cursor-pointer text-[var(--pri-600)] text-[12px] w-[70px] flex flex-col justify-center items-center gap-[8px] p-3 rounded-md bg-[var(--neu-100)] hover:bg-[var(--neu-700)] hover:text-[var(--pri-100)] transition-all duration-200 ease-in active:scale-95">
@@ -47,9 +47,9 @@ export default function DashboardLayout({
             </header>
             <nav className={`top-[60px] relative h-[calc(100vh-60px)] bg-[var(--neu-100)] w-[220px] flex flex-col flex-shrink-0 transition-all duration-300 ease-in-out ${menu ? 'left-0' : '-left-[220px]'} border-r border-[var(--neu-600)] border-1 shadow-lg text-[var(--neu-900)] font-heading`}>
                 {menu ?
-                    <HiOutlineMenuAlt3 onClick={toggleMenu} className="absolute top-2 right-[-40px] cursor-pointer text-[24px] text-[var(--pri-800)] transition active:scale-95 duration-200 ease-in z-10" />
+                    <HiOutlineMenuAlt3 onClick={toggleMenu} className="absolute top-2 right-[-40px] cursor-pointer text-[24px] text-[var(--pri-800)] transition active:scale-95 duration-200 ease-in z-[1]" />
                     :
-                    <HiOutlineMenuAlt2 onClick={toggleMenu} className="absolute top-2 right-[-40px] cursor-pointer text-[24px] text-[var(--pri-800)] transition active:scale-95 duration-200 ease-in z-10" />
+                    <HiOutlineMenuAlt2 onClick={toggleMenu} className="absolute top-2 right-[-40px] cursor-pointer text-[24px] text-[var(--pri-800)] transition active:scale-95 duration-200 ease-in z-[1]" />
                 }
                 <ul className="flex flex-col p-[10px] py-[30px] gap-[15px] overflow-y-auto scrollbar-thin">
                     <li >
@@ -97,6 +97,8 @@ export default function DashboardLayout({
                 </div>
             </nav>
             <main className={`relative top-[60px] flex flex-column ${menu ? 'w-[calc(100vw-220px)]' : 'w-[100vw]'} bg-white ${menu ? 'left-0' : '-left-[220px]'} flex-grow h-[calc(100vh-60px)] overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out font-body`}>
+                <div className={`${menu ? 'overlay': 'no-overlay'}`} onClick={toggleMenu}>
+                </div>
                 {children}
             </main>
         </div>
