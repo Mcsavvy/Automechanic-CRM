@@ -1,14 +1,14 @@
 import mongoose from 'mongoose';
 import { getBaseSchema, IBaseDocument , defineModel} from '../../common/models/base';
-import GoodModel from './good';
-import OrderModel from './order';
+import { GoodModel , IGoodDocument} from './good';
+import {OrderModel, IOrderDocument} from './order';
 
-interface IOrderItemDocument extends IBaseDocument {
+export interface IOrderItemDocument extends IBaseDocument {
     qty: number;
     sellingPrice: number; // Per unit
     discount: number; //In percentage
-    orderId: mongoose.Types.ObjectId;
-    goodId: mongoose.Types.ObjectId;
+    orderId: mongoose.Types.ObjectId | IOrderDocument;
+    goodId: mongoose.Types.ObjectId | IGoodDocument;
     costPrice: number; // The current cost price per unit as at creation of the invoice
 }
 
@@ -20,4 +20,4 @@ const OrderItemSchema = getBaseSchema().add({
     orderId: { type: mongoose.Types.ObjectId, required: true, ref: OrderModel },
     goodId: { type: mongoose.Types.ObjectId, required: true, ref: GoodModel},
 })
-export default defineModel<IOrderItemDocument>("OrderItem", OrderItemSchema);
+export const OrderItemModel = defineModel<IOrderItemDocument>("OrderItem", OrderItemSchema);

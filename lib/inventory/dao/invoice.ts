@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
-import OrderModel from "../models/order";
-import OrderItemModel from "../models/orderItem";
-import GoodModel from "../models/good";
-import BuyerModel from "../models/buyer";
+import { OrderModel} from "../models/order";
+import { OrderItemModel } from "../models/orderItem";
+import { GoodModel } from "../models/good";
+import { BuyerModel } from "../models/buyer";
 
 interface InvoiceItem {
     productId: string;

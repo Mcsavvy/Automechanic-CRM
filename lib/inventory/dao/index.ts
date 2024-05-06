@@ -4,6 +4,7 @@ import OrderItemDAO from './orderItem'
 import GoodDAO from './good'
 import BuyerDAO from './buyer'
 import InvoiceDAO from './invoice'
+import InsightsDAO from './insights'
 
 dbConnect()
 
@@ -12,6 +13,7 @@ const DAO = {
     OrderItem: OrderItemDAO,
     Good: GoodDAO,
     Buyer: BuyerDAO,
-    Invoice: InvoiceDAO
+    Invoice: InvoiceDAO,
+    Insights: InsightsDAO
 }
 export default DAO

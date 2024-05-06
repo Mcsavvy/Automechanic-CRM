@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import BuyerModel from '../models/buyer';
-import OrderModel from '../models/order';
+import { BuyerModel } from '../models/buyer';
+import { OrderModel } from '../models/order';
 
 interface Buyer {
     name: string;
