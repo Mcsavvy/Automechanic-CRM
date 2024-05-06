@@ -27,7 +27,7 @@ export default function DashboardLayout({
     }
     return (
         <div className="fixed flex flex-row items-center justify-start top-0 left-0">
-            <header className="fixed top-0 h-[60px] w-screen border-b border-neu-9-500 bg-neu-1 overflow-visible z-[10]">
+            <header className="fixed top-0 h-[60px] w-screen border-b border-neu-9 bg-neu-1 overflow-visible z-[10]">
                 <div className="absolute right-[30px] top-[10px] overflow-visible flex flex-col items-end justify-start">
                     <h2 onClick={toggleApp} className="cursor-pointer font-heading text-[13px] font-semibold flex flex-grow-0 w-auto h-[40px] flex-row gap-[8px] rounded-xl bg-neu-2 text-black px-4 py-2 items-center jusitify-start">
                         { currApp === 'Inventory' ? 
