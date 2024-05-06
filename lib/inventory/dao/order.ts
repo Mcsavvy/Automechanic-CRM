@@ -9,13 +9,7 @@ interface Order {
     amountPaid: number;
     change: number;
   }
-interface OOrder {
-    status?: 'pending' | 'cancelled' | 'error' | 'rest'| 'paid';
-    overdueLimit?: Date;
-    paymentMethod?: 'cash' | 'credit' | 'debit' | 'voucher' | 'bank' | 'cheque';
-    amountPaid?: number;
-    change?: number;
-}
+
 async function addOrder(buyerId: mongoose.Types.ObjectId, order: Order) {
 
     // validate the order data
@@ -30,7 +24,7 @@ async function addOrder(buyerId: mongoose.Types.ObjectId, order: Order) {
     });
 }
 
-async function updateOrder(id: mongoose.Types.ObjectId, params: OOrder) {
+async function updateOrder(id: mongoose.Types.ObjectId, params: Partial<Order>) {
 
     // Validate the order data
 
@@ -53,7 +47,7 @@ async function deleteOrder(id: mongoose.Types.ObjectId) {
     return order
 }
 
-async function getOrder(id?: mongoose.Types.ObjectId, filters?: OOrder) {
+async function getOrder(id?: mongoose.Types.ObjectId, filters?: Partial<Order>) {
     let query = {};
     if (id) query = { _id: id };
     if (filters) query = { ...query, ...filters };
@@ -67,7 +61,7 @@ async function getOrder(id?: mongoose.Types.ObjectId, filters?: OOrder) {
     return order;
 }
 
-async function getOrders(filters?: OOrder, page: number = 1, limit: number = 30) {
+async function getOrders(filters?: Partial<Order>, page: number = 1, limit: number = 30) {
     if (page < 1) {
         throw new Error("Invalid page number");
     }
