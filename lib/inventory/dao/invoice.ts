@@ -63,8 +63,9 @@ async function getInvoice(orderId?: mongoose.Types.ObjectId, orderDoc?: any) : P
         invoiceGrandTotal += grandTotal;
         
         return {
-// @ts-ignore
+            // @ts-ignore
             productId: orderItem.goodId.productId,
+            // @ts-ignore
             name: orderItem.goodId.name,
             qty: orderItem.qty,
             sellingPrice: orderItem.sellingPrice,
@@ -73,7 +74,7 @@ async function getInvoice(orderId?: mongoose.Types.ObjectId, orderDoc?: any) : P
             grandTotal
         };
     });
-
+    
     const sumDiscount = getDiscount(invoiceTotal, invoiceTotal - invoiceGrandTotal, true);
 
     return {

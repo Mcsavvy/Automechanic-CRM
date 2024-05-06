@@ -16,7 +16,7 @@ const OrderSchema = getBaseSchema().add({
     overdueLimit: { type: Date, required: true },
     paymentMethod: { type: String, required: true, enum: ['cash', 'credit', 'debit', 'voucher', 'bank', 'cheque'] },
     buyerId: { type: mongoose.Types.ObjectId, required: true, ref: BuyerModel },
-    amountPaid: { type: Number, required: true, default: 0 },
-    change: { type: Number, required: true, default: 0 },
+    amountPaid: { type: Number, required: true, default: () => 0 },
+    change: { type: Number, required: true, default: () => 0 },
 })
 export default defineModel<IOrderDocument>("Order", OrderSchema);
