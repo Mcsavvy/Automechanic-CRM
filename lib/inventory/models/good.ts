@@ -1,4 +1,4 @@
-import { getBaseSchema, IBaseDocument , defineModel} from '@/lib/common/models/base';
+import { getBaseSchema, IBaseDocument , defineModel} from '../../common/models/base';
 
 interface IGoodDocument extends IBaseDocument {
   name: string;

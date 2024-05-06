@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { getBaseSchema, IBaseDocument , defineModel} from '@/lib/common/models/base';
+import { getBaseSchema, IBaseDocument , defineModel} from '../../common/models/base';
 import BuyerModel from './buyer';
 
 interface IOrderDocument extends IBaseDocument {

@@ -1,4 +1,4 @@
-import dbConnect from "@/lib/dbConnect";
+import dbConnect from "../../dbConnect";
 import OrderDAO from './order'
 import OrderItemDAO from './orderItem'
 import GoodDAO from './good'

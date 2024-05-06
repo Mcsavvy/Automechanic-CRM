@@ -4,7 +4,7 @@ import {
     validateFirstName,
     validateLastName,
     validatePhoneNumber,
-} from "../common/validation";
+} from "../../common/validation";
 import mongoose, { mongo } from "mongoose";
 import LogDAO from "../../common/dao/log";
 
