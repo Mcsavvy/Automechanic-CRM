@@ -1,6 +1,6 @@
 import { getBaseSchema, IBaseDocument , defineModel} from '../../common/models/base';
 
-interface IGoodDocument extends IBaseDocument {
+export interface IGoodDocument extends IBaseDocument {
   name: string;
   costPrice: number;
   qty: number;
@@ -17,4 +17,4 @@ const GoodSchema = getBaseSchema().add({
     minQty: { type: Number, required: true },
     productId: { type: String, required: true },
 })
-export default defineModel<IGoodDocument>("Good", GoodSchema);
+export const GoodModel = defineModel<IGoodDocument>("Good", GoodSchema);

@@ -1,7 +1,7 @@
-import GoodModel from '../../inventory/models/good';
+import { GoodModel } from '../../inventory/models/good';
 import mongoose from 'mongoose';
-import OrderItemModel from '../models/orderItem';
-import OrderModel from '../models/order';
+import { OrderItemModel } from '../models/orderItem';
+import { OrderModel } from '../models/order';
 
 interface Good {
     name: string;

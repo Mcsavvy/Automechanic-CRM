@@ -1,12 +1,12 @@
 import mongoose from 'mongoose';
 import { getBaseSchema, IBaseDocument , defineModel} from '../../common/models/base';
-import BuyerModel from './buyer';
+import { BuyerModel, IBuyerDocument } from './buyer';
 
-interface IOrderDocument extends IBaseDocument {
+export interface IOrderDocument extends IBaseDocument {
   status: 'pending' | 'cancelled' | 'error' | 'rest'| 'paid';
   overdueLimit: Date;
   paymentMethod: 'cash' | 'credit' | 'debit' | 'voucher' | 'bank' | 'cheque';
-  buyerId: mongoose.Types.ObjectId;
+  buyerId: mongoose.Types.ObjectId | IBuyerDocument;
   amountPaid: number;
   change: number;
 }
@@ -19,4 +19,4 @@ const OrderSchema = getBaseSchema().add({
     amountPaid: { type: Number, required: true, default: () => 0 },
     change: { type: Number, required: true, default: () => 0 },
 })
-export default defineModel<IOrderDocument>("Order", OrderSchema);
+export const OrderModel = defineModel<IOrderDocument>("Order", OrderSchema);
