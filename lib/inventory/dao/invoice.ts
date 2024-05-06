@@ -63,6 +63,7 @@ async function getInvoice(orderId?: mongoose.Types.ObjectId, orderDoc?: any) : P
         invoiceGrandTotal += grandTotal;
         
         return {
+// @ts-ignore
             productId: orderItem.goodId.productId,
             name: orderItem.goodId.name,
             qty: orderItem.qty,
