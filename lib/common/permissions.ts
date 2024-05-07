@@ -1,38 +1,37 @@
 import mongoose from "mongoose";
-import UserModel from "./models/user";
+import {IUserDocument} from "./models/user";
 
-type User = typeof UserModel;
-function isAdmin(user: User): boolean {
-  return user.roles.include('admin');
+function isAdmin(user: IUserDocument): boolean {
+  return user.roles.includes('admin');
 }
-function isOwner(user: User): boolean {
-  return user.roles.include('owner');
+function isOwner(user: IUserDocument): boolean {
+  return user.roles.includes('owner');
 }
-function isNotBanned(user: User): boolean {
+function isNotBanned(user: IUserDocument): boolean {
   return user.status !== 'banned';
 }
 
-function isTeller(user: User): boolean {
-  return user.roles.include('teller');
+function isTeller(user: IUserDocument): boolean {
+  return user.roles.includes('teller');
 }
 
-function isMechanic(user: User): boolean {
-    return user.roles.include('mechanic');
+function isMechanic(user: IUserDocument): boolean {
+    return user.roles.includes('mechanic');
 }
 
-function isEntityOwner(user: User, ownerId: mongoose.Types.ObjectId): boolean {
+function isEntityOwner(user: IUserDocument, ownerId: mongoose.Types.ObjectId): boolean {
   return user._id === ownerId;
 }
 
-function hasAdminClaim(user: User): boolean {
+function hasAdminClaim(user: IUserDocument): boolean {
   return isAdmin(user) || isOwner(user);
 }
 
-function hasMechanicClaim(user: User): boolean {
+function hasMechanicClaim(user: IUserDocument): boolean {
   return isMechanic(user) || isAdmin(user) || isOwner(user);
 }
 
-function hasTellerClaim(user: User): boolean {
+function hasTellerClaim(user: IUserDocument): boolean {
   return isTeller(user) || isAdmin(user) || isOwner(user);
 }
 const Permissions = {
