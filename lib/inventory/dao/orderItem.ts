@@ -11,16 +11,6 @@ interface OrderItem {
     goodId: mongoose.Types.ObjectId;
 }
 
-interface OOrderItem {
-    qty?: number;
-    sellingPrice?: number;
-    discount?: number;
-    orderId?: mongoose.Types.ObjectId;
-    goodId?: mongoose.Types.ObjectId;
-    costPrice?: number;
-
-}
-
 async function addOrderItem(orderId: mongoose.Types.ObjectId, goodId: mongoose.Types.ObjectId, params: OrderItem) {
 
     // validate the orderItem data
@@ -61,7 +51,7 @@ async function deleteOrderItem(id: mongoose.Types.ObjectId) {
 
 }
 
-async function updateOrderItem(id: mongoose.Types.ObjectId, params: OOrderItem) {
+async function updateOrderItem(id: mongoose.Types.ObjectId, params: Partial<OrderItem>) {
     const orderItem = await OrderItemModel.findByIdAndUpdate(id, params, { new: true });
     if (!orderItem) {
         throw new Error("OrderItem not found");

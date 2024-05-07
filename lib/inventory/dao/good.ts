@@ -12,16 +12,6 @@ interface Good {
     productId: string;
 }
 
-interface OGood {
-    name?: string;
-    costPrice?: number;
-    qty?: number;
-    description?: string;
-    minQty?: number;
-    productId?: string;
-
-}
-
 async function addGood(params: Good) {
     const good = new GoodModel(params);
 
@@ -31,7 +21,7 @@ async function addGood(params: Good) {
     return good;
 }
 
-async function getGood(id?: mongoose.Types.ObjectId, filters?: OGood) {
+async function getGood(id?: mongoose.Types.ObjectId, filters?: Partial<Good>) {
     let query = {};
     if (id) query = { _id: id };
     if (filters) query = { ...query, ...filters };
@@ -45,7 +35,7 @@ async function getGood(id?: mongoose.Types.ObjectId, filters?: OGood) {
     return good;
 }
 
-async function getGoods(filters?: OGood, page: number = 1, limit: number = 30) {
+async function getGoods(filters?: Partial<Good>, page: number = 1, limit: number = 30) {
     if (page < 1) {
         throw new Error("Invalid page number");
     }
@@ -62,7 +52,7 @@ async function restockGood(id: mongoose.Types.ObjectId, qty: number) {
 }
 
 
-async function updateGood(id: mongoose.Types.ObjectId, params: OGood) {
+async function updateGood(id: mongoose.Types.ObjectId, params: Partial<Good>) {
     return await GoodModel.findByIdAndUpdate(id, params, { new: true });
 }
 

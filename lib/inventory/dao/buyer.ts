@@ -8,11 +8,6 @@ interface Buyer {
     email?: string;
 }
 
-interface OBuyer {
-    name?: string;
-    phone?: string;
-    email?: string;
-}
 async function addBuyer(params: Buyer) {
     const { name, phone, email } = params;
 
@@ -27,7 +22,7 @@ async function addBuyer(params: Buyer) {
     return buyer;
 }
 
-async function getBuyers(filters?: OBuyer, page: number = 1, limit: number = 30) {
+async function getBuyers(filters?: Partial<Buyer>, page: number = 1, limit: number = 30) {
     if (page < 1) {
         throw new Error("Invalid page number");
     }
@@ -39,7 +34,7 @@ async function getBuyers(filters?: OBuyer, page: number = 1, limit: number = 30)
     return { buyers, next, prev };
 }
 
-async function getBuyer(id?: mongoose.Types.ObjectId, filters?: OBuyer) {
+async function getBuyer(id?: mongoose.Types.ObjectId, filters?: Partial<Buyer>) {
     let query = {};
     if (id) query = { _id: id };
     if (filters) query = { ...query, ...filters };
@@ -53,7 +48,7 @@ async function getBuyer(id?: mongoose.Types.ObjectId, filters?: OBuyer) {
     return buyer;
 }
 
-async function updateBuyer(id: mongoose.Types.ObjectId, params: OBuyer, buyerData: OBuyer) {
+async function updateBuyer(id: mongoose.Types.ObjectId, params: Partial<Buyer>, buyerData: Partial<Buyer>) {
     if (params.name) {
         throw new Error("Cannot change a buyer's name")
     }
