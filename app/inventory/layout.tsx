@@ -4,8 +4,10 @@ import { FaCar, FaUser, FaTools, FaUsers, FaRegUserCircle, FaStoreAlt } from "re
 import { HiOutlineMenuAlt2, HiOutlineMenuAlt3 } from "react-icons/hi";
 import { MdLogout } from "react-icons/md";
 import React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { GiMechanicGarage } from "react-icons/gi";
+import { useRouter } from "next/navigation";
+import {useAuthStore} from "@/lib/providers/auth-store-provider";
 
 export default function DashboardLayout({
     children,
@@ -15,6 +17,8 @@ export default function DashboardLayout({
     const [menu, setMenu] = useState(true)
     const [app, setApp] = useState(false)
     const [currApp, setCurrApp] = useState('Inventory')
+    const { loggedIn, firstName, lastName } = useAuthStore((state) => state);
+    const router = useRouter();
     const toggleMenu = () => {
         setMenu(!menu)
     }
@@ -25,6 +29,13 @@ export default function DashboardLayout({
         setCurrApp(app)
         setApp(!app)
     }
+
+    useEffect(() => {
+        if (!loggedIn) {
+            router.push("/auth/login");
+        }
+    });
+
     return (
         <div className="fixed flex flex-row items-center justify-start top-0 left-0">
             <header className="fixed top-0 h-[60px] w-screen border-b border-neu-9 bg-neu-1 overflow-visible z-[10]">
@@ -93,7 +104,7 @@ export default function DashboardLayout({
                     </li>
                 </ul>
                 <div className="flex flex-col h-[120px] bg-lavender justify-between items-start px-[10px] py-[5px] text-lg font-bold my-[20px] mb-[30px] border-t border-neu-6 border-1">
-                    <h3 className="text-[16px] w-full font-medium flex flex-row gap-[10px] items-center justify-start hover:bg-neu-2 hover:text-black transition-all duration-200 ease-in active:scale-95 cursor-pointer px-5 py-1"><FaRegUserCircle />John Thomas</h3>
+                    <h3 className="text-[16px] w-full font-medium flex flex-row gap-[10px] items-center justify-start hover:bg-neu-2 hover:text-black transition-all duration-200 ease-in active:scale-95 cursor-pointer px-5 py-1"><FaRegUserCircle />{firstName}{' '}{lastName}</h3>
                     <h3 className="text-[16px] w-full font-medium flex flex-row gap-[10px] items-center justify-start hover:bg-neu-2 hover:text-black transition-all duration-200 ease-in active:scale-95 cursor-pointer px-5 py-1"><MdLogout /></h3>
                 </div>
             </nav>
