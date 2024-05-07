@@ -12,3 +12,4 @@ const BuyerSchema = getBaseSchema().add({
   email: { type: String, required: true, unique: true },
 })
 export const BuyerModel = defineModel<IBuyerDocument>("Buyer", BuyerSchema);
+export default BuyerModel;

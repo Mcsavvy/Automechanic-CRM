@@ -21,3 +21,4 @@ const OrderItemSchema = getBaseSchema().add({
     goodId: { type: mongoose.Types.ObjectId, required: true, ref: GoodModel},
 })
 export const OrderItemModel = defineModel<IOrderItemDocument>("OrderItem", OrderItemSchema);
+export default OrderItemModel;

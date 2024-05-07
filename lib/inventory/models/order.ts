@@ -20,3 +20,4 @@ const OrderSchema = getBaseSchema().add({
     change: { type: Number, required: true, default: () => 0 },
 })
 export const OrderModel = defineModel<IOrderDocument>("Order", OrderSchema);
+export default OrderModel;

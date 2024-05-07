@@ -18,3 +18,4 @@ const GoodSchema = getBaseSchema().add({
     productId: { type: String, required: true },
 })
 export const GoodModel = defineModel<IGoodDocument>("Good", GoodSchema);
+export default GoodModel;
