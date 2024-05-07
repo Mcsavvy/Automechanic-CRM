@@ -1,7 +1,7 @@
 import { getBaseSchema, IBaseDocument, defineModel } from './base';
 
 type Role = 'admin' | 'mechanic' | 'teller' | 'owner';
-interface IUserDocument extends IBaseDocument {
+export interface IUserDocument extends IBaseDocument {
   firstName: string;
   lastName: string;
   phone: string;
@@ -12,7 +12,7 @@ interface IUserDocument extends IBaseDocument {
   fullName(): string;
 }
 
-const UserSchema = getBaseSchema().add({
+export const UserSchema = getBaseSchema().add({
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
   phone: { type: String, required: false },
