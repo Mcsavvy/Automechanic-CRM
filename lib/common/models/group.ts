@@ -1,6 +1,7 @@
 import { getBaseSchema, IBaseDocument, defineModel } from "./base";
 import User from "./user";
 import mongoose from 'mongoose';
+import { hasPermission } from "./utils";
 
 export interface IGroupDocument extends IBaseDocument {
     name: string;
@@ -20,26 +21,7 @@ export const GroupSchema = getBaseSchema().add({
     permissions: { type: Object, required: true, default: {} },
 });
 
-GroupSchema.methods.hasPermission = function (permission: string) {
-    // example: 'user:read,write'
-    if (permission.includes(":")) {
-        const [scope, action] = permission.split(":", 2);
-        const actions = action.split(",");
-        if (actions.length > 1) {
-            return actions.every((action) =>
-                this.hasPermission(`${scope}:${action}`)
-            );
-        }
-        if (action === "*" || action === "all" || action === "") {
-            return this.permissions[scope] === true;
-        }
-        return (
-            this.permissions[scope] === true ||
-            this.permissions[scope].includes(action)
-        );
-    }
-    return this.permissions[permission] === true;
-};
+GroupSchema.methods.hasPermission = hasPermission;
 
 GroupSchema.methods.hasMember = function (userId: mongoose.Types.ObjectId) {
     return this.members_ids.includes(userId);

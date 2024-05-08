@@ -1,4 +1,5 @@
 import { getBaseSchema, IBaseDocument, defineModel } from './base';
+import { hasPermission } from './utils';
 
 export interface IUserDocument extends IBaseDocument {
   firstName: string;
@@ -28,20 +29,6 @@ UserSchema.methods.fullName = function() {
   return this.firstName + ' ' + this.lastName;
 }
 
-UserSchema.methods.hasPermission = function(permission: string) {
-  // example: 'user:read,write'
-  if (permission.includes(':')) {
-    const [scope, action] = permission.split(':', 2);
-    const actions = action.split(',');
-    if (actions.length > 1) {
-      return actions.every(action => this.hasPermission(`${scope}:${action}`));
-    }
-    if (action === '*' || action === 'all' || action === '') {
-      return this.permissions[scope] === true;
-    }
-    return this.permissions[scope] === true || this.permissions[scope].includes(action);
-  }
-  return this.permissions[permission] === true;
-}
+UserSchema.methods.hasPermission = hasPermission;
 
 export default defineModel<IUserDocument>("User", UserSchema);
