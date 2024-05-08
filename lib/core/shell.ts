@@ -12,8 +12,10 @@ import connect from "../dbConnect";
 // Import all common models and database operations
 import User from "../common/models/user";
 import Log from "../common/models/log";
+import Group from "../common/models/group";
 import UserDAO from "../common/dao/user";
 import LogDAO from "../common/dao/log";
+import GroupDAO from "../common/dao/group";
 // Import all inventory models and database operations
 import Buyer from "../inventory/models/buyer";
 import Order from "../inventory/models/order";
@@ -35,6 +37,7 @@ import CustomerDAO from "../garage/dao/customer";
 const shellContext = {
     User,
     Log,
+    Group,
     Buyer,
     Order,
     Good,
@@ -46,6 +49,7 @@ const shellContext = {
     Mechanic,
     ...UserDAO,
     ...LogDAO,
+    ...GroupDAO,
     ...BuyerDAO,
     ...OrderDAO,
     ...GoodDAO,
