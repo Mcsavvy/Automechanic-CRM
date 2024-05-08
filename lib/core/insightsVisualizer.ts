@@ -25,6 +25,3 @@ export function createRevenueByBuyerChart(data: RevenueByBuyer[]) {
     console.log(d.buyerName);
   });
 }
-
-// Call the function with your data
-createRevenueByBuyerChart(yourData);
