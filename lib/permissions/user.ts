@@ -1,50 +1,44 @@
 import { Permission } from "./base";
 import { IUserDocument } from "../common/models/user";
+import Group from "../common/models/group";
 
-const isAdmin = Permission.create({
-    hasPermission: async (user: IUserDocument, request) => {
-        return user.roles.includes('admin');
-    },
-    hasObjectPermission: async (user: IUserDocument, object, request) => {
-        return user.roles.includes('admin');
-    }
-});
+const isGroupMember = (groupName: string) => {
+    return Permission.create({
+        hasPermission: async (user: IUserDocument, request) => {
+            const group = await Group.findOne({ name: groupName });
+            if (!group) {
+                return false;
+            }
+            return group.hasMember(user._id);
+        },
+    });
+}
 
+const hasPermission = (permission: string) => {
+    return Permission.create({
+        async hasPermission(user: IUserDocument, request): Promise<boolean> {
+            if (user.hasPermission(permission)) {
+                return true;
+            }
+            const userGroups = await Group.find({ members_ids: user._id });
+            for (const group of userGroups) {
+                if (group.hasPermission(permission)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    });
+}
 
-const isOwner = Permission.create({
-    hasPermission: async (user: IUserDocument, request) => {
-        return user.roles.includes('owner');
-    },
-    hasObjectPermission: async (user: IUserDocument, object, request) => {
-        return user.roles.includes('owner');
-    }
-});
-
+const isAdmin = isGroupMember('admin');
+const isOwner = isGroupMember('owner');
+const isTeller = isGroupMember('teller');
+const isMechanic = isGroupMember('mechanic');
 const isBanned = Permission.create({
-    hasPermission: async (user: IUserDocument, request) => {
+    async hasPermission(user: IUserDocument, request): Promise<boolean> {
         return user.status !== 'banned';
     },
-    hasObjectPermission: async (user: IUserDocument, object, request) => {
-        return user.status !== 'banned';
-    }
-});
-
-const isTeller = Permission.create({
-    hasPermission: async (user: IUserDocument, request) => {
-        return user.roles.includes('teller');
-    },
-    hasObjectPermission: async (user: IUserDocument, object, request) => {
-        return user.roles.includes('teller');
-    }
-});
-
-const isMechanic = Permission.create({
-    hasPermission: async (user: IUserDocument, request) => {
-        return user.roles.includes('mechanic');
-    },
-    hasObjectPermission: async (user: IUserDocument, object, request) => {
-        return user.roles.includes('mechanic');
-    }
 });
 
 export {
@@ -52,5 +46,7 @@ export {
     isOwner,
     isBanned,
     isTeller,
-    isMechanic
+    isMechanic,
+    isGroupMember,
+    hasPermission
 };
