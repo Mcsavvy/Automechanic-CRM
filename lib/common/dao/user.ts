@@ -151,8 +151,8 @@ async function authenticateUser(email: string, password: string) {
     if (!isPasswordValid) {
         throw new Error("Invalid password");
     }
-    const token = jwt.sign({ id: user._id.toHexString() }, process.env.JWT_SECRET as string, {
-        expiresIn: process.env.JWT_EXPIRY,
+    const token = jwt.sign({ sub: user._id.toHexString() }, process.env.JWT_SECRET as string, {
+        expiresIn: process.env.JWT_EXPIRY, algorithm: "HS256"
     });
     return { token, user };
 }
