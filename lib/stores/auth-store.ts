@@ -13,8 +13,8 @@ export type AuthState =
     email: null;
     firstName: null;
     lastName: null;
-    loggedIn: false;
-};
+    loggedIn: false | null;
+}
 
 export interface AuthActions {
     setAuth: (auth: AuthState) => void;
@@ -28,7 +28,7 @@ export const defaultAuthState: AuthState = {
     email: null,
     firstName: null,
     lastName: null,
-    loggedIn: false,
+    loggedIn: null,
 };
 
 

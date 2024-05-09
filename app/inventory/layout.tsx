@@ -31,7 +31,7 @@ export default function DashboardLayout({
     }
 
     useEffect(() => {
-        if (!loggedIn) {
+        if (loggedIn === false) {
             router.push("/auth/login");
         }
     });
