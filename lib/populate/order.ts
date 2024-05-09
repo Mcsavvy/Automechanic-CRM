@@ -19,4 +19,5 @@ export default async function populateOrders(number: number) {
         await order.save();
         orders.push(order);
     }
+    return orders;
 };
