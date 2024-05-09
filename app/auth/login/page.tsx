@@ -5,7 +5,6 @@ import backgroundImage from "./background.png";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useAuthStore } from "@/lib/providers/auth-store-provider";
-import { useCookies } from "react-cookie";
 
 
 interface LoginResponse {
@@ -25,7 +24,6 @@ const LoginPage: React.FC = () => {
     const [password, setPassword] = useState("");
     const {loggedIn, setAuth} = useAuthStore((state) => state);
     const router = useRouter();
-    const [cookieJar, setCookie, removeCookie] = useCookies(["accessToken"]);
 
     React.useEffect(() => {
         if (loggedIn) {
@@ -45,7 +43,6 @@ const LoginPage: React.FC = () => {
                     lastName: data.lastName,
                     loggedIn: true,
                 });
-                setCookie("accessToken", data.accessToken, { path: "/" });
                 resolve(data);
             }).catch((error) => {
                 reject(error.response.data as ErrorResponse);
