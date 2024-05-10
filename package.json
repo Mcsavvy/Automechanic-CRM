@@ -10,6 +10,7 @@
     "shell": "ts-node ./lib/core/shell.ts"
   },
   "dependencies": {
+    "@radix-ui/react-popover": "^1.0.7",
     "@radix-ui/react-slot": "^1.0.2",
     "@types/asciichart": "^1.5.8",
     "axios": "^1.6.8",
@@ -21,7 +22,7 @@
     "lucide-react": "^0.378.0",
     "mongoose": "^8.3.3",
     "ms": "^2.1.3",
-    "next": "14.2.3",
+    "next": "^14.2.3",
     "phone": "^3.1.42",
     "react": "^18",
     "react-cookie": "^7.1.4",
