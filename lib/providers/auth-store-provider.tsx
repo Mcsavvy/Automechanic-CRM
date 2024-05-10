@@ -15,7 +15,7 @@ export async function getAuthState(): Promise<AuthState> {
         return defaultAuthState;
     }
     try {
-        const response = await axios.post("/api/auth", { accessToken });
+        const response = await axios.post("/api/auth/me");
         if (response.status !== 200) {
             throw response;
         }

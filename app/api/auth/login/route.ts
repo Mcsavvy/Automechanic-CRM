@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import {UserDAO} from "@/lib/common/dao";
+import {cookies} from "next/headers";
 
 
 interface LoginData {
@@ -12,7 +13,6 @@ interface LoginResponse {
     email: string;
     lastName: string;
     firstName: string;
-    accessToken: string;
 }
 
 
@@ -33,8 +33,12 @@ export async function POST(req: NextRequest) {
             email: user.email,
             lastName: user.lastName,
             firstName: user.firstName,
-            accessToken: token,
         };
+        cookies().set("X-Auth-Token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: true,
+        });
         return NextResponse.json(response);
     } catch (error) {
         if (error instanceof Error) {

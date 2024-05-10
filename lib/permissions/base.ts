@@ -2,6 +2,7 @@
 import { IBaseDocument } from "../common/models/base";
 import { IUserDocument } from "../common/models/user";
 import { NextRequest, NextResponse } from "next/server";
+import { AddThisParameter } from "../@types";
 
 interface IPermission<T extends IBaseDocument=IBaseDocument> {
     hasPermission?: (
@@ -20,7 +21,7 @@ export class Permission<T extends IBaseDocument = IBaseDocument>
 {
     async hasPermission(
         user: IUserDocument,
-        request: NextRequest
+        request?: NextRequest
     ): Promise<boolean> {
         return true;
     }
@@ -30,7 +31,7 @@ export class Permission<T extends IBaseDocument = IBaseDocument>
         object: T,
         request?: NextRequest
     ): Promise<boolean> {
-        return true;
+        return await this.hasPermission(user, request);
     }
 
     not() {
@@ -50,17 +51,17 @@ export class Permission<T extends IBaseDocument = IBaseDocument>
     }
 
     static create<T extends IBaseDocument = IBaseDocument>(
-        permission: IPermission<T>
+        permission: AddThisParameter<IPermission<T>, Permission<T>>
     ): Permission<T> {
         const newPermission = new Permission<T>();
         if (permission.hasPermission) {
             newPermission.hasPermission =
-                permission.hasPermission.bind(permission);
+                permission.hasPermission.bind(newPermission);
         }
         if (permission.hasObjectPermission) {
             // @ts-ignore
             newPermission.hasObjectPermission =
-                permission.hasObjectPermission.bind(permission);
+                permission.hasObjectPermission.bind(newPermission);
         }
         return newPermission;
     }
