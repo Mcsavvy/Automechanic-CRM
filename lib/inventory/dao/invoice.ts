@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import { OrderModel} from "../models/order";
 import { OrderItemModel } from "../models/orderItem";
-import { GoodModel } from "../models/good";
 import { BuyerModel } from "../models/buyer";
 
 interface InvoiceItem {
@@ -69,7 +68,6 @@ async function getInvoice(orderId?: mongoose.Types.ObjectId, orderDoc?: any) : P
         invoiceGrandTotal += grandTotal;
         
         return {
-
             // @ts-ignore
             productId: orderItem.goodId.productId,
             // @ts-ignore

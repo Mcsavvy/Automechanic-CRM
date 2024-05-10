@@ -10,10 +10,14 @@
     "shell": "ts-node ./lib/core/shell.ts"
   },
   "dependencies": {
+    "@radix-ui/react-slot": "^1.0.2",
     "@types/asciichart": "^1.5.8",
     "axios": "^1.6.8",
     "bcrypt": "^5.1.1",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
     "jsonwebtoken": "^9.0.2",
+    "lucide-react": "^0.378.0",
     "mongoose": "^8.3.3",
     "next": "14.2.3",
     "phone": "^3.1.42",
@@ -23,6 +27,8 @@
     "react-icons": "^5.2.0",
     "react-toastify": "^10.0.5",
     "sharp": "^0.33.3",
+    "tailwind-merge": "^2.3.0",
+    "tailwindcss-animate": "^1.0.7",
     "zustand": "^4.5.2"
   },
   "devDependencies": {

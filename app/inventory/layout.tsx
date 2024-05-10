@@ -7,7 +7,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { GiMechanicGarage } from "react-icons/gi";
 import { useRouter } from "next/navigation";
-import {useAuthStore} from "@/lib/providers/auth-store-provider";
+import { useAuthStore } from "@/lib/providers/auth-store-provider";
 
 export default function DashboardLayout({
     children,
@@ -38,30 +38,34 @@ export default function DashboardLayout({
 
     return (
         <div className="fixed flex flex-row items-center justify-start top-0 left-0">
-            <header className="fixed top-0 h-[60px] w-screen border-b border-neu-9 bg-neu-1 overflow-visible z-[10]">
-                <div className="absolute right-[30px] top-[10px] overflow-visible flex flex-col items-end justify-start">
-                    <h2 onClick={toggleApp} className="cursor-pointer font-heading text-[13px] font-semibold flex flex-grow-0 w-auto h-[40px] flex-row gap-[8px] rounded-xl bg-neu-2 text-black px-4 py-2 items-center jusitify-start">
-                        { currApp === 'Inventory' ? 
-                            <FaStoreAlt className="text-[18px]"/> : 
-                            <GiMechanicGarage className="text-[18px]"/>
+            <nav className={`top-0 relative h-screen bg-white w-[220px] flex flex-col flex-shrink-0 transition-all duration-300 ease-in-out ${menu ? 'left-0' : '-left-[220px]'} border-r border-[var(--neu-300)] border-1 shadow-lg text-neu-9 font-heading`}>
+                <div className="header">
+                    <h1 className="p-[30px]  text-lg font-lg pb-1">W I L L I E</h1>
+                    <div className="relative overflow-visible flex flex-col items-center justify-start gap-[20px]">
+                        <h2 onClick={toggleApp} className=" self-start cursor-pointer font-heading text-[12px]  font-semibold flex flex-grow-0 w-auto h-[40px] flex-row gap-[8px] rounded-[4px] bg-neu-2 text-black py-2 px-[20px] mx-[30px] items-center jusitify-start">
+                            {currApp === 'Inventory' ?
+                                <FaStoreAlt className="text-[16px]" /> :
+                                <GiMechanicGarage className="text-[16px]" />
+                            }
+                            {currApp}
+                        </h2>
+                        {app &&
+                            <div className="absolute top-full mt-[10px] z-10">
+                                <ul className="flex flex-row gap-3 bg-neu-3 p-3 rounded-lg">
+                                    <li onClick={() => changeApp('Inventory')} className="cursor-pointer text-neu-9 text-[12px] flex flex-col justify-center items-center gap-[8px] p-3 rounded-md bg-neu-1 hover:bg-neu-7 hover:text-neu-1 transition-all duration-200 ease-in active:scale-95">
+                                        <FaStoreAlt className="text-[16px]" />Inventory</li>
+                                    <li onClick={() => changeApp('Garage')} className="cursor-pointer text-neu-9 text-[12px] flex flex-col justify-center items-center gap-[8px] p-3 rounded-md bg-neu-1 hover:bg-neu-7 hover:text-neu-1 transition-all duration-200 ease-in active:scale-95">
+                                        <GiMechanicGarage className="text-[16px]" />Garage</li>
+                                </ul>
+                            </div>
                         }
-                        {currApp}
-                    </h2>
-                    {app &&
-                        <ul className="flex flex-row gap-[15px] mt-[10px] bg-neu-3 p-3 rounded-lg z-10">
-                        <li onClick={() => changeApp('Inventory')} className="cursor-pointer text-neu-9 text-[12px] flex flex-col w-[70px] justify-center items-center gap-[8px] p-3 rounded-md bg-neu-1 hover:bg-neu-7 hover:text-neu-1 transition-all duration-200 ease-in active:scale-95">
-                            <FaStoreAlt className="text-[20px]"/>Inventory</li>
-                        <li onClick={() => changeApp('Garage')} className="cursor-pointer text-neu-9 text-[12px] w-[70px] flex flex-col justify-center items-center gap-[8px] p-3 rounded-md bg-neu-1 hover:bg-neu-7 hover:text-neu-1 transition-all duration-200 ease-in active:scale-95">
-                            <GiMechanicGarage className="text-[20px]"/>Garage</li>
-                        </ul>
-                    }
+                    </div>
                 </div>
-            </header>
-            <nav className={`top-[60px] relative h-[calc(100vh-60px)] bg-neu-1 w-[220px] flex flex-col flex-shrink-0 transition-all duration-300 ease-in-out ${menu ? 'left-0' : '-left-[220px]'} border-r border-[var(--neu-600)] border-1 shadow-lg text-neu-9 font-heading`}>
+
                 {menu ?
-                    <HiOutlineMenuAlt3 onClick={toggleMenu} className="absolute top-2 right-[-40px] cursor-pointer text-[24px] text-neu-9 transition active:scale-95 duration-200 ease-in z-[1]" />
+                    <HiOutlineMenuAlt3 onClick={toggleMenu} className="absolute top-2 right-[-40px] cursor-pointer text-[24px] text-neu-9 transition active:scale-95 duration-200 ease-in z-10" />
                     :
-                    <HiOutlineMenuAlt2 onClick={toggleMenu} className="absolute top-2 right-[-40px] cursor-pointer text-[24px] text-neu-9 transition active:scale-95 duration-200 ease-in z-[1]" />
+                    <HiOutlineMenuAlt2 onClick={toggleMenu} className="absolute top-2 right-[-40px] cursor-pointer text-[24px] text-neu-9 transition active:scale-95 duration-200 ease-in z-10" />
                 }
                 <ul className="flex flex-col p-[10px] py-[30px] gap-[15px] overflow-y-auto scrollbar-thin">
                     <li >
@@ -108,8 +112,12 @@ export default function DashboardLayout({
                     <h3 className="text-[16px] w-full font-medium flex flex-row gap-[10px] items-center justify-start hover:bg-neu-2 hover:text-black transition-all duration-200 ease-in active:scale-95 cursor-pointer px-5 py-1"><MdLogout /></h3>
                 </div>
             </nav>
-            <main className={`relative top-[60px] flex flex-column ${menu ? 'w-[calc(100vw-220px)]' : 'w-[100vw]'} bg-white ${menu ? 'left-0' : '-left-[220px]'} flex-grow h-[calc(100vh-60px)] overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out font-body`}>
-                <div className={`${menu ? 'overlay': 'no-overlay'}`} onClick={toggleMenu}>
+            <main className={`relative top-0 flex flex-column ${menu ? 'w-[calc(100vw-220px)]' : 'w-[100vw]'} bg-neu-1 ${menu ? 'left-0' : '-left-[220px]'} flex-grow h-[calc(100vh-60px)] overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out font-body`}>
+                <div className={`${menu ? 'overlay' : 'no-overlay'}`} onClick={toggleMenu}>
+                </div>
+                <header className="fixed top-0 h-[50px] w-screen border-b border-neu-9 bg-white overflow-visible z-[10]">
+                </header>
+                <div className="">
                 </div>
                 {children}
             </main>
