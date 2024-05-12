@@ -62,10 +62,14 @@ export const DataTable: React.FC<DataTableProps> = ({ populate, headers }) => {
                     ))}
                 </TableBody>
             </Table>
-            <div className="absolute bottom-0 flex flex-row items-center justify-start gap-3 bg-neu-1 w-full">
-                <Button variant={'outline'} className="h-[30px]">Prev</Button>
-                <Button variant={'outline'} className="h-[30px]">Next</Button>
-                <p>Page <span c>1</span> of <span>100</span></p>
+            <div className="absolute bottom-0 left-0 flex flex-row items-center justify-between py-4 bg-neu-1 w-full">
+                <div className="flex flex-row items-center justify-start gap-3">
+                    <Button variant={'outline'} className="h-[30px] text-[12px]">Prev</Button>
+                    <Button variant={'outline'} className="h-[30px] text-[12px]">Next</Button>
+                </div>
+                <p>
+                    Page <span className="text-lg font-semibold text-pri-6">1</span> of <span className="text-lg font-semibold text-pri-6">100</span>
+                </p>
             </div>
         </div>
     );
