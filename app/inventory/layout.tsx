@@ -31,14 +31,14 @@ export default function DashboardLayout({
     }
 
     useEffect(() => {
-        if (!loggedIn) {
-            router.push("/auth/login");
-        }
+        // if (!loggedIn) {
+        //     router.push("/auth/login");
+        // }
     });
 
     return (
         <div className="fixed flex flex-row items-center justify-start top-0 left-0">
-            <nav className={`top-0 relative h-screen bg-white w-[220px] flex flex-col flex-shrink-0 transition-all duration-300 ease-in-out ${menu ? 'left-0' : '-left-[220px]'} border-r border-neu-3 border-1 shadow-lg text-neu-9 font-heading`}>
+            <nav className={`fixed top-0 md:relative h-screen bg-white w-[220px] flex flex-col flex-shrink-0 transition-all duration-300 ease-in-out ${menu ? 'left-0' : '-left-[220px]'} border-r border-neu-3 border-1 shadow-lg text-neu-9 font-heading z-50 `}>
                 <div className="header">
                     <h1 className="p-[30px]  text-lg font-lg pb-1">W I L L I E</h1>
                     <div className="relative overflow-visible flex flex-col items-center justify-start gap-[20px]">
@@ -63,9 +63,9 @@ export default function DashboardLayout({
                 </div>
 
                 {menu ?
-                    <HiOutlineMenuAlt3 onClick={toggleMenu} className="absolute top-2 right-[-40px] cursor-pointer text-[24px] text-neu-9 transition active:scale-95 duration-200 ease-in z-10" />
+                    <HiOutlineMenuAlt3 onClick={toggleMenu} className="absolute top-2 right-[-40px] cursor-pointer text-[24px] text-neu-9 transition active:scale-95 duration-200 ease-in z-30" />
                     :
-                    <HiOutlineMenuAlt2 onClick={toggleMenu} className="absolute top-2 right-[-40px] cursor-pointer text-[24px] text-neu-9 transition active:scale-95 duration-200 ease-in z-10" />
+                    <HiOutlineMenuAlt2 onClick={toggleMenu} className="absolute top-2 right-[-40px] cursor-pointer text-[24px] text-neu-9 transition active:scale-95 duration-200 ease-in z-30" />
                 }
                 <ul className="flex flex-col p-[10px] py-[30px] gap-[15px] overflow-y-auto scrollbar-thin">
                     <li >
@@ -112,9 +112,9 @@ export default function DashboardLayout({
                     <h3 className="text-[16px] w-full font-medium flex flex-row gap-[10px] items-center justify-start hover:bg-neu-2 hover:text-black transition-all duration-200 ease-in active:scale-95 cursor-pointer px-5 py-1"><MdLogout /></h3>
                 </div>
             </nav>
-            <main className={`relative top-0 flex flex-column ${menu ? 'w-[calc(100vw-220px)]' : 'w-[100vw]'} pt-[40px] bg-neu-1 ${menu ? 'left-0' : '-left-[220px]'} flex-grow h-screen overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out font-body`}>
-                <div className={`${menu ? 'overlay' : 'no-overlay'}`} onClick={toggleMenu}>
-                </div>
+            <main className={`relative top-0 flex flex-column ${menu ? 'md:w-[calc(100vw-220px)]' : 'md:w-[100vw]'}   m-small pt-[40px] bg-neu-1 ${menu ? 'md:left-0' : 'md:left-[-220px]'} flex-grow h-screen overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out font-body`}>
+                {menu && <div className='md:w-0 md:h-0 transition-width duration-300 ease flex w-full h-full absolute left-0 top-0 bg-black bg-opacity-50 z-30 backdrop-blur-md' onClick={toggleMenu}>
+                </div>}
                 <header className="fixed top-0 h-[40px] w-screen border-b border-neu-3 bg-white overflow-visible z-[10]">
                 </header>
                 {children}

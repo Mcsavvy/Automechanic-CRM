@@ -48,8 +48,8 @@ export default function Home() {
   };
 
   return (
-    <div className="w-full h-full overflow-auto relative">
-      <Breadcrumb className="sticky top-0 px-[30px] h-[30px] bg-white z-10 border-b border-neu-3">
+    <div className="flex flex-col relative w-full">
+      <Breadcrumb className="sticky top-0 px-[30px] h-[30px] w-full bg-white z-10">
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink href="/">Home</BreadcrumbLink>
@@ -64,25 +64,27 @@ export default function Home() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <div className="flex flex-row justify-between items-center p-[20px]">
-        <h1 className="text-xl font-semibold">Inventory Summary</h1>
-        <Button className="flex flex-row gap-2"><FaPlus />Add Product</Button>
+      <div className="w-full h-full overflow-auto relative">
+        <div className="flex flex-row justify-between items-center p-[20px]">
+          <h1 className="text-xl font-semibold">Inventory Summary</h1>
+          <Button className="flex flex-row gap-2"><FaPlus />Add Product</Button>
+        </div>
+        <div className="flex flex-row flex-wrap gap-[30px] px-[30px] items-center justify-evenly">
+          <div className=" min-w-[300px] bg-white p-4 flex grow-1 flex-col rounded-md w-[30%] gap-3 border border-pri-3 shadow-inner">
+            <h3 className="text-2xl text-pri-5">Categories</h3>
+            <p className="text-lg text-neu-8">Total: 17 </p>
+          </div>
+          <div className=" min-w-[300px] bg-white p-4 flex grow-1 flex-col rounded-md w-[30%] gap-3 border border-pri-3 shadow-inner">
+            <h3 className="text-2xl text-pri-5">Goods</h3>
+            <p className="text-lg text-neu-8">Total: 45 (Goods)</p>
+          </div>
+          <div className=" min-w-[300px] bg-white p-4 flex grow-1 flex-col rounded-md w-[30%] gap-3 border border-pri-3 shadow-inner">
+            <h3 className="text-2xl text-pri-5">Low on Stock</h3>
+            <p className="text-lg text-neu-8">Total: 34 (Goods)</p>
+          </div>
+        </div>
+        <DataTable populate={generateFakeData} headers={tableHeaders} />
       </div>
-      <div className="flex flex-row flex-wrap gap-[30px] px-[30px]">
-        <div className=" min-w-300 bg-white p-4 flex grow-1 flex-col rounded-md w-[30%] gap-3 border border-pri-3 shadow-inner">
-          <h3 className="text-2xl text-pri-5">Categories</h3>
-          <p className="text-lg text-neu-8">Total: 17 </p>
-        </div>
-        <div className=" min-w-300 bg-white p-4 flex flex-col rounded-md w-[30%] gap-3 border border-pri-3 shadow-inner">
-          <h3 className="text-2xl text-pri-5">Goods</h3>
-          <p className="text-lg text-neu-8">Total: 45 (Goods)</p>
-        </div>
-        <div className=" min-w-300 bg-white p-4 flex flex-col rounded-md w-[30%] gap-3 border border-pri-3 shadow-inner">
-          <h3 className="text-2xl text-pri-5">Low on Stock</h3>
-          <p className="text-lg text-neu-8">Total: 34 (Goods)</p>
-        </div>
-      </div>
-      <DataTable populate={generateFakeData} headers={tableHeaders}/>
     </div>
   );
 }

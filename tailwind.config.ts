@@ -119,6 +119,7 @@ const config = {
     transitionTimingFunction: ["responsive", "hover", "focus", "active"],
     scale: ["responsive", "hover", "focus", "active"],
     zIndex: ["responsive", "hover", "focus", "active"],
+    width: ["responsive", "hover", "focus", "active"],
   },
   plugins: [require("tailwindcss-animate"), require('tailwind-scrollbar')],
 } satisfies Config
