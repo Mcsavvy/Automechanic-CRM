@@ -19,7 +19,7 @@ export default function DashboardLayout({
 }) {
     const [menu, setMenu] = useState(true)
     const [app, setApp] = useState(false)
-    const [currApp, setCurrApp] = useState('Inventory')
+    const [currApp, setCurrApp] = useState('inventory')
     const { loggedIn, firstName, lastName } = useAuthStore((state) => state);
     const router = useRouter();
     const pathname = usePathname();
@@ -44,7 +44,7 @@ export default function DashboardLayout({
         return pathname.startsWith(pathValue) ? 'active-nav' : ''
     }
     const navigateTo = (path: string) => {
-        router.push(`/${currApp.toLowerCase()}/${path}`)
+        router.push(`/${currApp}/${path}`)
     }
 
 
@@ -57,11 +57,11 @@ export default function DashboardLayout({
 
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline" className="ml-[10px] capitalize">
+                            <Button variant="outline" className="ml-[30px] capitalize">
                                 {currApp} <ChevronDown className="ml-2 h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent className="w-[40px] ml-[10px]">
+                        <DropdownMenuContent className="w-[40px] ml-[30px]">
                             <DropdownMenuSeparator />
                             <DropdownMenuRadioGroup value={currApp} onValueChange={setCurrApp}>
                                 <DropdownMenuRadioItem value="inventory">Inventory</DropdownMenuRadioItem>
