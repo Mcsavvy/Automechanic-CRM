@@ -10,7 +10,7 @@ import { GiMechanicGarage } from "react-icons/gi";
 import { useAuthStore } from "@/lib/providers/auth-store-provider";
 import { useRouter, usePathname } from "next/navigation";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Button } from "react-day-picker";
+import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 export default function DashboardLayout({
     children,
@@ -53,34 +53,15 @@ export default function DashboardLayout({
             <nav className={`fixed top-0 md:relative h-screen bg-white w-[220px] flex flex-col flex-shrink-0 transition-all duration-300 ease-in-out ${menu ? 'left-0' : '-left-[220px]'} border-r border-neu-3 border-1 shadow-lg text-neu-9 font-heading z-50 `}>
                 <div className="header">
                     <h1 className="p-[30px]  text-lg font-lg pb-1">W I L L I E</h1>
-                    {/* <div className="relative overflow-visible flex flex-col items-center justify-start gap-[20px]">
-                        <h2 onClick={toggleApp} className=" self-start cursor-pointer font-heading text-[12px]  font-semibold flex flex-grow-0 w-auto h-[40px] flex-row gap-[8px] rounded-[4px] bg-neu-2 text-black py-2 px-[20px] mx-[30px] items-center jusitify-start">
-                            {currApp === 'Inventory' ?
-                                <FaStoreAlt className="text-[16px]" /> :
-                                <GiMechanicGarage className="text-[16px]" />
-                            }
-                            {currApp}
-                        </h2>
-                        {app &&
-                            <div className="absolute top-full mt-[10px] z-10">
-                                <ul className="flex flex-row gap-3 bg-neu-3 p-3 rounded-lg">
-                                    <li onClick={() => changeApp('Inventory')} className="cursor-pointer text-neu-9 text-[12px] flex flex-col justify-center items-center gap-[8px] p-3 rounded-md bg-neu-1 hover:bg-neu-7 hover:text-neu-1 transition-all duration-200 ease-in active:scale-95">
-                                        <FaStoreAlt className="text-[16px]" />Inventory</li>
-                                    <li onClick={() => changeApp('Garage')} className="cursor-pointer text-neu-9 text-[12px] flex flex-col justify-center items-center gap-[8px] p-3 rounded-md bg-neu-1 hover:bg-neu-7 hover:text-neu-1 transition-all duration-200 ease-in active:scale-95">
-                                        <GiMechanicGarage className="text-[16px]" />Garage</li>
-                                </ul>
-                            </div>
-                        }
-                    </div> */}
+
 
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline" className="ml-auto">
+                            <Button variant="outline" className="ml-[10px] capitalize">
                                 {currApp} <ChevronDown className="ml-2 h-4 w-4" />
                             </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent className="w-56">
-                            <DropdownMenuLabel>Panel Position</DropdownMenuLabel>
+                        <DropdownMenuContent className="w-[40px] ml-[10px]">
                             <DropdownMenuSeparator />
                             <DropdownMenuRadioGroup value={currApp} onValueChange={setCurrApp}>
                                 <DropdownMenuRadioItem value="inventory">Inventory</DropdownMenuRadioItem>
