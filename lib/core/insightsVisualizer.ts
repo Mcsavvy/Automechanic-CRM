@@ -1,4 +1,5 @@
-import Chart from 'cli-chart';
+// @ts-ignore
+import Chart from "cli-chart";
 
 interface RevenueByBuyer {
     totalRevenue: number,
