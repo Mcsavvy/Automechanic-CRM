@@ -13,15 +13,15 @@ import { FaPlus } from "react-icons/fa";
 import { DataTable } from "@/components/datatable";
 
 export default function Home() {
-  const tableHeaders = {
-    productName: "Product Name",
-    category: "Category",
-    productId: "Product ID",
-    unitPrice: "Unit Price",
-    qty: "In Stock",
-    totalValue: "Total Value",
-    status: "Status",
-  };
+  const tableHeaders = [
+    { id: 'productName', name: "Product Name", isVisible: true },
+    { id: 'category', name: "Category", isVisible: true },
+    { id: 'productId', name: "Product ID", isVisible: false },
+    { id: 'unitPrice', name: "Unit Price", isVisible: true },
+    { id: 'qty', name: "In Stock", isVisible: true },
+    { id: 'totalValue', name: "Total Value", isVisible: false },
+    { id: 'status', name: "Status", isVisible: true },
+  ];
   const generateFakeData = () => {
     const data = [];
     for (let i = 0; i < 10; i++) {
@@ -83,7 +83,7 @@ export default function Home() {
             <p className="text-lg text-neu-8">Total: 34 (Goods)</p>
           </div>
         </div>
-        <DataTable populate={generateFakeData} headers={tableHeaders} />
+        <DataTable data={generateFakeData()} headers={tableHeaders} />
       </div>
     </div>
   );
