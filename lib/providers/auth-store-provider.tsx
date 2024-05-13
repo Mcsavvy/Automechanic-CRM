@@ -37,12 +37,14 @@ export function AuthStoreProvider({ children }: { children: ReactNode }) {
     const store = useRef<StoreApi<AuthStore>>(createAuthStore(defaultAuthState));
     const storeLoaded = useRef(false);
 
-    if (!storeLoaded.current) {
-        getAuthState().then((state) => {
-            store.current.setState(state);
-            storeLoaded.current = true;
-        });
-    }
+    useEffect(() => {
+        if (!storeLoaded.current) {
+            getAuthState().then((state) => {
+                store.current.setState(state);
+                storeLoaded.current = true;
+            });
+        }
+    }, []);
 
     return <AuthStoreContext.Provider value={store.current}>{children}</AuthStoreContext.Provider>;
 }
