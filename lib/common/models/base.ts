@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-const dbUri = process.env.MONGODB_URI;
+const dbUri = process.env.MONGODB_URI as string;
 let db: mongoose.Mongoose | undefined = undefined;
 
 (async () => {
