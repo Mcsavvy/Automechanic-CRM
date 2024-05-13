@@ -10,6 +10,7 @@
     "shell": "ts-node ./lib/core/shell.ts"
   },
   "dependencies": {
+    "@iconscout/react-unicons": "^2.0.2",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-dropdown-menu": "^2.0.6",
     "@radix-ui/react-popover": "^1.0.7",

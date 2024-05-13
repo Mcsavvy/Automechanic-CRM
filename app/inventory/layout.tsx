@@ -113,7 +113,7 @@ export default function DashboardLayout({
                 </div>
             </nav>
             <main className={`relative top-0 flex flex-column ${menu ? 'md:w-[calc(100vw-220px)]' : 'md:w-[100vw]'}   m-small pt-[40px] bg-neu-1 ${menu ? 'md:left-0' : 'md:left-[-220px]'} flex-grow h-screen overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out font-body`}>
-                {menu && <div className='md:w-0 md:h-0 transition-width duration-300 ease flex w-full h-full absolute left-0 top-0 bg-black bg-opacity-50 z-30 backdrop-blur-md' onClick={toggleMenu}>
+                {menu && <div className='md:w-0 md:h-0 transition-width duration-300 ease flex w-full h-full fixed left-0 top-0 bg-black bg-opacity-50 z-30 backdrop-blur-md' onClick={toggleMenu}>
                 </div>}
                 <header className="fixed top-0 h-[40px] w-screen border-b border-neu-3 bg-white overflow-visible z-[10]">
                 </header>

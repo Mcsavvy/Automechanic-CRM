@@ -14,7 +14,7 @@ import { DataTable } from "@/components/datatable";
 
 export default function Home() {
   const tableHeaders = [
-    { id: 'productName', name: "Product Name", isVisible: true },
+    { id: 'productName', name: "Product Name", isVisible: true, isPresent: true },
     { id: 'category', name: "Category", isVisible: true },
     { id: 'productId', name: "Product ID", isVisible: false },
     { id: 'unitPrice', name: "Unit Price", isVisible: true },
@@ -64,7 +64,7 @@ export default function Home() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <div className="w-full h-full overflow-auto relative">
+      <div className="w-full h-full relative">
         <div className="flex flex-row justify-between items-center p-[20px]">
           <h1 className="text-xl font-semibold">Inventory Summary</h1>
           <Button className="flex flex-row gap-2"><FaPlus />Add Product</Button>

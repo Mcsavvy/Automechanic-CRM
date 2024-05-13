@@ -18,10 +18,13 @@ import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMe
 import { table } from "console";
 import { ChevronDown } from "lucide-react";
 import { FC, useEffect, useState } from "react";
+import { MdOutlineEdit, MdOutlineDeleteOutline } from "react-icons/md";
+
 interface TableHeader {
     id: string;
     name: string;
     isVisible: boolean;
+    isPresent?: boolean;
 
 }
 interface DataTableProps {
@@ -34,7 +37,7 @@ export const DataTable: FC<DataTableProps> = ({ data, headers }) => {
     const [rows, setRows] = useState<any[]>(data);
     const toggleColumnVisibility = (id: string) => {
         const newColumns = columns.map((column) => {
-            if (column.id === id) {
+            if (column.id === id && (!column.isPresent)) {
                 column.isVisible = !column.isVisible;
             }
             return column;
@@ -42,8 +45,8 @@ export const DataTable: FC<DataTableProps> = ({ data, headers }) => {
         setColumns(newColumns);
     }
     return (
-        <div className="relative flex flex-col h-full w-full">
-            <div className="relative flex flex-col bg-white p-3 overflow-auto rounded-t-md m-[30px] border border-pri-3 h-[calc(100% - 550px)]">
+        <div className="relative flex flex-col h-full border border-red-500 w-screen">
+            <div className="relative flex flex-col max-w-[calc(100%-60px)] bg-white p-3 overflow-auto rounded-t-md m-[30px] border border-pri-3 h-[calc(100% - 550px)]">
                 <div>
                     <h2 className="font-semibold text-lg">All Goods</h2>
                     <div className="flex flex-row justify-between flex-wrap items-center">
@@ -82,28 +85,28 @@ export const DataTable: FC<DataTableProps> = ({ data, headers }) => {
                         </div>
                     </div>
                 </div>
-                <Table className="scrollbar-thin w-[90%]">
+                <Table className="scrollbar-thin">
                     <TableHeader>
                         <TableRow>
                             {
                                 columns.map((column: any, index: any) => {
-                                    if (column.isVisible) {
+                                    if (column.isPresent || column.isVisible) {
                                         return (
-                                            <TableHead key={index}>{column.name}</TableHead>
+                                            <TableHead key={index} className={`${index == 0? ' left-0 z-[1]': ''} sticky top-0  bg-neu-1`}>{column.name}</TableHead>
                                         )
                                     }
                                 })
                             }
-                            <TableHead className="text-right">Action</TableHead>
+                            <TableHead className="text-right sticky top-0">Action</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {rows.map((row: any, idx: any) => (
-                            <TableRow key={idx} className={`${idx == 0? 'sticky left-0 ': ''}`}>
+                            <TableRow key={idx}>
                                 {
                                     columns.map((column: any, index: any) => (
-                                        column.isVisible &&
-                                        <TableCell key={index}>{row[column.id].toString()}</TableCell>
+                                        (column.isPresent || column.isVisible) &&
+                                        <TableCell key={index} className={`${index == 0? 'sticky left-0 bg-neu-1': ''}`}>{row[column.id].toString()}</TableCell>
                                     ))
                                 }
                                 <TableCell className="text-right cursor-pointer">
@@ -111,8 +114,8 @@ export const DataTable: FC<DataTableProps> = ({ data, headers }) => {
                                         <PopoverTrigger><FaEllipsis />
                                         </PopoverTrigger>
                                         <PopoverContent className="w-[150px] flex flex-col gap-3">
-                                            <Button variant={'default'}>Edit</Button>
-                                            <Button variant={'destructive'}>Delete</Button>
+                                            <Button variant={'ghost'} className="items-start gap-2"><MdOutlineEdit />Edit</Button>
+                                            <Button variant={'ghost'} className="text-red items-start gap-2"><MdOutlineDeleteOutline />Delete</Button>
                                         </PopoverContent>
                                     </Popover>
                                 </TableCell>
