@@ -109,7 +109,7 @@ export default function DashboardLayout({
                             Customers
                         </h3>
                         <ul className="flex flex-col">
-                            <li onClick={() => navigateTo('customers')} className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[14px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive('customers')}`}><FaUsers />Customers' Overview</li>
+                                <FaUsers />
                         </ul>
                     </li>
                 </ul>
