@@ -58,8 +58,8 @@ export const DataTable: FC<DataTableProps> = ({ data, headers, filters }) => {
         console.log(filterValues);
     }
     return (
-        <div className="relative flex flex-col h-full w-screen">
-            <div className="relative flex flex-col max-w-[calc(100%-60px)] bg-white p-3 overflow-auto rounded-t-md m-[30px] border border-pri-3 h-[calc(100% - 550px)]">
+        <div className="relative flex flex-col h-full w-full">
+            <div className="relative flex flex-col bg-white p-3 overflow-auto rounded-t-md m-[30px] border border-pri-3 h-[calc(100% - 550px)]">
                 <div>
                     <h2 className="font-semibold text-lg">All Goods</h2>
                     <div className="flex flex-row justify-between flex-wrap items-center">
@@ -144,8 +144,8 @@ export const DataTable: FC<DataTableProps> = ({ data, headers, filters }) => {
                                             <PopoverTrigger><FaEllipsis />
                                             </PopoverTrigger>
                                             <PopoverContent className="w-[150px] flex flex-col gap-3">
-                                                <Button variant={'ghost'} className="items-start text-left gap-2"><MdOutlineEdit />Edit</Button>
-                                                <Button variant={'ghost'} className="text-red text-left items-start gap-2"><MdOutlineDeleteOutline />Delete</Button>
+                                                <Button variant={'ghost'} className="items-center justify-start gap-2"><MdOutlineEdit />Edit</Button>
+                                                <Button variant={'ghost'} className="font-red items-center justify-start gap-2"><MdOutlineDeleteOutline />Delete</Button>
                                             </PopoverContent>
                                         </Popover>
                                     </TableCell>

@@ -148,19 +148,6 @@
     border: 3px solid transparent;
   }
   .active-nav {
-    position: relative;
-    font-weight: 500;
-    color: black;
-    font-size: 14px;
-    height: 30px;
-    background: var(--neu-200);
-  }
-  .active-nav::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 3px;
-    height: 30px;
-    background: var(--neu-600);
+    color: white;
+    background: var(--pri-600);
   }
