@@ -7,7 +7,7 @@ import Select from "react-select";
 import axios from "axios";
 
 async function getGroups() {
-  const response = await fetch("/api/auth/group/all");
+  const response = await fetch("/api/group/all");
   const groups: { id: string; name: string }[] = await response.json();
   return groups;
 }
