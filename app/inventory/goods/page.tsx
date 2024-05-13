@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { faker } from "@faker-js/faker";
 import { FaPlus } from "react-icons/fa";
-import { DataTable } from "@/components/datatable";
+import { DataTable } from "@/components/ui/datatable";
 
 export default function Home() {
   const tableHeaders = [
@@ -22,6 +22,14 @@ export default function Home() {
     { id: 'totalValue', name: "Total Value", isVisible: false },
     { id: 'status', name: "Status", isVisible: true },
   ];
+  const dataFilters = [
+    { id: 'productName', name: "Product Name", type: "text" },
+    { id: 'productId', name: "Product ID", type: "text" },
+    { id: 'qty', name: "In Stock", type: "number" },
+    { id: 'status', name: "Status", type: "text" },
+    { id: 'Before', name: "Before", type: "date" },
+    { id: 'After', name: "After", type: "date"}
+  ]
   const generateFakeData = () => {
     const data = [];
     for (let i = 0; i < 10; i++) {
@@ -83,7 +91,7 @@ export default function Home() {
             <p className="text-lg text-neu-8">Total: 34 (Goods)</p>
           </div>
         </div>
-        <DataTable data={generateFakeData()} headers={tableHeaders} />
+        <DataTable data={generateFakeData()} headers={tableHeaders} filters={dataFilters} />
       </div>
     </div>
   );
