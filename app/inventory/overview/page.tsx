@@ -9,17 +9,16 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button"
 import { faker } from "@faker-js/faker";
-import { FaPlus } from "react-icons/fa";
 import { DataTable } from "@/components/ui/datatable";
-
+import { Plus } from 'lucide-react'
 export default function Home() {
   const tableHeaders = [
     { id: 'productName', name: "Product Name", isVisible: true, isPresent: true },
     { id: 'category', name: "Category", isVisible: true },
-    { id: 'productId', name: "Product ID", isVisible: false },
+    { id: 'productId', name: "Product ID", isVisible: true },
     { id: 'unitPrice', name: "Unit Price", isVisible: true },
     { id: 'qty', name: "In Stock", isVisible: true },
-    { id: 'totalValue', name: "Total Value", isVisible: false },
+    { id: 'totalValue', name: "Total Value", isVisible: true },
     { id: 'status', name: "Status", isVisible: true },
   ];
   const dataFilters = [
@@ -68,10 +67,10 @@ export default function Home() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <div className="w-full h-full relative">
+      <div className="h-full relative">
         <div className="flex flex-row justify-between items-center p-[20px]">
           <h1 className="text-xl font-semibold">Inventory Summary</h1>
-          <Button className="flex flex-row gap-2"><FaPlus />Add Product</Button>
+          <Button className="flex flex-row gap-2"><Plus size={20} strokeWidth={1.5} />Add Product</Button>
         </div>
         <div className="flex flex-row flex-wrap gap-[30px] px-[30px] items-center justify-evenly">
           <div className=" min-w-[300px] bg-white p-4 flex grow-1 flex-col rounded-md w-[30%] gap-3 border border-pri-3 shadow-inner">

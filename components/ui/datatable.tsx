@@ -8,11 +8,9 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { FaPlus, FaSearch } from "react-icons/fa";
 import { Input } from "@/components/ui/input";
 import { DatePicker } from "@/components/ui/datepicker";
 import { Button } from "@/components/ui/button";
-import { FaEllipsis, FaFilter } from "react-icons/fa6";
 import {
     Popover,
     PopoverContent,
@@ -25,9 +23,8 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { table } from "console";
-import { ChevronDown } from "lucide-react";
-import { FC, useEffect, useState } from "react";
-import { MdOutlineEdit, MdOutlineDeleteOutline } from "react-icons/md";
+import { ChevronDown, ListFilter, Search, Ellipsis, Pencil, Trash } from "lucide-react";
+import { FC, useState } from "react";
 
 interface TableHeader {
     id: string;
@@ -69,13 +66,13 @@ export const DataTable: FC<DataTableProps> = ({ data, headers, filters }) => {
         console.log(filterValues);
     };
     return (
-        <div className="relative flex flex-col h-full w-full">
-            <div className="relative flex flex-col bg-white p-3 overflow-auto rounded-t-md m-[30px] border border-pri-3 h-[calc(100% - 550px)]">
+        <div className="relative flex flex-col h-full w-full border border-red-500">
+            <div className=" w-[calc(100%-60px)] box-border flex flex-col bg-white p-3 overflow-auto rounded-t-md m-[30px] border border-pri-3 h-[calc(100% - 550px)]">
                 <div>
                     <h2 className="font-semibold text-lg">All Goods</h2>
                     <div className="flex flex-row justify-between flex-wrap items-center">
-                        <div className="bg-white w-[300px] px-[10px] flex flex-row items-center justify-start gap-[10px] border border-neu-6">
-                            <FaSearch />
+                        <div className="bg-white w-[300px] px-[10px] flex flex-row items-center justify-start gap-[10px] border border-neu-3">
+                        <Search size={20} strokeWidth={1.5} />
                             <input
                                 placeholder="Start typing..."
                                 className=" w-full outline-none border-none text-md py-2 px-0"
@@ -84,8 +81,7 @@ export const DataTable: FC<DataTableProps> = ({ data, headers, filters }) => {
                         <div className="flex flex-row justify-start items-center gap-[10px] py-3">
                             <Popover>
                                 <PopoverTrigger className="flex flex-row items-center justify-start gap-3 border border-neu-3 p-[8px] rounded-md">
-                                    <FaFilter />
-                                    Filter
+                                <ListFilter size={20} strokeWidth={1.5} />                                    Filter
                                 </PopoverTrigger>
                                 <PopoverContent>
                                     <div className="flex flex-col gap-3 overflow-auto h-[300px]">
@@ -160,7 +156,7 @@ export const DataTable: FC<DataTableProps> = ({ data, headers, filters }) => {
                         </div>
                     </div>
                 </div>
-                <Table className="scrollbar-thin w-full">
+                <Table className="scrollbar-thin w-full box-border">
                     <TableHeader>
                         <TableRow>
                             {columns.map((column: any, index: any) => {
@@ -206,21 +202,21 @@ export const DataTable: FC<DataTableProps> = ({ data, headers, filters }) => {
                                 <TableCell className="text-right cursor-pointer">
                                     <Popover>
                                         <PopoverTrigger>
-                                            <FaEllipsis />
+                                            <Ellipsis size={20} strokeWidth={1.5} />
                                         </PopoverTrigger>
                                         <PopoverContent className="w-[150px] flex flex-col gap-3">
                                             <Button
                                                 variant={"ghost"}
                                                 className="items-center justify-start gap-2"
                                             >
-                                                <MdOutlineEdit />
+                                                <Pencil size={20} strokeWidth={1.5} />
                                                 Edit
                                             </Button>
                                             <Button
                                                 variant={"ghost"}
-                                                className="font-red items-center justify-start gap-2"
+                                                className="text-red-500 items-center justify-start gap-2"
                                             >
-                                                <MdOutlineDeleteOutline />
+                                                <Trash size={20} color="red" strokeWidth={1.5} />
                                                 Delete
                                             </Button>
                                         </PopoverContent>
