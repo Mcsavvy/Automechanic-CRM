@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import { OrderModel} from "../models/order";
 import { OrderItemModel } from "../models/orderItem";
-import { GoodModel } from "../models/good";
 import { BuyerModel } from "../models/buyer";
 
 interface InvoiceItem {
@@ -31,6 +30,12 @@ interface InvoiceTable {
     amountPaid: number;
     discount: number;
     grandTotal: number;
+}
+
+interface InvoiceQuery {
+    buyerId: mongoose.Types.ObjectId;
+    before: Date;
+    after: Date;
 }
 function getDiscount(price: number, discount: number, rev: boolean = false): number {
     return rev ? (discount / price) * 100 : (discount / 100) * price;
@@ -96,8 +101,19 @@ async function getInvoice(orderId?: mongoose.Types.ObjectId, orderDoc?: any) : P
     };
 }
 
-async function getInvoices(buyerId: mongoose.Types.ObjectId): Promise<InvoiceTable[]> {
-    const orders = await OrderModel.find({ buyerId }).select('-__v').lean();
+async function getInvoices(query: Partial<InvoiceQuery>): Promise<InvoiceTable[]> {
+    const{ buyerId, before, after } = query;
+    const filter: any = {}
+    if (buyerId) filter['buyerId'] = buyerId;
+    if (before) filter['createdAt'] = { $lt: before };
+    if (after) {
+        if (filter['createdAt']) {
+            filter['createdAt']['$gt'] = after;
+        } else {
+            filter['createdAt'] = { $gt: after };
+        }
+    }
+    const orders = await OrderModel.find(filter).select('-__v').lean();
     const invoicePromises = orders.map(order => getInvoice(undefined, order));
     const invoices = await Promise.all(invoicePromises);
     return invoices;

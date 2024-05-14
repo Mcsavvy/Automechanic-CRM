@@ -1,123 +1,153 @@
 @tailwind base;
-@tailwind components;
-@tailwind utilities;
-@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-  
-    /* Primary: Prussian Blue */
-    --pri-100: #F2F6FF;
-    --pri-200: #B4CCFD;
-    --pri-300: #70A0EC;
-    --pri-400: #2D6DBE;
-    --pri-500: #003366;
-    --pri-600: #003056;
-    --pri-700: #002B46;
-    --pri-800: #002536;
-    --pri-900: #001C26;
+  @tailwind components;
+  @tailwind utilities;
+  @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
 
-    /* Accent: Robot Grendizer Gold */
-    --acc-100: #FCFFF2;
-    --acc-200: #F3FFBC;
-    --acc-300: #EEFC84;
-    --acc-400: #EBF54D;
-    --acc-500: #E8E817;
-    --acc-600: #B8AD08;
-    --acc-700: #877802;
-    --acc-800: #574800;
-    --acc-900: #261D00;
+  @layer base {
+    :root {
+      --background: 0 0% 100%;
+      --foreground: 222.2 84% 4.9%;
 
-    /* Neutral */
-    --neu-100: #FAFBFC;
-    --neu-200: #EAECEE;
-    --neu-300: #DBDDE0;
-    --neu-400: #CCCFD2;
-    --neu-500: #BCC0C4;
-    --neu-600: #94999D;
-    --neu-700: #6D7275;
-    --neu-800: #474C4E;
-    --neu-900: #222526;
+      --card: 0 0% 100%;
+      --card-foreground: 222.2 84% 4.9%;
+
+      --popover: 0 0% 100%;
+      --popover-foreground: 222.2 84% 4.9%;
+
+      --primary: 222.2 47.4% 11.2%;
+      --primary-foreground: 210 40% 98%;
+
+      --secondary: 210 40% 96.1%;
+      --secondary-foreground: 222.2 47.4% 11.2%;
+
+      --muted: 210 40% 96.1%;
+      --muted-foreground: 215.4 16.3% 46.9%;
+
+      --accent: 210 40% 96.1%;
+      --accent-foreground: 222.2 47.4% 11.2%;
+
+      --destructive: 0 84.2% 60.2%;
+      --destructive-foreground: 210 40% 98%;
+
+      --border: 214.3 31.8% 91.4%;
+      --input: 214.3 31.8% 91.4%;
+      --ring: 222.2 84% 4.9%;
+
+      --radius: 0.5rem;
+      --foreground-rgb: 0, 0, 0;
+      --background-start-rgb: 214, 219, 220;
+      --background-end-rgb: 255, 255, 255;
+      
+        /* Primary: Prussian Blue */
+        --pri-100: #F2F6FF;
+        --pri-200: #B4CCFD;
+        --pri-300: #70A0EC;
+        --pri-400: #2D6DBE;
+        --pri-500: #003366;
+        --pri-600: #003056;
+        --pri-700: #002B46;
+        --pri-800: #002536;
+        --pri-900: #001C26;
     
-}
+        /* Accent: Robot Grendizer Gold */
+        --acc-100: #FCFFF2;
+        --acc-200: #F3FFBC;
+        --acc-300: #EEFC84;
+        --acc-400: #EBF54D;
+        --acc-500: #E8E817;
+        --acc-600: #B8AD08;
+        --acc-700: #877802;
+        --acc-800: #574800;
+        --acc-900: #261D00;
+    
+        /* Neutral */
+        --neu-100: #FAFBFC;
+        --neu-200: #EAECEE;
+        --neu-300: #DBDDE0;
+        --neu-400: #CCCFD2;
+        --neu-500: #BCC0C4;
+        --neu-600: #94999D;
+        --neu-700: #6D7275;
+        --neu-800: #474C4E;
+        --neu-900: #222526;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --foreground-rgb: 255, 255, 255;
+        --background-start-rgb: 0, 0, 0;
+        --background-end-rgb: 0, 0, 0;
+      }
+    }
+    
+    body {
+      color: rgb(var(--foreground-rgb));
+      background: linear-gradient(
+          to bottom,
+          transparent,
+          rgb(var(--background-end-rgb))
+        )
+        rgb(var(--background-start-rgb));
+    }
+    .dark {
+      --background: 222.2 84% 4.9%;
+      --foreground: 210 40% 98%;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+      --card: 222.2 84% 4.9%;
+      --card-foreground: 210 40% 98%;
+
+      --popover: 222.2 84% 4.9%;
+      --popover-foreground: 210 40% 98%;
+
+      --primary: 210 40% 98%;
+      --primary-foreground: 222.2 47.4% 11.2%;
+
+      --secondary: 217.2 32.6% 17.5%;
+      --secondary-foreground: 210 40% 98%;
+
+      --muted: 217.2 32.6% 17.5%;
+      --muted-foreground: 215 20.2% 65.1%;
+
+      --accent: 217.2 32.6% 17.5%;
+      --accent-foreground: 210 40% 98%;
+
+      --destructive: 0 62.8% 30.6%;
+      --destructive-foreground: 210 40% 98%;
+
+      --border: 217.2 32.6% 17.5%;
+      --input: 217.2 32.6% 17.5%;
+      --ring: 212.7 26.8% 83.9%;
+    }
   }
-}
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  @layer base {
+    * {
+      @apply border-border;
+    }
+    body {
+      @apply bg-background text-foreground;
+    }
   }
-}
 
-/* Define your custom scrollbar styles */
-.scrollbar-thin {
-  scrollbar-width: thin;
-  scrollbar-color: var(--neu-300) transparent;
-}
-
-/* For Webkit browsers */
-.scrollbar-thin::-webkit-scrollbar {
-  width: 12px;
-}
-
-.scrollbar-thin::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.scrollbar-thin::-webkit-scrollbar-thumb {
-  background-color: var(--neu-300) ;
-  border-radius: 20px;
-  border: 3px solid transparent;
-}
-.active-nav {
-  position: relative;
-  font-weight: 500;
-  color: black;
-  font-size: 14px;
-  height: 30px;
-  background: var(--neu-200);
-}
-.active-nav::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 3px;
-  height: 30px;
-  background: var(--neu-600);
-}
-.no-overlay, .overlay {
-  width: 0px;
-  height: 0px;
-  transition: width 0.3s ease;
-}
-@media screen and (max-width: 768px) {
-
-  .overlay {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    left: 0;
-    top: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(5px);
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--neu-300) transparent;
   }
-}
+  
+  /* For Webkit browsers */
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 12px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: var(--neu-300) ;
+    border-radius: 20px;
+    border: 3px solid transparent;
+  }
+  .active-nav {
+    color: white;
+    background: var(--pri-600);
+  }
