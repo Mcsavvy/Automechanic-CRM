@@ -67,8 +67,8 @@ export const DataTable: FC<DataTableProps> = ({ data, headers, filters }) => {
     };
     return (
         <div className="relative flex flex-col h-full w-full">
-            <div className=" w-inherit md:w-[calc(100%-60px)] box-border flex flex-col bg-white p-3 overflow-auto rounded-t-md m-[30px] border border-pri-3 h-[calc(100% - 550px)]">
-                <div>
+            <div className=" w-inherit md:w-[calc(100%-60px)] box-border flex flex-col bg-white py-3 overflow-auto rounded-t-md m-[30px] border border-pri-3 h-[calc(100% - 550px)]">
+                <div className="px-3">
                     <h2 className="font-semibold text-lg">All Goods</h2>
                     <div className="flex flex-row justify-between flex-wrap items-center">
                         <div className="bg-white w-[300px] px-[10px] flex flex-row items-center justify-start gap-[10px] border border-neu-3">
@@ -156,7 +156,7 @@ export const DataTable: FC<DataTableProps> = ({ data, headers, filters }) => {
                         </div>
                     </div>
                 </div>
-                <Table className="scrollbar-thin w-full">
+                <Table className="scrollbar-thin w-full px-3">
                     <TableHeader>
                         <TableRow>
                             {columns.map((column: any, index: any) => {
