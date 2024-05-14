@@ -2,16 +2,14 @@
 import { FaCalendarDay, FaChartPie, FaDatabase, FaChartLine, FaToolbox, FaFileInvoiceDollar } from "react-icons/fa6";
 import { FaCar, FaUser, FaTools, FaUsers, FaRegUserCircle, FaStoreAlt } from "react-icons/fa";
 import { HiOutlineMenuAlt2, HiOutlineMenuAlt3 } from "react-icons/hi";
-import { TbReceiptRefund } from "react-icons/tb";
 import { MdAddAlert, MdLogout } from "react-icons/md";
 import React from "react";
 import { useEffect, useState } from "react";
-import { GiMechanicGarage } from "react-icons/gi";
 import { useAuthStore } from "@/lib/providers/auth-store-provider";
 import { useRouter, usePathname } from "next/navigation";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, LineChart, Receipt, TriangleAlert, PieChart, Store, Bell, UsersRound } from "lucide-react";
 export default function DashboardLayout({
     children,
 }: {
@@ -82,8 +80,8 @@ export default function DashboardLayout({
                             Inventory Management
                         </h3>
                         <ul className="flex flex-col">
-                            <li onClick={() => navigateTo('overview')} className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[14px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive('overview')}`}><FaStoreAlt />Overview</li>
-                            <li onClick={() => navigateTo('alerts')} className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[14px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive('alerts')}`}><MdAddAlert />Low Stock Alerts</li>
+                            <li onClick={() => navigateTo('overview')} className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[16px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive('overview')}`}><Store width={20} height={20} strokeWidth={1.5} />Overview</li>
+                            <li onClick={() => navigateTo('alerts')} className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[16px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive('alerts')}`}><Bell width={20} height={20} strokeWidth={1.5} />Low Stock Alerts</li>
                         </ul>
                     </li>
                     <li >
@@ -91,8 +89,8 @@ export default function DashboardLayout({
                             Sales & Invoices
                         </h3>
                         <ul className="flex flex-col">
-                            <li onClick={() => navigateTo('invoices')} className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[14px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive('invoices')}`}><FaFileInvoiceDollar />Invoices</li>
-                            <li onClick={() => navigateTo('returns')} className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[14px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive('returns')}`}><TbReceiptRefund />Returns</li>
+                            <li onClick={() => navigateTo('invoices')} className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[16px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive('invoices')}`}><Receipt width={20} height={20} strokeWidth={1.5} />Invoices</li>
+                            <li onClick={() => navigateTo('returns')} className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[16px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive('returns')}`}><TriangleAlert width={20} height={20} strokeWidth={1.5} />Returns</li>
                         </ul>
                     </li>
                     <li>
@@ -100,8 +98,8 @@ export default function DashboardLayout({
                             Analytics and Reports
                         </h3>
                         <ul className="flex flex-col">
-                            <li onClick={() => navigateTo('sales-reports')} className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[14px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive('sales-reports')}`}><FaChartLine />Sales Analytics</li>
-                            <li onClick={() => navigateTo('store-reports')} className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[14px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive('store-reports')}`}><FaChartPie />Inventory Reports</li>
+                            <li onClick={() => navigateTo('sales-reports')} className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[16px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive('sales-reports')}`}><LineChart width={20} height={20} strokeWidth={1.5} />Sales Analytics</li>
+                            <li onClick={() => navigateTo('store-reports')} className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[16px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive('store-reports')}`}><PieChart width={20} height={20} strokeWidth={1.5} />Inventory Reports</li>
                         </ul>
                     </li>
                     <li >
@@ -109,7 +107,7 @@ export default function DashboardLayout({
                             Customers
                         </h3>
                         <ul className="flex flex-col">
-                                <FaUsers />
+                        <li onClick={() => navigateTo('customers')} className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[16px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive('sales-reports')}`}><UsersRound width={20} height={20} strokeWidth={1.5} />Customers</li>
                         </ul>
                     </li>
                 </ul>
