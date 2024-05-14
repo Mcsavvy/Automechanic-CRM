@@ -71,16 +71,16 @@ function validateForm(
 }
 
 async function createStaff(
-  firstname: string,
-  lastname: string,
+  firstName: string,
+  lastName: string,
   email: string,
   phone: string,
   selectedGroups: readonly { label: string; value: string }[]
 ) {
   try {
     const response = await axios.post("/api/staff/new", {
-      firstname,
-      lastname,
+      firstName,
+      lastName,
       email,
       phone,
       groups: selectedGroups,
@@ -90,7 +90,8 @@ async function createStaff(
         toastId: "staff-added",
       });
     } else {
-      throw response;
+      toast.error(response.data.message, { toastId: "staff-add-error" });
+      return false;
     }
   } catch (error) {
     toast.error("Could not add staff", { toastId: "staff-add-error" });
