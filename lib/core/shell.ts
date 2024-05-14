@@ -8,7 +8,7 @@ dotenv.config({
 
 import packageJson from "../../package.json";
 import repl from "repl";
-import connect from "../dbConnect";
+import mongoose, { Mongoose } from "mongoose";
 // Import all common models and database operations
 import User from "../common/models/user";
 import Log from "../common/models/log";
@@ -71,7 +71,8 @@ const shellContext = {
     populateOrders
 };
 
-connect().then(() => {
+
+const startShell = () => {
     console.log(`${packageJson.name} v${packageJson.version}`);
     const r = repl.start();
     for (const [key, value] of Object.entries(shellContext)) {
@@ -82,6 +83,20 @@ connect().then(() => {
         });
     }
     r.on("exit", () => {
+        db?.disconnect();
         process.exit();
     });
-});
+}
+
+const dbUri = process.env.MONGODB_URI as string;
+let db: Mongoose | null = null;
+if (!db) {
+    console.log("Connecting to database:", dbUri);
+    mongoose.connect(dbUri).then((db) => {
+        console.log("Connected to database:", db.connection.name);
+        db = db;
+        startShell();
+    });
+} else {
+    startShell();
+}
