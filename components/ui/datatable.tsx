@@ -22,6 +22,14 @@ import {
     DropdownMenuContent,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
 import { table } from "console";
 import { ChevronDown, ListFilter, Search, Ellipsis, Pencil, Trash } from "lucide-react";
 import { FC, useState } from "react";
@@ -41,9 +49,10 @@ interface DataTableProps {
     data: Array<any>;
     headers: TableHeader[];
     filters: TableFilter[];
+    onChangeGood: (id: string, title: string) => void;
 }
 
-export const DataTable: FC<DataTableProps> = ({ data, headers, filters }) => {
+export const DataTable: FC<DataTableProps> = ({ data, headers, filters, onChangeGood }) => {
     const [columns, setColumns] = useState(headers);
     const [rows, setRows] = useState<any[]>(data);
     const [filterValues, setFilterValues] = useState<{ [key: string]: any }>(
@@ -69,11 +78,10 @@ export const DataTable: FC<DataTableProps> = ({ data, headers, filters }) => {
         <div className="relative flex flex-col h-full w-full">
             <div className=" w-inherit md:w-[calc(100%-60px)] box-border flex flex-col bg-white py-3 overflow-auto rounded-t-md m-[30px] border border-pri-3 h-[calc(100% - 550px)]">
                 <div className="px-3">
-                    <h2 className="font-semibold text-lg">All Goods</h2>
                     <div className="flex flex-row justify-between flex-wrap items-center">
-                        <div className="bg-white w-[300px] px-[10px] flex flex-row items-center justify-start gap-[10px] border border-neu-3">
-                        <Search size={20} strokeWidth={1.5} />
-                            <input
+                        <div className="bg-white w-[300px] px-[10px] flex flex-row items-center justify-start gap-[10px] border border-neu-3 focus-visible:outline-pri-6">
+                            <Search size={20} strokeWidth={1.5} />
+                            <Input
                                 placeholder="Start typing..."
                                 className=" w-full outline-none border-none text-md py-2 px-0"
                             />
@@ -81,7 +89,7 @@ export const DataTable: FC<DataTableProps> = ({ data, headers, filters }) => {
                         <div className="flex flex-row justify-start items-center gap-[10px] py-3">
                             <Popover>
                                 <PopoverTrigger className="flex flex-row items-center justify-start gap-3 border border-neu-3 p-[8px] rounded-md">
-                                <ListFilter size={20} strokeWidth={1.5} />                                    Filter
+                                    <ListFilter size={20} strokeWidth={1.5} />                                    Filter
                                 </PopoverTrigger>
                                 <PopoverContent>
                                     <div className="flex flex-col gap-3 overflow-auto h-[300px]">
@@ -95,12 +103,12 @@ export const DataTable: FC<DataTableProps> = ({ data, headers, filters }) => {
                                                         <label className="text-sm">
                                                             {filter.name}
                                                         </label>
-                                                        <input
+                                                        <Input
                                                             type={filter.type}
                                                             className="border border-neu-6 outline-none p-2"
                                                             value={
                                                                 filterValues[
-                                                                    filter.id
+                                                                filter.id
                                                                 ] || ""
                                                             }
                                                             onChange={(e) =>
@@ -156,7 +164,7 @@ export const DataTable: FC<DataTableProps> = ({ data, headers, filters }) => {
                         </div>
                     </div>
                 </div>
-                <Table className="scrollbar-thin w-full px-3">
+                <Table className="scrollbar-thin w-full">
                     <TableHeader>
                         <TableRow>
                             {columns.map((column: any, index: any) => {
@@ -164,11 +172,10 @@ export const DataTable: FC<DataTableProps> = ({ data, headers, filters }) => {
                                     return (
                                         <TableHead
                                             key={index}
-                                            className={`${
-                                                index == 0
-                                                    ? " left-0 z-[1]"
-                                                    : ""
-                                            } sticky top-0  bg-neu-1`}
+                                            className={`${index == 0
+                                                ? " left-0 z-[1]"
+                                                : ""
+                                                } sticky top-0  bg-neu-1`}
                                         >
                                             {column.name}
                                         </TableHead>
@@ -189,11 +196,10 @@ export const DataTable: FC<DataTableProps> = ({ data, headers, filters }) => {
                                             column.isVisible) && (
                                             <TableCell
                                                 key={index}
-                                                className={`${
-                                                    index == 0
-                                                        ? "sticky left-0 bg-neu-1"
-                                                        : ""
-                                                }`}
+                                                className={`${index == 0
+                                                    ? "sticky left-0 bg-neu-1"
+                                                    : ""
+                                                    }`}
                                             >
                                                 {row[column.id].toString()}
                                             </TableCell>
@@ -205,20 +211,32 @@ export const DataTable: FC<DataTableProps> = ({ data, headers, filters }) => {
                                             <Ellipsis size={20} strokeWidth={1.5} />
                                         </PopoverTrigger>
                                         <PopoverContent className="w-[150px] flex flex-col gap-3">
-                                            <Button
-                                                variant={"ghost"}
-                                                className="items-center justify-start gap-2"
+                                            <a
+                                                href={`#goods/${row.id}/edit`}
+                                                className="block px-4 py-2 hover:bg-gray-100"
+                                                onClick={() => onChangeGood(row.id, row.productName)}
                                             >
-                                                <Pencil size={20} strokeWidth={1.5} />
-                                                Edit
-                                            </Button>
-                                            <Button
-                                                variant={"ghost"}
-                                                className="text-red-500 items-center justify-start gap-2"
+                                                <Button
+                                                    variant={"ghost"}
+                                                    className="items-center justify-start gap-2"
+                                                >
+                                                    <Pencil size={20} strokeWidth={1.5} />
+                                                    Edit
+                                                </Button>
+                                            </a>
+                                            <a href={`#goods/${row.id}/delete`}
+                                                className="block px-4 py-2 hover:bg-gray-100"
+                                                onClick={() => onChangeGood(row.id, row.productName)}
                                             >
-                                                <Trash size={20} color="red" strokeWidth={1.5} />
-                                                Delete
-                                            </Button>
+                                                <Button
+                                                    variant={"ghost"}
+                                                    className="text-red-500 items-center justify-start gap-2 hover:text-red-500"
+                                                >
+                                                    <Trash size={20} color="red" strokeWidth={1.5} />
+                                                    Delete
+                                                </Button>
+                                            </a>
+
                                         </PopoverContent>
                                     </Popover>
                                 </TableCell>

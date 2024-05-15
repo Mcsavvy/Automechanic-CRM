@@ -6,7 +6,7 @@ const Table = React.forwardRef<
   HTMLTableElement,
   React.HTMLAttributes<HTMLTableElement>
 >(({ className, ...props }, ref) => (
-  <div className="relative overflow-auto scrollbar-thin px-3">
+  <div className="relative overflow-auto scrollbar-thin mx-2">
     <table
       ref={ref}
       className={cn("caption-bottom text-sm", className)}
