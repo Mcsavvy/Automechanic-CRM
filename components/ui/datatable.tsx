@@ -79,8 +79,8 @@ export const DataTable: FC<DataTableProps> = ({ data, headers, filters, onChange
             <div className=" w-inherit md:w-[calc(100%-60px)] box-border flex flex-col bg-white py-3 overflow-auto rounded-t-md m-[30px] border border-pri-3 h-[calc(100% - 550px)]">
                 <div className="px-3">
                     <div className="flex flex-row justify-between flex-wrap items-center">
-                        <div className="bg-white w-[300px] px-[10px] flex flex-row items-center justify-start gap-[10px] border border-neu-3 focus-visible:outline-pri-6">
-                            <Search size={20} strokeWidth={1.5} />
+                        <div className="bg-white w-[300px] px-[10px] flex flex-row items-center justify-start gap-[10px] border border-pri-3 rounded-md">
+                            <Search size={20} strokeWidth={1.5} color={"var(--pri-600)"} />
                             <Input
                                 placeholder="Start typing..."
                                 className=" w-full outline-none border-none text-md py-2 px-0"

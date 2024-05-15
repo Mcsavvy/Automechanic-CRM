@@ -29,7 +29,7 @@ import AddNewStaffModal from "../components/modals/AddNewStaffModal";
 import { useRouter, usePathname } from "next/navigation";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, LineChart, Receipt, TriangleAlert, PieChart, Store, Bell, UsersRound, User, LogOut, ChevronsLeft, ChevronsRight, EllipsisVertical } from "lucide-react";
+import { ChevronDown, LineChart, Receipt, TriangleAlert, PieChart, Store, Bell, NotebookTabs, UsersRound, User, LogOut, ChevronsLeft, ChevronsRight, EllipsisVertical } from "lucide-react";
 export default function DashboardLayout({
     children,
 }: {
@@ -117,8 +117,8 @@ export default function DashboardLayout({
                                 Inventory Management
                             </h3>
                             <ul className="flex flex-col">
-                                <li onClick={() => navigateTo('overview')} className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[16px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive('overview')}`}><Store width={20} height={20} strokeWidth={1.5} />Overview</li>
-                                <li onClick={() => navigateTo('alerts')} className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[16px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive('alerts')}`}><Bell width={20} height={20} strokeWidth={1.5} />Low Stock Alerts</li>
+                                <li onClick={() => navigateTo('overview')} className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[15px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive('overview')}`}><Store width={20} height={20} strokeWidth={1.5} />Overview</li>
+                                <li onClick={() => navigateTo('alerts')} className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[15px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive('alerts')}`}><Bell width={20} height={20} strokeWidth={1.5} />Low Stock Alerts</li>
                             </ul>
                         </li>
                         <li >
@@ -126,8 +126,9 @@ export default function DashboardLayout({
                                 Sales & Invoices
                             </h3>
                             <ul className="flex flex-col">
-                                <li onClick={() => navigateTo('invoices')} className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[16px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive('invoices')}`}><Receipt width={20} height={20} strokeWidth={1.5} />Invoices</li>
-                                <li onClick={() => navigateTo('returns')} className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[16px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive('returns')}`}><TriangleAlert width={20} height={20} strokeWidth={1.5} />Returns</li>
+                            <li onClick={() => navigateTo('orders')} className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[15px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive('orders')}`}><NotebookTabs width={20} height={20} strokeWidth={1.5} />Orders</li>
+                            <li onClick={() => navigateTo('invoices')} className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[15px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive('invoices')}`}><Receipt width={20} height={20} strokeWidth={1.5} />Invoices</li>
+                                <li onClick={() => navigateTo('returns')} className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[15px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive('returns')}`}><TriangleAlert width={20} height={20} strokeWidth={1.5} />Returns</li>
                             </ul>
                         </li>
                         <li>
@@ -135,8 +136,8 @@ export default function DashboardLayout({
                                 Analytics and Reports
                             </h3>
                             <ul className="flex flex-col">
-                                <li onClick={() => navigateTo('sales-reports')} className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[16px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive('sales-reports')}`}><LineChart width={20} height={20} strokeWidth={1.5} />Sales Analytics</li>
-                                <li onClick={() => navigateTo('store-reports')} className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[16px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive('store-reports')}`}><PieChart width={20} height={20} strokeWidth={1.5} />Inventory Reports</li>
+                                <li onClick={() => navigateTo('sales-reports')} className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[15px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive('sales-reports')}`}><LineChart width={20} height={20} strokeWidth={1.5} />Sales Analytics</li>
+                                <li onClick={() => navigateTo('store-reports')} className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[15px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive('store-reports')}`}><PieChart width={20} height={20} strokeWidth={1.5} />Inventory Reports</li>
                             </ul>
                         </li>
                         <li >
@@ -144,13 +145,13 @@ export default function DashboardLayout({
                                 Customers
                             </h3>
                             <ul className="flex flex-col">
-                                <li onClick={() => navigateTo('customers')} className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[16px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive('sales-reports')}`}><UsersRound width={20} height={20} strokeWidth={1.5} />Customers</li>
+                                <li onClick={() => navigateTo('customers')} className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[15px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive('sales-reports')}`}><UsersRound width={20} height={20} strokeWidth={1.5} />Customers</li>
                             </ul>
                         </li>
                     </ul>
                     <div className="flex flex-col h-[120px] bg-lavender justify-between items-start px-[10px] py-[5px] text-lg font-bold my-[20px] mb-[30px] border-t border-neu-6 border-1">
-                        <h3 onClick={() => navigateTo('settings')} className={`w-full font-normal cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[16px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive('settings')}`}><User width={20} height={20} strokeWidth={1.5} />{firstName}{' '}{lastName}</h3>
-                        <h3 className={`w-full font-normal cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[16px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95`}><LogOut width={20} height={20} strokeWidth={1.5} />Log Out</h3>
+                        <h3 onClick={() => navigateTo('settings')} className={`w-full font-normal cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[15px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive('settings')}`}><User width={20} height={20} strokeWidth={1.5} />{firstName}{' '}{lastName}</h3>
+                        <h3 className={`w-full font-normal cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[15px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95`}><LogOut width={20} height={20} strokeWidth={1.5} />Log Out</h3>
                     </div>
                 </nav>
                 <main className={`relative top-0 flex flex-column w-screen ${menu ? 'md:w-[calc(100vw-220px)]' : 'md:w-screen'}  m-small pt-[40px] bg-neu-1 ${menu ? 'md:left-0' : 'md:left-[-220px]'} flex-grow h-screen overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out font-body`}>
