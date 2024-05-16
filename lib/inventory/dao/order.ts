@@ -54,11 +54,16 @@ async function getOrder(id?: mongoose.Types.ObjectId, filters?: Partial<Order>) 
     if (!id && !filters) {
         throw new Error("No values provided")
     }
-    const order = await OrderModel.findOne(query).exec();
+    const order = await OrderModel.findOne(query).populate({
+        path: 'buyerId',
+        select: 'name email _id phone'
+    });
+;
     if (!order) {
         throw new Error("Good not found");
     }
-    return order;
+    // await order
+    return order
 }
 
 async function getOrders(filters?: Partial<Order>, page: number = 1, limit: number = 30) {
@@ -67,12 +72,14 @@ async function getOrders(filters?: Partial<Order>, page: number = 1, limit: numb
     }
     const query = filters ? filters : {};
     const skip = (page - 1) * limit;
-    const orders = await OrderModel.find(query).skip(skip).limit(limit).exec();
+    const orders = await OrderModel.find(query)
+        .skip(skip)
+        .limit(limit)
+    // await Promise.all(orders.map(order => order.populate({path: 'buyerId', select: 'name email phone id'})))
     const next = orders.length === limit ? page + 1 : null;
     const prev = page > 1 ? page - 1 : null;
     return { orders, next, prev };
 }
-
 
 const OrderDAO = {
     addOrder,

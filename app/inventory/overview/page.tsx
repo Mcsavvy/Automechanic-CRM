@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { faker } from "@faker-js/faker";
-import { DataTable } from "@/components/ui/datatable";
+import { DataTable } from "@/components/ui/goodsDataTable";
 import { Plus } from 'lucide-react'
 import EditGoodModal from "@/app/components/modals/EditGoodModal";
 import DeleteGoodModal from "@/app/components/modals/DeleteGoodModal";
