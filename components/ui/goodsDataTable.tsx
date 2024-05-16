@@ -210,31 +210,21 @@ export const DataTable: FC<DataTableProps> = ({ data, headers, filters, onChange
                                         <PopoverTrigger>
                                             <Ellipsis size={20} strokeWidth={1.5} />
                                         </PopoverTrigger>
-                                        <PopoverContent className="w-[150px] flex flex-col gap-3">
+                                        <PopoverContent className="w-[120px] px-0 flex flex-col gap-3">
                                             <a
                                                 href={`#goods/${row.id}/edit`}
-                                                className="block px-4 py-2 hover:bg-gray-100"
+                                                className="block px-4 py-2 hover:bg-gray-100 flex flex-row justify-start items-center gap-2"
                                                 onClick={() => onChangeGood(row.id, row.productName)}
                                             >
-                                                <Button
-                                                    variant={"ghost"}
-                                                    className="items-center justify-start gap-2"
-                                                >
-                                                    <Pencil size={20} strokeWidth={1.5} />
-                                                    Edit
-                                                </Button>
+                                                <Pencil size={20} strokeWidth={1.5} />
+                                                Edit
                                             </a>
                                             <a href={`#goods/${row.id}/delete`}
-                                                className="block px-4 py-2 hover:bg-gray-100"
+                                                className="block px-4 py-2 hover:bg-gray-100 flex flex-row justify-start items-center gap-2"
                                                 onClick={() => onChangeGood(row.id, row.productName)}
                                             >
-                                                <Button
-                                                    variant={"ghost"}
-                                                    className="text-red-500 items-center justify-start gap-2 hover:text-red-500"
-                                                >
-                                                    <Trash size={20} color="red" strokeWidth={1.5} />
-                                                    Delete
-                                                </Button>
+                                                <Trash size={20} color="red" strokeWidth={1.5} />
+                                                Delete
                                             </a>
 
                                         </PopoverContent>

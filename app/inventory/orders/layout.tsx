@@ -27,7 +27,7 @@ export default function OrderLayout({
     }, [params])
     return (
         <div className="flex flex-col h-full w-full overflow-auto">
-            <Breadcrumb className="bg-white sticky z-30 top-0 w-full h-[30px] font-heading flex items-center flex-row justify-start px-3 text-[14px]">
+            <Breadcrumb className="bg-white sticky z-20 top-0 w-full h-[30px] font-heading flex items-center flex-row justify-start px-3 text-[14px]">
                 <BreadcrumbList>
                     <BreadcrumbItem>
                         <BreadcrumbLink className="text-pri-3" href="/inventory/orders">Orders</BreadcrumbLink>

@@ -35,7 +35,7 @@ export default function DashboardLayout({
 }: {
     children: React.ReactNode;
 }) {
-    const [menu, setMenu] = useState(true);
+    const [menu, setMenu] = useState(window.innerWidth > 768);
     const [app, setApp] = useState(false);
     const [showDropdown, setShowDropdown] = useState(false);
     const [currApp, setCurrApp] = useState("Inventory");
