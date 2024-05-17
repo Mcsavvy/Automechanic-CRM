@@ -130,7 +130,7 @@ export default function Settings() {
 
     useEffect(() => {
         console.log(user)
-    }, []);
+    }, [user]);
 
     return (
         <div className="relative bg-white py-[30px] px-[30px] w-full h-full overflow-auto">
