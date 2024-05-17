@@ -66,13 +66,13 @@ export default function Home() {
     <EditGoodModal goodId={goodId} goodTitle={goodTitle} onClose={setGoodId}/>
     <DeleteGoodModal goodId={goodId} goodTitle={goodTitle} onClose={changeCurrGood}/>
     <AddGoodModal onClose={changeCurrGood}/>
-      <div className="flex flex-col relative w-full">
+      <div className="flex flex-col absolute h-[calc(100vh-60px)] top-[60px] w-full">
         <div className="h-full relative">
-          <div className="flex flex-row justify-between items-center p-[20px]">
-            <h1 className="text-xl font-semibold">Inventory Summary</h1>
+          <div className="flex flex-row justify-between items-center p-4 px-[30px]">
+            <h1 className="text-xl font-heading font-semibold">Inventory Summary</h1>
             <a href="#goods/new"><Button className="flex flex-row gap-2"><Plus size={20} strokeWidth={1.5} />Add Product</Button></a>
           </div>
-          <div className="flex flex-row flex-wrap gap-[30px] px-[30px] items-center justify-evenly">
+          <div className="flex flex-row flex-wrap gap-[30px] px-[30px] mx-0 items-center justify-evenly">
             <div className=" min-w-[300px] bg-white p-4 flex grow-1 flex-col rounded-md w-[30%] gap-3 border border-pri-3 shadow-inner">
               <h3 className="text-2xl text-pri-5">Categories</h3>
               <p className="text-lg text-neu-8">Total: 17 </p>

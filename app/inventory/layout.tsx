@@ -1,45 +1,24 @@
 "use client"
-"use client";
-import {
-    FaCalendarDay,
-    FaChartPie,
-    FaDatabase,
-    FaChartLine,
-    FaToolbox,
-    FaFileInvoiceDollar,
-} from "react-icons/fa6";
-import {
-    FaCar,
-    FaUser,
-    FaTools,
-    FaUsers,
-    FaRegUserCircle,
-    FaStoreAlt,
-} from "react-icons/fa";
-import { HiOutlineMenuAlt2, HiOutlineMenuAlt3 } from "react-icons/hi";
-import { MdAddAlert, MdLogout } from "react-icons/md";
 import React from "react";
 import { useEffect, useState } from "react";
-import { GiMechanicGarage } from "react-icons/gi";
 import { useAuthStore } from "@/lib/providers/auth-store-provider";
-import { FaEllipsisV } from "react-icons/fa";
 import MainDropdown from "../components/dropdown/MainDropdown";
 import AddNewStaffModal from "../components/modals/AddNewStaffModal";
 
 import { useRouter, usePathname } from "next/navigation";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, LineChart, Receipt, TriangleAlert, PieChart, Store, Bell, NotebookTabs, UsersRound, User, LogOut, ChevronsLeft, ChevronsRight, EllipsisVertical } from "lucide-react";
+import { ChevronDown, LineChart, Receipt, TriangleAlert, PieChart, Store, Bell, NotebookTabs, UsersRound, User, LogOut, SquareChevronLeft , SquareChevronRight, EllipsisVertical } from "lucide-react";
 export default function DashboardLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
-    const [menu, setMenu] = useState(window.innerWidth > 768);
+    const [menu, setMenu] = useState(true);
     const [app, setApp] = useState(false);
     const [showDropdown, setShowDropdown] = useState(false);
     const [currApp, setCurrApp] = useState("Inventory");
-    const { loggedIn, firstName, lastName } = useAuthStore((state) => state);
+    const { loggedIn, firstName } = useAuthStore((state) => state);
     const router = useRouter();
     const pathname = usePathname();
     const toggleMenu = () => {
@@ -58,6 +37,9 @@ export default function DashboardLayout({
         //     router.push("/auth/login");
         // }
     });
+    useEffect(() => {
+        setMenu(window.innerWidth > 768)
+    }, [])
     const checkActive = (path: string) => {
         const pathValue = `/${currApp.toLowerCase()}/${path}`;
         return pathname.startsWith(pathValue) ? "active-nav" : "";
@@ -107,11 +89,11 @@ export default function DashboardLayout({
                     </div>
 
                     {menu ?
-                        <ChevronsLeft strokeWidth={1.5} width={20} height={20} onClick={toggleMenu} className="absolute top-[60px] right-[-20px] cursor-pointer text-neu-9 transition active:scale-95 duration-200 ease-in z-30" />
+                        <SquareChevronLeft strokeWidth={1.5} width={20} height={20} onClick={toggleMenu} className="absolute top-[60px] right-[-20px] cursor-pointer text-neu-9 transition active:scale-95 duration-200 ease-in z-30" />
                         :
-                        <ChevronsRight strokeWidth={1.5} width={20} height={20} onClick={toggleMenu} className="absolute top-[60px] right-[-20px] cursor-pointer text-neu-9 transition active:scale-95 duration-200 ease-in z-30" />
+                        <SquareChevronRight strokeWidth={1.5} width={20} height={20} onClick={toggleMenu} className="absolute top-[60px] right-[-20px] cursor-pointer text-neu-9 transition active:scale-95 duration-200 ease-in z-30" />
                     }
-                    <ul className="flex flex-col p-[10px] py-[30px] gap-[15px] overflow-y-auto scrollbar-thin">
+                    <ul className="flex flex-col p-[10px] py-[30px] gap-[15px] overflow-y-auto scrollbar-thin mb-[50px]">
                         <li >
                             <h3 className="relative flex p-[10px] flex-row text-[15px] font-[200px] justify-between items-center cursor-pointer text-neu-7">
                                 Inventory Management
@@ -149,26 +131,22 @@ export default function DashboardLayout({
                             </ul>
                         </li>
                     </ul>
-                    <div className="flex flex-col h-[120px] bg-lavender justify-between items-start px-[10px] py-[5px] text-lg font-bold my-[20px] mb-[30px] border-t border-neu-6 border-1">
-                        <h3 onClick={() => navigateTo('settings')} className={`w-full font-normal cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[15px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive('settings')}`}><User width={20} height={20} strokeWidth={1.5} />{firstName}{' '}{lastName}</h3>
-                        <h3 className={`w-full font-normal cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[15px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95`}><LogOut width={20} height={20} strokeWidth={1.5} />Log Out</h3>
-                    </div>
                 </nav>
                 <main className={`relative top-0 flex flex-column w-screen ${menu ? 'md:w-[calc(100vw-220px)]' : 'md:w-screen'}  m-small pt-[40px] bg-neu-1 ${menu ? 'md:left-0' : 'md:left-[-220px]'} flex-grow h-screen overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out font-body`}>
                     {menu && 
-                    <div className='md:w-0 md:h-0 transition-width duration-300 ease flex w-full h-full fixed left-0 top-0 bg-black bg-opacity-50 z-30 backdrop-blur-md' onClick={toggleMenu}>
+                    <div className='md:w-0 md:h-0 transition-width duration-300 ease flex w-full h-full fixed left-0 top-0 bg-black bg-opacity-50 z-40 backdrop-blur-md' onClick={toggleMenu}>
                     </div>
                     }
-                    <header className={`fixed top-0 right-0 w-screen h-[40px] ${menu ? 'md:w-[calc(100vw-220px)]' : 'md:w-screen'}  border-b border-neu-3 bg-white overflow-visible z-20`}>
+                    <header className={`fixed top-0 right-0 w-screen h-[60px] ${menu ? 'md:w-[calc(100vw-220px)]' : 'md:w-screen'}  border-b border-neu-3 bg-white overflow-visible z-30 transition-all duration-200 ease-in`}>
                         <div className="relative">
-                            <div className="absolute right-[10px] top-[3px] overflow-visible flex flex-col items-end justify-start">
+                            <div className="absolute right-[30px] top-[15px] overflow-visible flex flex-col items-end justify-start">
                                 <button
-                                    className="inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-50"
+                                    className="inline-flex items-center p-2 gap-3 capitalize font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-50"
                                     type="button"
                                     id="dropdownToggle"
                                     onClick={() => setShowDropdown((show) => !show)}
-                                >
-                                    <EllipsisVertical size={18} strokeWidth={1.5} />
+                                > 
+                                    < User size={24} strokeWidth={1.5} className="border border-pri-6 rounded-full"/>{firstName}
                                 </button>
                                 <MainDropdown
                                     show={showDropdown}
