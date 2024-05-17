@@ -11,8 +11,8 @@ interface LoginResponse {
     id: string;
     email: string;
     lastName: string;
+    phone: string;
     firstName: string;
-    accessToken: string;
 }
 
 interface ErrorResponse {
@@ -41,6 +41,7 @@ const LoginPage: React.FC = () => {
                     email: data.email,
                     firstName: data.firstName,
                     lastName: data.lastName,
+                    phone: data.phone,
                     loggedIn: true,
                 });
                 resolve(data);

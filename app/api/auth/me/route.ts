@@ -8,6 +8,7 @@ interface AuthResponse {
     email: string;
     lastName: string;
     firstName: string;
+    phone: string;
 }
 
 export const POST = permissionRequired(Permission.AllowAny())(async function (req) {
@@ -17,6 +18,7 @@ export const POST = permissionRequired(Permission.AllowAny())(async function (re
         email: user.email,
         lastName: user.lastName,
         firstName: user.firstName,
+        phone: user.phone
     };
     return NextResponse.json(response);
 });
