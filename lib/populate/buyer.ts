@@ -8,7 +8,7 @@ export default async function populateBuyers(number: number) {
         const buyer = new Buyer({
             name: faker.person.fullName(),
             email: faker.internet.email(),
-            phoneNumber: faker.phone.number()
+            phone: faker.phone.number()
         });
         await buyer.save();
         buyers.push(buyer);

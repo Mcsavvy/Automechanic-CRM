@@ -3,10 +3,11 @@ import { OrderItemModel } from "../models/orderItem";
 import { OrderModel } from "../models/order";
 import { GoodModel } from "../models/good";
 import { BuyerModel } from "../models/buyer";
+import { createBuyerRevenueByPeriodChart, createRevenueByBuyerChart, createRevenueByGoodChart, createRevenueByPeriodChart } from "../../core/insightsVisualizer";
 
 
 
-async function revenueByBuyer() {
+async function revenueByBuyer(visualize: boolean = false) {
   try {
     const results = await OrderModel.aggregate([
       {
@@ -42,16 +43,21 @@ async function revenueByBuyer() {
           totalCost: 1,
           profit: { $subtract: ['$totalRevenue', '$totalCost'] } // Calculate profit
         }
-      }
+      },
+      { $sort: { buyerName: 1} }
     ]);
-    return results;
+    if (visualize) {
+      console.table(results)
+      createRevenueByBuyerChart(results);
+    } else
+      return results;
   } catch (error) {
     console.error('Error calculating revenue by buyer:', error);
     throw error;
   }
 }
 
-async function revenueByGood() {
+async function revenueByGood(visualize: boolean = false) {
     try {
       const results = await OrderItemModel.aggregate([
         {
@@ -80,6 +86,7 @@ async function revenueByGood() {
         {
           $group: {
             _id: '$goodId',               // Group by goodId
+            goodName: {$last: '$goodDetails.name'},
             totalRevenue: { $sum: { $multiply: ['$qty', '$sellingPrice'] } }, // Sum of revenue for each good
             totalCost: { $sum: { $multiply: ['$qty', '$costPrice'] } },       // Sum of cost prices for each good
             totalQuantitySold: { $sum: '$qty' }                               // Total quantity sold for each good
@@ -88,14 +95,19 @@ async function revenueByGood() {
         {
           $project: {
             _id: 0,
-            goodName: '$goodDetails.name',
+            goodName: 1,
             totalRevenue: 1,
             totalCost: 1,
             totalQuantitySold: 1,
             profit: { $subtract: ['$totalRevenue', '$totalCost'] }           // Calculate profit
-          }
-        }
+          },
+        },
+        { $sort: { goodName: 1 } }
       ]);
+      if (visualize) {
+        console.table(results)
+        createRevenueByGoodChart(results)
+      }else 
         return results;
     } catch (error) {
       console.error('Error calculating revenue by good:', error);
@@ -104,7 +116,7 @@ async function revenueByGood() {
   }
   
 
-  async function revenueByPeriod(metric: 'days' | 'months' | 'years') {
+  async function revenueByPeriod(metric: 'day' | 'month' | 'year', visualize: boolean = false) {
     try {
       const results = await OrderItemModel.aggregate([
         {
@@ -146,13 +158,17 @@ async function revenueByGood() {
         },
         { $sort: { period: 1 } }         // Sort by period in ascending order
       ]);
-      return results;
+      if (visualize) {
+        console.table(results)
+        createRevenueByPeriodChart(results)
+      } else
+        return results;
     } catch (error) {
       console.error('Error calculating revenue by period:', error);
       throw error;
     }
   }
-  async function buyerRevenueByPeriod(metric: 'days' | 'months' | 'years') {
+  async function buyerRevenueByPeriod(metric: 'day' | 'month' | 'year', visualize: boolean = false) {
     try {
       const results = await OrderItemModel.aggregate([
         {
@@ -207,9 +223,11 @@ async function revenueByGood() {
         },
         { $sort: { period: 1, buyer: 1 } } // Sort by period and buyer in ascending order
       ]);
-  
-      console.log(results);
-      return results;
+      if (visualize) {
+        console.table(results)
+        createBuyerRevenueByPeriodChart(results)
+      } else
+        return results;
     } catch (error) {
       console.error('Error calculating buyer revenue by period:', error);
       throw error;

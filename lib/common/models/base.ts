@@ -1,6 +1,16 @@
 import mongoose, { Document, Schema } from "mongoose";
 import paginate from "mongoose-paginate-v2";
 
+const dbUri = process.env.MONGODB_URI as string;
+let db: mongoose.Mongoose | undefined = undefined;
+
+(async () => {
+    if (!db) {
+        console.log('Connecting to database:', dbUri);
+        db = await mongoose.connect(dbUri);
+    }
+})();
+
 export interface IBaseDocument extends Document {
   createdAt: Date;
   updatedAt: Date;

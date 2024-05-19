@@ -7,7 +7,7 @@ import Select from "react-select";
 import axios from "axios";
 
 async function getGroups() {
-  const response = await fetch("/api/auth/group/all");
+  const response = await fetch("/api/group/all");
   const groups: { id: string; name: string }[] = await response.json();
   return groups;
 }
@@ -71,16 +71,16 @@ function validateForm(
 }
 
 async function createStaff(
-  firstname: string,
-  lastname: string,
+  firstName: string,
+  lastName: string,
   email: string,
   phone: string,
   selectedGroups: readonly { label: string; value: string }[]
 ) {
   try {
     const response = await axios.post("/api/staff/new", {
-      firstname,
-      lastname,
+      firstName,
+      lastName,
       email,
       phone,
       groups: selectedGroups,
@@ -90,7 +90,8 @@ async function createStaff(
         toastId: "staff-added",
       });
     } else {
-      throw response;
+      toast.error(response.data.message, { toastId: "staff-add-error" });
+      return false;
     }
   } catch (error) {
     toast.error("Could not add staff", { toastId: "staff-add-error" });
@@ -292,7 +293,7 @@ export default function AddNewStaffModal() {
                   });
                 }}
                 disabled={status === "loading"}
-                className="w-full text-white bg-pri-3 hover:bg-pri-4 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                className="w-full text-white bg-pri-6 hover:bg-pri-4 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
               >
                 {status === "loading" ? (
                   <>
