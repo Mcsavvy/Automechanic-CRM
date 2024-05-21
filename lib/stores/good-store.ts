@@ -1,6 +1,7 @@
 import Good from "../@types/goods";
 import { createStore } from "zustand/vanilla";
 import axios from "axios";
+import lodash from "lodash";
 
 interface GoodCreate {
     name: string;
@@ -10,7 +11,6 @@ interface GoodCreate {
     minQty: number;
     productId: string;
 }
-
 
 interface PaginatedGoods {
     goods: Good[];
@@ -27,17 +27,18 @@ export type GoodFilter = {
     query?: string;
 };
 
-
 export type GoodState = {
     goods: Good[];
     page: number;
     limit: number;
     filter: GoodFilter;
+    allCategories: string[];
     pageCount: number;
     hasNextPage: boolean;
     hasPrevPage: boolean;
     goodId: string;
     goodTitle: string;
+    loaded: boolean;
 };
 
 export interface GoodActions {
@@ -48,6 +49,7 @@ export interface GoodActions {
     createGood: (good: GoodCreate) => void;
     updateGood: (goodId: string, good: Partial<GoodCreate>) => void;
     getGood: (goodId: string) => Promise<Good>;
+    setFilter: (filter: GoodFilter) => void;
     applyFilter: (filter: GoodFilter) => void;
     clearFilter: () => void;
 }
@@ -66,8 +68,8 @@ export const goodCategories = [
     "Tires and Wheels",
     "Lubricants and Fluids",
     "Tools and Equipment",
-    "Accessories"
-]
+    "Accessories",
+];
 
 export const defaultGoodState: GoodState = {
     goods: [],
@@ -79,6 +81,8 @@ export const defaultGoodState: GoodState = {
     hasPrevPage: false,
     goodId: "",
     goodTitle: "",
+    allCategories: [],
+    loaded: false,
 };
 
 export const createGood = async (good: GoodCreate): Promise<Good> => {
@@ -91,19 +95,27 @@ export const createGood = async (good: GoodCreate): Promise<Good> => {
         return {
             id: newGood.id as string,
             name: newGood.name as string,
-            categories: [goodCategories[Math.floor(Math.random() * goodCategories.length)]],
+            categories: newGood.categories as string[],
             productCode: newGood.productId as string,
             unitPrice: newGood.costPrice as number,
             qtyInStock: newGood.qty as number,
             totalValue: newGood.costPrice * newGood.qty,
-            status: newGood.qty > newGood.minQty ? "in-stock" : newGood.qty > 0 ? "low-stock" : "out-of-stock",
-        }
+            status:
+                newGood.qty > newGood.minQty
+                    ? "in-stock"
+                    : newGood.qty > 0
+                    ? "low-stock"
+                    : "out-of-stock",
+        };
     } catch (error) {
         throw error;
     }
 };
 
-export const updateGood = async (goodId: string, good: Partial<GoodCreate>): Promise<Good> =>  {
+export const updateGood = async (
+    goodId: string,
+    good: Partial<GoodCreate>
+): Promise<Good> => {
     try {
         const response = await axios.put(`/api/goods/${goodId}`, good);
         if (response.status !== 200) {
@@ -113,14 +125,18 @@ export const updateGood = async (goodId: string, good: Partial<GoodCreate>): Pro
         return {
             id: goodId,
             name: updatedGood.name as string,
-            categories: [goodCategories[Math.floor(Math.random() * goodCategories.length)]],
+            categories: updatedGood.categories as string[],
             productCode: updatedGood.productId as string,
             unitPrice: updatedGood.costPrice as number,
             qtyInStock: updatedGood.qty as number,
             totalValue: updatedGood.costPrice * updatedGood.qty,
-            status: updatedGood.qty > updatedGood.minQty ? "in-stock" : updatedGood.qty > 0 ? "low-stock" : "out-of-stock",
-        }
-
+            status:
+                updatedGood.qty > updatedGood.minQty
+                    ? "in-stock"
+                    : updatedGood.qty > 0
+                    ? "low-stock"
+                    : "out-of-stock",
+        };
     } catch (error) {
         throw error;
     }
@@ -136,13 +152,18 @@ export const getGood = async (goodId: string): Promise<Good> => {
         return {
             id: goodId,
             name: good.name as string,
-            categories: [goodCategories[Math.floor(Math.random() * goodCategories.length)]],
+            categories: good.categories as string[],
             productCode: good.productId as string,
             unitPrice: good.costPrice as number,
             qtyInStock: good.qty as number,
             totalValue: good.costPrice * good.qty,
-            status: good.qty > good.minQty ? "in-stock" : good.qty > 0 ? "low-stock" : "out-of-stock",
-        }
+            status:
+                good.qty > good.minQty
+                    ? "in-stock"
+                    : good.qty > 0
+                    ? "low-stock"
+                    : "out-of-stock",
+        };
     } catch (error) {
         throw error;
     }
@@ -157,9 +178,14 @@ export const deleteGood = async (goodId: string): Promise<void> => {
     } catch (error) {
         throw error;
     }
-}
+};
 
-export const getGoods = async (page: number, limit: number, filter?: GoodFilter): Promise<PaginatedGoods> => {
+export const getGoods = async (
+    page: number,
+    limit: number,
+    filter?: GoodFilter
+): Promise<PaginatedGoods> => {
+    console.log("getGoods", page, limit, filter);
     const queryParams = new URLSearchParams();
     queryParams.append("l", limit.toString());
     queryParams.append("p", page.toString());
@@ -169,7 +195,9 @@ export const getGoods = async (page: number, limit: number, filter?: GoodFilter)
         filter.query && queryParams.append("q", filter.query);
     }
     try {
-        const response = await axios.get(`/api/goods/all?${queryParams.toString()}`);
+        const response = await axios.get(
+            `/api/goods/all?${queryParams.toString()}`
+        );
         if (response.status !== 200) {
             throw response;
         }
@@ -178,11 +206,7 @@ export const getGoods = async (page: number, limit: number, filter?: GoodFilter)
             goods: goods.map((good: any) => ({
                 id: good.id as string,
                 name: good.name as string,
-                categories: [
-                    goodCategories[
-                        Math.floor(Math.random() * goodCategories.length)
-                    ],
-                ],
+                categories: good.categories as string[],
                 productCode: good.productId as string,
                 unitPrice: good.costPrice as number,
                 qtyInStock: good.qty as number,
@@ -203,59 +227,98 @@ export const getGoods = async (page: number, limit: number, filter?: GoodFilter)
     } catch (error) {
         throw error;
     }
-}
-
-export const createGoodStore = (state: GoodState) => {
-    return createStore<GoodStore>((set) => ({
-        ...state,
-        setGoods: (goods: Good[]) => set({ goods }),
-        setPage: (page: number) => {
-            getGoods(page, state.limit, state.filter).then((result) => {
-                set(result)
-            });
-        },
-        setLimit: (limit: number) => {
-            getGoods(state.page, limit).then((result) => {
-                set(result)
-            });
-        },
-        deleteGood: async (goodId: string) => {
-            await deleteGood(goodId);
-            // check if the good is in the current page
-            if (state.goods.find((good) => good.id === goodId)) {
-                // TODO: refetch the goods to maintain correct pagination
-                const newGoods = state.goods.filter((good) => good.id !== goodId);
-                set({ goods: newGoods });
-            }
-        },
-        createGood: async (good: GoodCreate) => {
-            const newGood = await createGood(good);
-            // TODO: refetch the goods to maintain correct pagination
-            set((state) => ({ goods: [...state.goods, newGood] }));
-        },
-        updateGood: async (goodId: string, good: Partial<GoodCreate>) => {
-            const updatedGood = await updateGood(goodId, good);
-            const newGoods = state.goods.map((g) => (g.id === goodId ? updatedGood : g));
-            set({ goods: newGoods });
-        },
-        getGood: async (goodId: string) => {
-            let good = state.goods.find((good) => good.id === goodId);
-            if (!good) {
-                good = await getGood(goodId);
-            }
-            return good;
-        },
-        applyFilter: (filter: GoodFilter) => {
-            const page = 1 // reset the page to 1 when applying a filter
-            getGoods(page, state.limit, filter).then((result) => {
-                set({ ...result, filter });
-            });
-        },
-        clearFilter: () => {
-            getGoods(state.page, state.limit).then((result) => {
-                set({ ...result, filter: {} });
-            });
-        },
-    }));
 };
 
+export const getCategories = async (): Promise<string[]> => {
+    try {
+        const response = await axios.get("/api/goods/categories");
+        if (response.status !== 200) {
+            throw response;
+        }
+        return response.data as string[];
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const createGoodStore = (state: GoodState) => {
+    return createStore<GoodStore>((set) => {
+        return {
+            ...state,
+            setGoods: (goods: Good[]) => set({ goods }),
+            setPage: (page: number) => set((state) => {
+                if (page === state.page) {
+                    return {};
+                }
+                getGoods(page, state.limit, state.filter).then((result) => {
+                    set(result);
+                });
+                return {};
+            }),
+            setLimit: (limit: number) => set((state) => {
+                if (limit === state.limit) {
+                    return {};
+                }
+                const page = 1; // reset the page to 1 when changing the limit
+                getGoods(page, limit).then((result) => {
+                    set(result);
+                });
+                return {};
+            }),
+            deleteGood: async (goodId: string) => set((state) => {
+                deleteGood(goodId).then(() => {
+                    // check if the good is in the current page
+                    if (state.goods.find((good) => good.id === goodId)) {
+                        // TODO: refetch the goods to maintain correct pagination
+                        const newGoods = state.goods.filter(
+                            (good) => good.id !== goodId
+                        );
+                        set({ goods: newGoods });
+                    }
+                });
+                return {};
+            }),
+            createGood: async (good: GoodCreate) => {
+                const newGood = await createGood(good);
+                // TODO: refetch the goods to maintain correct pagination
+                set((state) => ({ goods: [...state.goods, newGood] }));
+            },
+            updateGood: async (goodId: string, good: Partial<GoodCreate>) => set((state) => {
+                updateGood(goodId, good).then((updatedGood) => {
+                    const newGoods = state.goods.map((g) =>
+                        g.id === goodId ? updatedGood : g
+                    );
+                    set({ goods: newGoods });
+                });
+                return {};
+            }),
+            getGood: async (goodId: string) => {
+                let good = state.goods.find((good) => good.id === goodId);
+                if (!good) {
+                    good = await getGood(goodId);
+                }
+                return good;
+            },
+            setFilter: (filter: GoodFilter) => set({ filter }),
+            applyFilter: (filter: GoodFilter) => set((state) => {
+                const page = 1; // reset the page to 1 when applying a filter
+                if (lodash.isEqual(filter, state.filter)) {
+                    return {};
+                }
+                getGoods(page, state.limit, filter).then((result) => {
+                    set({ ...result, filter });
+                });
+                return {};
+            }),
+            clearFilter: () => set((state) => {
+                if (lodash.isEmpty(state.filter)) {
+                    return {};
+                }
+                getGoods(state.page, state.limit).then((result) => {
+                    set({ ...result, filter: {} });
+                });
+                return {};
+            }),
+        };
+    });
+};
