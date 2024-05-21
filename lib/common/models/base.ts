@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema } from "mongoose";
+import paginate from "mongoose-paginate-v2";
 
 const dbUri = process.env.MONGODB_URI as string;
 let db: mongoose.Mongoose | undefined = undefined;
@@ -28,4 +29,12 @@ export const getBaseSchema = () => {
 
 export const defineModel = <T extends IBaseDocument>(name: string, schema: Schema) => {
   return mongoose.models[name] as mongoose.Model<T> || mongoose.model<T>(name, schema);
+}
+
+export const defineModelWithPaginate = <T extends IBaseDocument>(name: string, schema: Schema) => {
+  schema.plugin(paginate);
+  return (
+    mongoose.models[name] as mongoose.Model<T> & mongoose.PaginateModel<T>
+    || mongoose.model<T, mongoose.PaginateModel<T>>(name, schema)
+  );
 }

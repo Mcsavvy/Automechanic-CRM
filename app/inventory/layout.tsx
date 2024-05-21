@@ -2,8 +2,8 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/lib/providers/auth-store-provider";
-import MainDropdown from "../components/dropdown/MainDropdown";
-import AddNewStaffModal from "../components/modals/AddNewStaffModal";
+import MainDropdown from "../../components/dropdown/MainDropdown";
+import AddNewStaffModal from "../../components/modals/AddNewStaffModal";
 import { useRouter, usePathname } from "next/navigation";
 import { ChevronDown, ChevronRight, LineChart, Receipt, TriangleAlert, PieChart, Store, Bell, NotebookTabs, UsersRound, User, LogOut, SquareChevronLeft, SquareChevronRight, EllipsisVertical } from "lucide-react";
 export default function DashboardLayout({
@@ -64,17 +64,17 @@ export default function DashboardLayout({
 
                     {menu ? (
                         <SquareChevronLeft
-                            size={24}
+                            size={28}
                             strokeWidth={1.5}
                             onClick={toggleMenu}
-                            className="absolute top-[20px] right-[-40px] cursor-pointer text-white transition active:scale-95 duration-200 ease-in z-30"
+                            className="absolute top-[20px] right-[-40px] cursor-pointer text-black transition active:scale-95 duration-200 ease-in z-30"
                         />
                     ) : (
                         <SquareChevronRight
                             strokeWidth={1.5}
-                            size={24}
+                            size={28}
                             onClick={toggleMenu}
-                            className="absolute top-[20px] right-[-40px] cursor-pointer text-neu-9 transition active:scale-95 duration-200 ease-in z-30"
+                            className="absolute top-[20px] right-[-40px] cursor-pointer text-black transition active:scale-95 duration-200 ease-in z-30"
                         />
                     )}
                     <ul className="flex flex-col p-[10px] py-[30px] gap-[15px] overflow-y-auto scrollbar-thin mb-[50px]">
