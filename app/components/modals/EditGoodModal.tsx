@@ -73,14 +73,14 @@ const EditGoodModal: FC<EditGoodProps> = ({ goodId, onClose, goodTitle}) => {
     <div
       id={`goods/${goodId}/edit`}
       tabIndex={-1}
-      className="hidden target:flex bg-[rgba(0,0,0,0.5)] overflow-y-auto overflow-x-hidden bottom-4 fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full backdrop-blur-sm"
+      className="hidden target:flex bg-[rgba(0,0,0,0.5)] overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 h-full justify-center items-center w-full md:inset-0 backdrop-blur-sm"
       onClick={(e) => {
         if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
           closeModal();
         }
       }}
     >
-      <div className="relative p-4 w-full max-w-md max-h-full">
+      <div className="relative p-4 w-full max-w-md h-full max-h-md">
         <div
           className="relative bg-white rounded-lg border border-neu-6"
           ref={modalRef}

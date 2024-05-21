@@ -20,7 +20,7 @@ export default function MainDropdown({ show, setShow }: MainDropdownProps) {
       >
         <StaffDropdownItem />
         <li>
-          <a href="#" className="block px-4 py-2 hover:bg-gray-100">
+          <a href="/inventory/settings" className="block px-4 py-2 hover:bg-gray-100">
             Settings
           </a>
         </li>

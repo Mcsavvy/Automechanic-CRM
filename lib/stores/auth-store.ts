@@ -8,12 +8,14 @@ export type AuthState =
     firstName: string;
     lastName: string;
     loggedIn: true;
+    phone: string;
 } | {
     id: null;
     email: null;
     firstName: null;
     lastName: null;
     loggedIn: false | null;
+    phone: null;
 }
 
 export interface AuthActions {
@@ -29,6 +31,7 @@ export const defaultAuthState: AuthState = {
     firstName: null,
     lastName: null,
     loggedIn: null,
+    phone: null
 };
 
 

@@ -20,7 +20,7 @@ const config = {
     extend: {
       fontFamily: {
         body: ["Lato", "sans-serif"],
-        heading: ["Nunito", "sans-serif"],
+        heading: ["Quicksand", "sans-serif"],
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

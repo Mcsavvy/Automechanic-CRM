@@ -13,6 +13,7 @@ interface LoginResponse {
     email: string;
     lastName: string;
     firstName: string;
+    phone: string;
 }
 
 
@@ -33,6 +34,7 @@ export async function POST(req: NextRequest) {
             email: user.email,
             lastName: user.lastName,
             firstName: user.firstName,
+            phone: user.phone,
         };
         cookies().set("X-Auth-Token", token, {
             httpOnly: true,
