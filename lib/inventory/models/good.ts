@@ -12,6 +12,7 @@ export interface IGoodDocument extends IBaseDocument {
   costPrice: number;
   qty: number;
   description: string;
+  categories: string[];
   minQty: number;
   productId: string;
 }
@@ -20,7 +21,8 @@ const GoodSchema = getBaseSchema().add({
     name: { type: String, required: true },
     costPrice: { type: Number, required: true },
     qty: { type: Number, required: true },
-    description: { type: String, required: true },
+    description: { type: String, required: false },
+    categories: { type: [String], default: [] },
     minQty: { type: Number, required: true },
     productId: { type: String, required: true },
 });

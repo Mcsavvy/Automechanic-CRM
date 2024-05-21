@@ -12,7 +12,7 @@ import {
     Trash,
     X
 } from "lucide-react";
-import {GoodFilter, goodCategories} from "@/lib/stores/good-store";
+import {GoodFilter} from "@/lib/stores/good-store";
 import {
     Select,
     SelectContent,
@@ -24,24 +24,44 @@ import {
 import {Button} from "@/components/ui/button";
 import { useQueryState } from "nuqs";
 import { useGoodStore } from "@/lib/providers/good-store-provider";
+import { useEffect } from "react";
 
 export default function GoodsFilters() {
     // @ts-ignore
     const [selectedCategory, setSelectedCategory] = useQueryState<string>("category", {defaultValue: ""});
     // @ts-ignore
     const [selectedStatus, setSelectedStatus] = useQueryState<string>("status", {defaultValue: ""});
-    const {applyFilter, filter} = useGoodStore((state) => state);
+    const {applyFilter, filter, allCategories, loaded} = useGoodStore((state) => state);
+
+    useEffect(() => {
+        if (!loaded) return;
+        applyFilter({...filter, category: selectedCategory});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedCategory]);
+
+    useEffect(() => {
+        if (!loaded) return;
+        applyFilter({...filter, status: selectedStatus as "in-stock" | "low-stock" | "out-of-stock"});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedStatus]);
     
     function handleApplyFilters() {
-        const newFilter: GoodFilter = {};
+        const newFilter: GoodFilter = {...filter};
         if (selectedCategory.length) {
             newFilter.category = selectedCategory.trim();
+        } else {
+            delete newFilter.category;
         }
         if (selectedStatus.length) {
             newFilter.status = selectedStatus.trim() as "in-stock" | "low-stock" | "out-of-stock";
+        } else {
+            delete newFilter.status;
         }
-        applyFilter({ ...filter, ...newFilter });
+        applyFilter(newFilter);
     }
+
+
+
     return (
         <Popover>
             <PopoverTrigger className="flex flex-row items-center justify-start gap-3 border border-neu-3 p-[8px] rounded-md">
@@ -55,7 +75,7 @@ export default function GoodsFilters() {
                     >
                         <div className="flex flex-row items-center justify-between">
                             <SelectTrigger className="w-[180px] text-left">
-                                <SelectValue placeholder="Good Category" />
+                                <SelectValue placeholder="Select item category" />
                             </SelectTrigger>
                             <Button
                                 variant={"ghost"}
@@ -68,7 +88,7 @@ export default function GoodsFilters() {
                         </div>
                         <SelectContent>
                             <SelectGroup>
-                                {goodCategories.map((category) => (
+                                {allCategories.map((category) => (
                                     <SelectItem key={category} value={category}>
                                         {category}
                                     </SelectItem>
@@ -83,7 +103,7 @@ export default function GoodsFilters() {
                     >
                         <div className="flex flex-row items-center justify-between">
                             <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Good Status" />
+                                <SelectValue placeholder="Select item status" />
                             </SelectTrigger>
                             <Button
                                 variant={"ghost"}
@@ -108,9 +128,9 @@ export default function GoodsFilters() {
                             </SelectGroup>
                         </SelectContent>
                     </Select>
-                    <Button variant={"default"} onClick={handleApplyFilters}>
+                    {/* <Button variant={"default"} onClick={handleApplyFilters}>
                         Apply
-                    </Button>
+                    </Button> */}
                 </div>
             </PopoverContent>
         </Popover>

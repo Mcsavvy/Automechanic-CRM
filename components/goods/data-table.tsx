@@ -32,22 +32,8 @@ import GoodsFilters from "./filters";
 import { useQueryState } from "nuqs";
 import GoodsSearch from "./search";
 
-interface TableHeader {
-    id: string;
-    name: string;
-    isVisible: boolean;
-    isPresent?: boolean;
-}
-interface TableFilter {
-    id: string;
-    name: string;
-    type: string;
-}
-
 interface DataTableProps {
     data: Good[];
-    headers: TableHeader[];
-    filters: TableFilter[];
     onChangeGood: (id: string, title: string) => void;
     onNext: () => void;
     onPrev: () => void;
@@ -59,9 +45,6 @@ interface DataTableProps {
 
 export const DataTable: FC<DataTableProps> = ({
     data,
-    headers,
-    filters,
-    onChangeGood,
     onNext,
     onPrev,
     page,

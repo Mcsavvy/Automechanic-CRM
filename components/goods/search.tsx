@@ -7,13 +7,14 @@ import { useEffect } from "react";
 
 export default function GoodsSearch() {
     const [query, setQuery] = useQueryState("query", { defaultValue: "" });
-    const {applyFilter, filter} = useGoodStore((state) => state);
+    const {applyFilter, filter, loaded} = useGoodStore((state) => state);
 
     const debouncedSearch = debounce((query: string) => {
         applyFilter({ ...filter, query });
     }, 500);
 
     useEffect(() => {
+        if (!loaded) return;
         debouncedSearch(query);
         // Cleanup function to cancel if component unmounts
         return () => {

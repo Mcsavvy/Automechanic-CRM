@@ -90,8 +90,6 @@ export default function Home() {
                     </div>
                     <DataTable
                         data={goods}
-                        headers={tableHeaders}
-                        filters={dataFilters}
                         onChangeGood={changeCurrGood}
                         page={page}
                         pageCount={pageCount}
