@@ -8,6 +8,7 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Suspense } from "react";
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
@@ -86,9 +87,13 @@ export const DataTable: FC<DataTableProps> = ({
             <div className=" w-inherit md:w-[calc(100%-60px)] box-border flex flex-col bg-white py-3 overflow-auto rounded-t-md m-[30px] border border-pri-3 h-[calc(100% - 550px)]">
                 <div className="px-3">
                     <div className="flex flex-row justify-between flex-wrap items-center">
-                        <GoodsSearch />
+                        <Suspense>
+                            <GoodsSearch />
+                        </Suspense>
                         <div className="flex flex-row justify-start items-center gap-[10px] py-3">
-                            <GoodsFilters />
+                            <Suspense>
+                                <GoodsFilters />
+                            </Suspense>
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button
