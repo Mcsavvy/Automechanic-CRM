@@ -21,6 +21,17 @@ import {
     SquareChevronLeft,
     SquareChevronRight,
     EllipsisVertical,
+    Package,
+    FileLineChart,
+    ShoppingCart,
+    ReceiptText,
+    CircleDollarSign,
+    TrendingUp,
+    CandlestickChart,
+    AreaChart,
+    Users,
+    UserRoundCog,
+    Scroll,
 } from "lucide-react";
 
 interface BaseSectionItem {
@@ -36,7 +47,6 @@ type SectionItem =
 interface Section {
     name: string;
     content?: React.ReactNode;
-    path: string;
     items: SectionItem[];
     show: boolean;
 }
@@ -44,95 +54,107 @@ interface Section {
 const sections: Section[] = [
     {
         name: "Inventory",
-        path: "inventory",
         show: true,
         items: [
             {
-                icon: <Store size={20} strokeWidth={1.5} />,
-                content: "Overview",
+                icon: <Package size={20} strokeWidth={1.5} />,
+                content: "Products",
                 getIsActive: (pathname) =>
                     pathname.startsWith("/inventory/overview"),
                 link: "/inventory/overview",
             },
             {
-                icon: <Bell size={20} strokeWidth={1.5} />,
-                content: "Low Stock Alerts",
+                icon: <FileLineChart size={20} strokeWidth={1.5} />,
+                content: "Reports",
                 getIsActive: (pathname) =>
-                    pathname.startsWith("/inventory/alerts"),
-                link: "/inventory/alerts",
+                    pathname.startsWith("/inventory/reports"),
+                link: "/inventory/reports",
             },
+        ],
+    },
+    {
+        name: "Sales",
+        show: true,
+        items: [
             {
-                icon: <NotebookTabs size={20} strokeWidth={1.5} />,
+                icon: <ShoppingCart size={20} strokeWidth={1.5} />,
                 content: "Orders",
                 getIsActive: (pathname) =>
                     pathname.startsWith("/inventory/orders"),
                 link: "/inventory/orders",
             },
             {
-                icon: <Receipt size={20} strokeWidth={1.5} />,
+                icon: <ReceiptText size={20} strokeWidth={1.5} />,
                 content: "Invoices",
                 getIsActive: (pathname) =>
                     pathname.startsWith("/inventory/invoices"),
                 link: "/inventory/invoices",
             },
             {
-                icon: <TriangleAlert size={20} strokeWidth={1.5} />,
-                content: "Returns",
+                icon: <CircleDollarSign size={20} strokeWidth={1.5} />,
+                content: "Payments",
                 getIsActive: (pathname) =>
-                    pathname.startsWith("/inventory/returns"),
-                link: "/inventory/returns",
-            },
-            {
-                icon: <LineChart size={20} strokeWidth={1.5} />,
-                content: "Sales Analytics",
-                getIsActive: (pathname) =>
-                    pathname.startsWith("/inventory/sales-reports"),
-                link: "/inventory/sales-reports",
-            },
-            {
-                icon: <PieChart size={20} strokeWidth={1.5} />,
-                content: "Inventory Reports",
-                getIsActive: (pathname) =>
-                    pathname.startsWith("/inventory/store-reports"),
-                link: "/inventory/store-reports",
-            },
-            {
-                icon: <UsersRound size={20} strokeWidth={1.5} />,
-                content: "Customers",
-                getIsActive: (pathname) =>
-                    pathname.startsWith("/inventory/customers"),
-                link: "/inventory/customers",
-            },
-        ],
+                    pathname.startsWith("/inventory/payments"),
+                link: "/inventory/payments",
+            }
+        ]
     },
     {
-        name: "Garage",
-        path: "garage",
+        name: "Business Insights",
         show: true,
         items: [
             {
-                icon: <LineChart size={20} strokeWidth={1.5} />,
-                content: "Sales Analytics",
+                icon: <TrendingUp size={20} strokeWidth={1.5} />,
+                content: "Sales Trends",
                 getIsActive: (pathname) =>
-                    pathname.startsWith("/garage/sales-reports"),
-                link: "/garage/sales-reports",
+                    pathname.startsWith("/inventory/sales-trends"),
+                link: "/inventory/sales-trends",
             },
             {
-                icon: <PieChart size={20} strokeWidth={1.5} />,
-                content: "Inventory Reports",
+                icon: <CandlestickChart size={20} strokeWidth={1.5} />,
+                content: "Profit & Loss",
                 getIsActive: (pathname) =>
-                    pathname.startsWith("/garage/store-reports"),
-                link: "/garage/store-reports",
+                    pathname.startsWith("/inventory/profit-loss"),
+                link: "/inventory/profit-loss",
             },
             {
-                icon: <UsersRound size={20} strokeWidth={1.5} />,
-                content: "Customers",
+                icon: <AreaChart size={20} strokeWidth={1.5} />,
+                content: "Revenue Analysis",
                 getIsActive: (pathname) =>
-                    pathname.startsWith("/garage/customers"),
-                link: "/garage/customers",
-            },
-        ],
+                    pathname.startsWith("/inventory/revenue-analysis"),
+                link: "/inventory/revenue-analysis",
+            }
+        ]
     },
+    {
+        name: "Access Control",
+        show: true,
+        items: [
+            {
+                icon: <Users size={20} strokeWidth={1.5} />,
+                content: "Manage Staff",
+                getIsActive: (pathname) =>
+                    pathname.startsWith("/staff"),
+                link: "/staff",
+            },
+            {
+                icon: <UserRoundCog size={20} strokeWidth={1.5} />,
+                content: "Manage Roles",
+                getIsActive: (pathname) =>
+                    pathname.startsWith("/roles"),
+                link: "/roles",
+            },
+            {
+                icon: <Scroll size={20} strokeWidth={1.5} />,
+                content: "Activity Logs",
+                getIsActive: (pathname) =>
+                    pathname.startsWith("/activity-logs"),
+                link: "/activity-logs",
+            }
+
+
+        ],
+    }
 ];
 
 export default function DashboardLayout({
