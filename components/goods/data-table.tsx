@@ -8,6 +8,7 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Suspense } from "react";
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
@@ -31,22 +32,8 @@ import GoodsFilters from "./filters";
 import { useQueryState } from "nuqs";
 import GoodsSearch from "./search";
 
-interface TableHeader {
-    id: string;
-    name: string;
-    isVisible: boolean;
-    isPresent?: boolean;
-}
-interface TableFilter {
-    id: string;
-    name: string;
-    type: string;
-}
-
 interface DataTableProps {
     data: Good[];
-    headers: TableHeader[];
-    filters: TableFilter[];
     onChangeGood: (id: string, title: string) => void;
     onNext: () => void;
     onPrev: () => void;
@@ -58,9 +45,6 @@ interface DataTableProps {
 
 export const DataTable: FC<DataTableProps> = ({
     data,
-    headers,
-    filters,
-    onChangeGood,
     onNext,
     onPrev,
     page,
@@ -86,9 +70,13 @@ export const DataTable: FC<DataTableProps> = ({
             <div className=" w-inherit md:w-[calc(100%-60px)] box-border flex flex-col bg-white py-3 overflow-auto rounded-t-md m-[30px] border border-pri-3 h-[calc(100% - 550px)]">
                 <div className="px-3">
                     <div className="flex flex-row justify-between flex-wrap items-center">
-                        <GoodsSearch />
+                        <Suspense>
+                            <GoodsSearch />
+                        </Suspense>
                         <div className="flex flex-row justify-start items-center gap-[10px] py-3">
-                            <GoodsFilters />
+                            <Suspense>
+                                <GoodsFilters />
+                            </Suspense>
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button
