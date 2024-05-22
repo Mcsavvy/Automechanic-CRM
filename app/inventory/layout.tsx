@@ -1,35 +1,167 @@
-"use client"
+"use client";
 import React from "react";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/lib/providers/auth-store-provider";
 import MainDropdown from "../../components/dropdown/MainDropdown";
 import AddNewStaffModal from "../../components/modals/AddNewStaffModal";
 import { useRouter, usePathname } from "next/navigation";
-import { ChevronDown, ChevronRight, LineChart, Receipt, TriangleAlert, PieChart, Store, Bell, NotebookTabs, UsersRound, User, LogOut, SquareChevronLeft, SquareChevronRight, EllipsisVertical } from "lucide-react";
+import {
+    ChevronDown,
+    ChevronRight,
+    LineChart,
+    Receipt,
+    TriangleAlert,
+    PieChart,
+    Store,
+    Bell,
+    NotebookTabs,
+    UsersRound,
+    User,
+    LogOut,
+    SquareChevronLeft,
+    SquareChevronRight,
+    EllipsisVertical,
+} from "lucide-react";
+
+interface BaseSectionItem {
+    icon: React.ReactNode;
+    content: React.ReactNode | string;
+    getIsActive: (pathname: string) => boolean;
+}
+
+type SectionItem =
+    | (BaseSectionItem & { link: string })
+    | (BaseSectionItem & { onClick: () => void });
+
+interface Section {
+    name: string;
+    content?: React.ReactNode;
+    path: string;
+    items: SectionItem[];
+    show: boolean;
+}
+
+const sections: Section[] = [
+    {
+        name: "Inventory",
+        path: "inventory",
+        show: true,
+        items: [
+            {
+                icon: <Store size={20} strokeWidth={1.5} />,
+                content: "Overview",
+                getIsActive: (pathname) =>
+                    pathname.startsWith("/inventory/overview"),
+                link: "/inventory/overview",
+            },
+            {
+                icon: <Bell size={20} strokeWidth={1.5} />,
+                content: "Low Stock Alerts",
+                getIsActive: (pathname) =>
+                    pathname.startsWith("/inventory/alerts"),
+                link: "/inventory/alerts",
+            },
+            {
+                icon: <NotebookTabs size={20} strokeWidth={1.5} />,
+                content: "Orders",
+                getIsActive: (pathname) =>
+                    pathname.startsWith("/inventory/orders"),
+                link: "/inventory/orders",
+            },
+            {
+                icon: <Receipt size={20} strokeWidth={1.5} />,
+                content: "Invoices",
+                getIsActive: (pathname) =>
+                    pathname.startsWith("/inventory/invoices"),
+                link: "/inventory/invoices",
+            },
+            {
+                icon: <TriangleAlert size={20} strokeWidth={1.5} />,
+                content: "Returns",
+                getIsActive: (pathname) =>
+                    pathname.startsWith("/inventory/returns"),
+                link: "/inventory/returns",
+            },
+            {
+                icon: <LineChart size={20} strokeWidth={1.5} />,
+                content: "Sales Analytics",
+                getIsActive: (pathname) =>
+                    pathname.startsWith("/inventory/sales-reports"),
+                link: "/inventory/sales-reports",
+            },
+            {
+                icon: <PieChart size={20} strokeWidth={1.5} />,
+                content: "Inventory Reports",
+                getIsActive: (pathname) =>
+                    pathname.startsWith("/inventory/store-reports"),
+                link: "/inventory/store-reports",
+            },
+            {
+                icon: <UsersRound size={20} strokeWidth={1.5} />,
+                content: "Customers",
+                getIsActive: (pathname) =>
+                    pathname.startsWith("/inventory/customers"),
+                link: "/inventory/customers",
+            },
+        ],
+    },
+    {
+        name: "Garage",
+        path: "garage",
+        show: true,
+        items: [
+            {
+                icon: <LineChart size={20} strokeWidth={1.5} />,
+                content: "Sales Analytics",
+                getIsActive: (pathname) =>
+                    pathname.startsWith("/garage/sales-reports"),
+                link: "/garage/sales-reports",
+            },
+            {
+                icon: <PieChart size={20} strokeWidth={1.5} />,
+                content: "Inventory Reports",
+                getIsActive: (pathname) =>
+                    pathname.startsWith("/garage/store-reports"),
+                link: "/garage/store-reports",
+            },
+            {
+                icon: <UsersRound size={20} strokeWidth={1.5} />,
+                content: "Customers",
+                getIsActive: (pathname) =>
+                    pathname.startsWith("/garage/customers"),
+                link: "/garage/customers",
+            },
+        ],
+    },
+];
+
 export default function DashboardLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
-    const [menu, setMenu] = useState(true);
-    const [app, setApp] = useState(false);
+    const [showMenu, setShowMenu] = useState(true);
     const [showDropdown, setShowDropdown] = useState(false);
-    const [currApp, setCurrApp] = useState("Inventory");
     const { loggedIn, firstName } = useAuthStore((state) => state);
-    const [showInventory, setShowInventory] = useState(true)
-    const [showGarage, setShowGarage] = useState(true)
+    const [showSections, setShowSections] = useState<{
+        [key: string]: boolean;
+    }>({});
     const router = useRouter();
     const pathname = usePathname();
-    const toggleMenu = () => {
-        setMenu(!menu);
-    };
-    const toggleApp = () => {
-        setApp(!app);
-    };
-    const changeApp = (app: string) => {
-        setCurrApp(app);
-        setApp(!app);
-    };
+
+    function toggleSection(section: string, defaultValue = true) {
+        setShowSections((prev) => ({
+            ...prev,
+            [section]: !(prev[section] === undefined
+                ? defaultValue
+                : prev[section]),
+        }));
+    }
+
+    function canShowSection(section: string, defaultValue = true): boolean {
+        return showSections[section] === undefined ? defaultValue : showSections[section];
+    }
+
 
     useEffect(() => {
         // if (!loggedIn) {
@@ -37,15 +169,13 @@ export default function DashboardLayout({
         // }
     });
     useEffect(() => {
-        setMenu(window.innerWidth > 768)
-    }, [])
-    const checkActive = (path: string) => {
-        const pathValue = `/${currApp.toLowerCase()}/${path}`;
-        return pathname.startsWith(pathValue) ? "active-nav" : "";
-    };
-    const navigateTo = (path: string) => {
-        router.push(`/${currApp.toLowerCase()}/${path}`);
-    };
+        setShowMenu(window.innerWidth > 768);
+        function handleResize() {
+            setShowMenu(window.innerWidth > 768);
+        }
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
     return (
         <React.Fragment>
@@ -53,7 +183,7 @@ export default function DashboardLayout({
             <div className="fixed flex flex-row items-center justify-start top-0 left-0">
                 <nav
                     className={`fixed top-0 md:relative h-screen bg-white w-[220px] flex flex-col flex-shrink-0 transition-all duration-300 ease-in-out ${
-                        menu ? "left-0" : "-left-[219px]"
+                        showMenu ? "left-0" : "-left-[219px]"
                     } border-r border-neu-3 border-1 shadow-lg text-neu-9 font-heading z-50 `}
                 >
                     <div className="header">
@@ -62,199 +192,91 @@ export default function DashboardLayout({
                         </h1>
                     </div>
 
-                    {menu ? (
+                    {showMenu ? (
                         <SquareChevronLeft
                             size={28}
                             strokeWidth={1.5}
-                            onClick={toggleMenu}
+                            onClick={() => setShowMenu((prev) => !prev)}
                             className="absolute top-[20px] right-[-40px] cursor-pointer text-black transition active:scale-95 duration-200 ease-in z-30"
                         />
                     ) : (
                         <SquareChevronRight
                             strokeWidth={1.5}
                             size={28}
-                            onClick={toggleMenu}
+                            onClick={() => setShowMenu((prev) => !prev)}
                             className="absolute top-[20px] right-[-40px] cursor-pointer text-black transition active:scale-95 duration-200 ease-in z-30"
                         />
                     )}
                     <ul className="flex flex-col p-[10px] py-[30px] gap-[15px] overflow-y-auto scrollbar-thin mb-[50px]">
-                        <li>
-                            <h3
-                                onClick={() => setShowInventory(!showInventory)}
-                                className="cursor-pointer text-pri-6 font-[600] w-full font-heading flex flex-row items-center justify-between"
-                            >
-                                Inventory
-                                {showInventory ? (
-                                    <ChevronDown strokeWidth={1.5} size={20} />
-                                ) : (
-                                    <ChevronRight strokeWidth={1.5} size={20} />
-                                )}{" "}
-                            </h3>
-                            {showInventory && (
-                                <ul className="flex flex-col">
-                                    <li
-                                        onClick={() => navigateTo("overview")}
-                                        className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[15px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive(
-                                            "overview"
-                                        )}`}
-                                    >
-                                        <Store size={20} strokeWidth={1.5} />
-                                        Overview
-                                    </li>
-                                    <li
-                                        onClick={() => navigateTo("alerts")}
-                                        className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[15px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive(
-                                            "alerts"
-                                        )}`}
-                                    >
-                                        <Bell size={20} strokeWidth={1.5} />
-                                        Low Stock Alerts
-                                    </li>
-                                    <li
-                                        onClick={() => navigateTo("orders")}
-                                        className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[15px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive(
-                                            "orders"
-                                        )}`}
-                                    >
-                                        <NotebookTabs
-                                            size={20}
+                        {sections.map((section) => (
+                            <li key={section.name}>
+                                <h3
+                                    onClick={() =>
+                                        toggleSection(
+                                            section.name,
+                                            section.show
+                                        )
+                                    }
+                                    className="cursor-pointer text-pri-6 font-[600] w-full font-heading flex flex-row items-center justify-between"
+                                >
+                                    {section.content || section.name}
+                                    {canShowSection(section.name, section.show) ? (
+                                        <ChevronDown
                                             strokeWidth={1.5}
-                                        />
-                                        Orders
-                                    </li>
-                                    <li
-                                        onClick={() => navigateTo("invoices")}
-                                        className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[15px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive(
-                                            "invoices"
-                                        )}`}
-                                    >
-                                        <Receipt size={20} strokeWidth={1.5} />
-                                        Invoices
-                                    </li>
-                                    <li
-                                        onClick={() => navigateTo("returns")}
-                                        className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[15px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive(
-                                            "returns"
-                                        )}`}
-                                    >
-                                        <TriangleAlert
                                             size={20}
-                                            strokeWidth={1.5}
                                         />
-                                        Returns
-                                    </li>
-                                    <li
-                                        onClick={() =>
-                                            navigateTo("sales-reports")
-                                        }
-                                        className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[15px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive(
-                                            "sales-reports"
-                                        )}`}
-                                    >
-                                        <LineChart
+                                    ) : (
+                                        <ChevronRight
+                                            strokeWidth={1.5}
                                             size={20}
-                                            strokeWidth={1.5}
                                         />
-                                        Sales Analytics
-                                    </li>
-                                    <li
-                                        onClick={() =>
-                                            navigateTo("store-reports")
-                                        }
-                                        className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[15px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive(
-                                            "store-reports"
-                                        )}`}
-                                    >
-                                        <PieChart size={20} strokeWidth={1.5} />
-                                        Inventory Reports
-                                    </li>
-                                    <li
-                                        onClick={() => navigateTo("customers")}
-                                        className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[15px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive(
-                                            "sales-reports"
-                                        )}`}
-                                    >
-                                        <UsersRound
-                                            size={20}
-                                            strokeWidth={1.5}
-                                        />
-                                        Customers
-                                    </li>
-                                </ul>
-                            )}
-                        </li>
-                        <li>
-                            <h3
-                                onClick={() => setShowGarage(!showGarage)}
-                                className="cursor-pointer text-pri-6 font-semibold w-full font-[600] flex flex-row items-center justify-between"
-                            >
-                                Garage
-                                {showGarage ? (
-                                    <ChevronDown strokeWidth={1.5} size={20} />
-                                ) : (
-                                    <ChevronRight strokeWidth={1.5} size={20} />
+                                    )}{" "}
+                                </h3>
+                                {canShowSection(section.name, section.show) && (
+                                    <ul className="flex flex-col">
+                                        {section.items.map((item, idx) => (
+                                            <li
+                                                key={idx}
+                                                onClick={
+                                                    "link" in item
+                                                        ? () =>
+                                                              router.push(
+                                                                  item.link
+                                                              )
+                                                        : item.onClick
+                                                }
+                                                className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[15px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${
+                                                    item.getIsActive(pathname)
+                                                        ? "active-nav"
+                                                        : ""
+                                                }`}
+                                            >
+                                                {item.icon}
+                                                {item.content}
+                                            </li>
+                                        ))}
+                                    </ul>
                                 )}
-                            </h3>
-                            {showGarage && (
-                                <ul className="flex flex-col">
-                                    <li
-                                        onClick={() =>
-                                            navigateTo("sales-reports")
-                                        }
-                                        className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[15px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive(
-                                            "sales-reports"
-                                        )}`}
-                                    >
-                                        <LineChart
-                                            size={20}
-                                            strokeWidth={1.5}
-                                        />
-                                        Sales Analytics
-                                    </li>
-                                    <li
-                                        onClick={() =>
-                                            navigateTo("store-reports")
-                                        }
-                                        className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[15px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive(
-                                            "store-reports"
-                                        )}`}
-                                    >
-                                        <PieChart size={20} strokeWidth={1.5} />
-                                        Inventory Reports
-                                    </li>
-                                    <li
-                                        onClick={() => navigateTo("customers")}
-                                        className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[15px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${checkActive(
-                                            "sales-reports"
-                                        )}`}
-                                    >
-                                        <UsersRound
-                                            size={20}
-                                            strokeWidth={1.5}
-                                        />
-                                        Customers
-                                    </li>
-                                </ul>
-                            )}
-                        </li>
+                            </li>
+                        ))}
                     </ul>
                 </nav>
                 <main
                     className={`relative top-0 flex flex-column w-screen ${
-                        menu ? "md:w-[calc(100vw-220px)]" : "md:w-screen"
+                        showMenu ? "md:w-[calc(100vw-220px)]" : "md:w-screen"
                     }  m-small pt-[40px] bg-neu-1 ${
-                        menu ? "md:left-0" : "md:left-[-220px]"
+                        showMenu ? "md:left-0" : "md:left-[-220px]"
                     } flex-grow h-screen overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out font-body`}
                 >
-                    {menu && (
+                    {showMenu && (
                         <div
                             className="md:w-0 md:h-0 transition-width duration-300 ease flex w-full h-full fixed left-0 top-0 bg-black bg-opacity-50 z-40 backdrop-blur-md"
-                            onClick={toggleMenu}
+                            onClick={() => setShowMenu(false)}
                         ></div>
                     )}
                     <header
                         className={`fixed top-0 right-0 w-screen h-[60px] ${
-                            menu ? "md:w-[calc(100vw-220px)]" : "md:w-screen"
+                            showMenu ? "md:w-[calc(100vw-220px)]" : "md:w-screen"
                         }  border-b border-neu-3 bg-white overflow-visible z-30 transition-all duration-200 ease-in`}
                     >
                         <div className="relative">
