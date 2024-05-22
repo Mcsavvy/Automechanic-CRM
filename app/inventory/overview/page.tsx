@@ -11,26 +11,6 @@ import Good from "@/lib/@types/goods";
 import { DataTable } from "@/components/goods/data-table";
 import { GoodStoreProvider, useGoodStore } from "@/lib/providers/good-store-provider";
 
-const tableHeaders = [
-    {
-        id: "productName",
-        name: "Product Name",
-        isVisible: true,
-        isPresent: true,
-    },
-    { id: "category", name: "Category", isVisible: true },
-    { id: "productId", name: "Product ID", isVisible: true },
-    { id: "unitPrice", name: "Unit Price", isVisible: true },
-    { id: "qty", name: "In Stock", isVisible: true },
-    { id: "totalValue", name: "Total Value", isVisible: true },
-    { id: "status", name: "Status", isVisible: true },
-];
-const dataFilters = [
-    { id: "productName", name: "Product Name", type: "text" },
-    { id: "productId", name: "Product ID", type: "text" },
-    { id: "qty", name: "In Stock", type: "number" },
-    { id: "status", name: "Status", type: "text" },
-];
 export default function Home() {
     const [goodId, setGoodId] = useState("");
     const [goodTitle, setGoodTitle] = useState("");

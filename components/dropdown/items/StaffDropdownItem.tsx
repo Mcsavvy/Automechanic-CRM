@@ -1,4 +1,4 @@
-import { FaAngleDown, FaAngleRight } from "react-icons/fa";
+import { ChevronDown, ChevronRight } from "lucide-react";
 import { useState } from "react";
 
 const StaffDropdownItem = () => {
@@ -12,9 +12,9 @@ const StaffDropdownItem = () => {
       >
         <span>Staffs</span>
         {show ? (
-          <FaAngleDown className="inline-block" />
+          <ChevronDown className="inline-block" />
         ) : (
-          <FaAngleRight className="inline-block" />
+          <ChevronRight strokeWidth={1.5} size={18}/>
         )}
       </div>
       <div

@@ -134,8 +134,8 @@ const sections: Section[] = [
                 icon: <Users size={20} strokeWidth={1.5} />,
                 content: "Manage Staff",
                 getIsActive: (pathname) =>
-                    pathname.startsWith("/staff"),
-                link: "/staff",
+                    pathname.startsWith("/inventory/staffs"),
+                link: "/inventory/staffs",
             },
             {
                 icon: <UserRoundCog size={20} strokeWidth={1.5} />,
