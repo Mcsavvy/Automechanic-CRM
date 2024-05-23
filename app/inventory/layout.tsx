@@ -32,6 +32,8 @@ import {
     Users,
     UserRoundCog,
     Scroll,
+    Fingerprint,
+    CircleUser,
 } from "lucide-react";
 
 interface BaseSectionItem {
@@ -58,7 +60,7 @@ const sections: Section[] = [
         items: [
             {
                 icon: <Package size={20} strokeWidth={1.5} />,
-                content: "Products",
+                content: "Overview",
                 getIsActive: (pathname) =>
                     pathname.startsWith("/inventory/overview"),
                 link: "/inventory/overview",
@@ -70,12 +72,6 @@ const sections: Section[] = [
                     pathname.startsWith("/inventory/reports"),
                 link: "/inventory/reports",
             },
-        ],
-    },
-    {
-        name: "Sales",
-        show: true,
-        items: [
             {
                 icon: <ShoppingCart size={20} strokeWidth={1.5} />,
                 content: "Orders",
@@ -96,13 +92,14 @@ const sections: Section[] = [
                 getIsActive: (pathname) =>
                     pathname.startsWith("/inventory/payments"),
                 link: "/inventory/payments",
-            }
-        ]
-    },
-    {
-        name: "Business Insights",
-        show: true,
-        items: [
+            },
+            {
+                icon: <Users size={20} strokeWidth={1.5} />,
+                content: "Customers",
+                getIsActive: (pathname) =>
+                    pathname.startsWith("/inventory/customers"),
+                link: "/inventory/customers",
+            },
             {
                 icon: <TrendingUp size={20} strokeWidth={1.5} />,
                 content: "Sales Trends",
@@ -124,21 +121,21 @@ const sections: Section[] = [
                     pathname.startsWith("/inventory/revenue-analysis"),
                 link: "/inventory/revenue-analysis",
             }
-        ]
+        ],
     },
     {
         name: "Access Control",
         show: true,
         items: [
             {
-                icon: <Users size={20} strokeWidth={1.5} />,
+                icon: <CircleUser size={20} strokeWidth={1.5} />,
                 content: "Manage Staff",
                 getIsActive: (pathname) =>
                     pathname.startsWith("/staff"),
                 link: "/staff",
             },
             {
-                icon: <UserRoundCog size={20} strokeWidth={1.5} />,
+                icon: <Fingerprint size={20} strokeWidth={1.5} />,
                 content: "Manage Roles",
                 getIsActive: (pathname) =>
                     pathname.startsWith("/roles"),
