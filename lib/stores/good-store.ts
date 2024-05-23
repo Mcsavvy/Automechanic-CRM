@@ -95,10 +95,12 @@ export const createGood = async (good: GoodCreate): Promise<Good> => {
         return {
             id: newGood.id as string,
             name: newGood.name as string,
+            description: newGood.description as string,
             categories: newGood.categories as string[],
             productCode: newGood.productId as string,
             unitPrice: newGood.costPrice as number,
             qtyInStock: newGood.qty as number,
+            minQtyThreshold: newGood.minQty as number,
             totalValue: newGood.costPrice * newGood.qty,
             status:
                 newGood.qty > newGood.minQty
@@ -125,10 +127,12 @@ export const updateGood = async (
         return {
             id: goodId,
             name: updatedGood.name as string,
+            description: updatedGood.description as string,
             categories: updatedGood.categories as string[],
             productCode: updatedGood.productId as string,
             unitPrice: updatedGood.costPrice as number,
             qtyInStock: updatedGood.qty as number,
+            minQtyThreshold: updatedGood.minQty as number,
             totalValue: updatedGood.costPrice * updatedGood.qty,
             status:
                 updatedGood.qty > updatedGood.minQty
@@ -152,10 +156,12 @@ export const getGood = async (goodId: string): Promise<Good> => {
         return {
             id: goodId,
             name: good.name as string,
+            description: good.description as string,
             categories: good.categories as string[],
             productCode: good.productId as string,
             unitPrice: good.costPrice as number,
             qtyInStock: good.qty as number,
+            minQtyThreshold: good.minQty as number,
             totalValue: good.costPrice * good.qty,
             status:
                 good.qty > good.minQty
@@ -206,10 +212,12 @@ export const getGoods = async (
             goods: goods.map((good: any) => ({
                 id: good.id as string,
                 name: good.name as string,
+                description: good.description as string,
                 categories: good.categories as string[],
                 productCode: good.productId as string,
                 unitPrice: good.costPrice as number,
                 qtyInStock: good.qty as number,
+                minQtyThreshold: good.minQty as number,
                 totalValue: good.costPrice * good.qty,
                 status:
                     good.qty > good.minQty
