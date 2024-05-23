@@ -4,6 +4,7 @@ export default interface Staff {
     lastName: string;
     email: string;
     phone: string;
+    password?: string;
     permissions: {
         [key: string]: string[] | boolean;
     };

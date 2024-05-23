@@ -12,7 +12,7 @@ import {
     Trash,
     X
 } from "lucide-react";
-import {GoodFilter} from "@/lib/stores/good-store";
+import {StaffFilter} from "@/lib/stores/staff-store";
 import {
     Select,
     SelectContent,
@@ -23,15 +23,15 @@ import {
 } from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import { useQueryState } from "nuqs";
-import { useGoodStore } from "@/lib/providers/good-store-provider";
+import { useStaffStore } from "@/lib/providers/staff-store-provider";
 import { useEffect } from "react";
 
-export default function GoodsFilters() {
+export default function StaffsFilters() {
     // @ts-ignore
     const [selectedCategory, setSelectedCategory] = useQueryState<string>("category", {defaultValue: ""});
     // @ts-ignore
     const [selectedStatus, setSelectedStatus] = useQueryState<string>("status", {defaultValue: ""});
-    const {applyFilter, filter, allCategories, loaded} = useGoodStore((state) => state);
+    const {applyFilter, filter, loaded} = useStaffStore((state) => state);
 
     useEffect(() => {
         if (!loaded) return;
@@ -41,19 +41,19 @@ export default function GoodsFilters() {
 
     useEffect(() => {
         if (!loaded) return;
-        applyFilter({...filter, status: selectedStatus as "in-stock" | "low-stock" | "out-of-stock"});
+        applyFilter({...filter, status: selectedStatus as "active" | "banned"});
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedStatus]);
     
     function handleApplyFilters() {
-        const newFilter: GoodFilter = {...filter};
+        const newFilter: StaffFilter = {...filter};
         if (selectedCategory.length) {
             newFilter.category = selectedCategory.trim();
         } else {
             delete newFilter.category;
         }
         if (selectedStatus.length) {
-            newFilter.status = selectedStatus.trim() as "in-stock" | "low-stock" | "out-of-stock";
+            newFilter.status = selectedStatus.trim() as "active" | "banned";
         } else {
             delete newFilter.status;
         }
@@ -86,7 +86,7 @@ export default function GoodsFilters() {
                                 <X size={20} strokeWidth={1.5} />
                             </Button>
                         </div>
-                        <SelectContent>
+                        {/* <SelectContent>
                             <SelectGroup>
                                 {allCategories.map((category) => (
                                     <SelectItem key={category} value={category}>
@@ -94,7 +94,7 @@ export default function GoodsFilters() {
                                     </SelectItem>
                                 ))}
                             </SelectGroup>
-                        </SelectContent>
+                        </SelectContent> */}
                     </Select>
                     <Select
                         value={selectedStatus}

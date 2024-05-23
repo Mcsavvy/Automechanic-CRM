@@ -8,10 +8,8 @@ interface StaffCreate {
     lastName: string;
     email: string;
     phone: string;
-    
-    description: string;
-    minQty: number;
-    productId: string;
+    permissions?: string[];
+    password?: string;
 }
 
 interface PaginatedStaffs {
@@ -55,21 +53,6 @@ export interface StaffActions {
 }
 
 export type StaffStore = StaffState & StaffActions;
-export const goodCategories = [
-    "Engine Parts",
-    "Transmission Parts",
-    "Suspension and Steering",
-    "Brakes",
-    "Exhaust and Emission",
-    "Cooling System",
-    "Electrical and Lighting",
-    "Fuel System",
-    "Body and Interior",
-    "Tires and Wheels",
-    "Lubricants and Fluids",
-    "Tools and Equipment",
-    "Accessories",
-];
 
 export const defaultStaffState: StaffState = {
     staff: [],
@@ -181,9 +164,10 @@ export const getStaffs = async (
         if (response.status !== 200) {
             throw response;
         }
-        const staff: any[] = response.data.staff;
+        const staffs: any[] = response.data.staffs;
+        console.log(staffs)
         return {
-            staff: staff.map((staff: any) => ({
+            staff: staffs.map((staff: any) => ({
                 id: staff.id as string,
                 firstName: staff.firstName as string,
                 lastName: staff.lastName as string,

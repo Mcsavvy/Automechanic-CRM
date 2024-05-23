@@ -26,15 +26,15 @@ import {
     useReactTable,
 } from "@tanstack/react-table";
 
-import { columns} from "@/components/goods/columns";
-import Good from "@/lib/@types/goods";
-import GoodsFilters from "./filters";
+import { columns} from "@/components/staff/columns";
+import Staff from "@/lib/@types/staff";
+import StaffsFilters from "./filters";
 import { useQueryState } from "nuqs";
-import GoodsSearch from "./search";
+import StaffsSearch from "./search";
 
 interface DataTableProps {
-    data: Good[];
-    onChangeGood: (id: string, title: string) => void;
+    data: Staff[];
+    onChangeStaff: (id: string, title: string) => void;
     onNext: () => void;
     onPrev: () => void;
     page: number;
@@ -71,11 +71,11 @@ export const DataTable: FC<DataTableProps> = ({
                 <div className="px-3">
                     <div className="flex flex-row justify-between flex-wrap items-center">
                         <Suspense>
-                            <GoodsSearch />
+                            <StaffsSearch />
                         </Suspense>
                         <div className="flex flex-row justify-start items-center gap-[10px] py-3">
                             <Suspense>
-                                <GoodsFilters />
+                                <StaffsFilters />
                             </Suspense>
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
@@ -197,7 +197,7 @@ export const DataTable: FC<DataTableProps> = ({
                     </Button>
                 </div>
                 <p>
-                    - Page <span className="text-pri-6">{page}</span> of{" "}
+                    Page <span className="text-pri-6">{page}</span> of{" "}
                     <span className="text-pri-6">{pageCount}</span>
                 </p>
             </div>

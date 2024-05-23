@@ -1,7 +1,7 @@
 'use client';
 import { type ReactNode, createContext, useRef, useContext, useState, useEffect } from "react";
 import { type StoreApi, useStore } from "zustand";
-import { type StaffStore, createStaffStore, defaultStaffState, getStaffs, getCategories } from "../stores/good-store";
+import { type StaffStore, createStaffStore, defaultStaffState, getStaffs } from "../stores/staff-store";
 import { useQueryState } from "nuqs";
 
 export const StaffStoreContext = createContext<StoreApi<StaffStore> | null>(null);
@@ -25,10 +25,8 @@ export function StaffStoreProvider({ children }: { children: ReactNode }) {
         if (storeStatus.current == "idle") {
             storeStatus.current = "loading";
             getStaffs(page, limit, filter).then((state): void => {
+                console.log("state", state)
                 store.current.setState({...state, filter, loaded: true});
-                getCategories().then((categories) => {
-                    store.current.setState({ allCategories: categories });
-                });
                 storeStatus.current = "ready";
             });
         }
