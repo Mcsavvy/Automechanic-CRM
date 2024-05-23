@@ -5,7 +5,6 @@ import {
   defineModel,
   defineModelWithPaginate,
 } from "../../common/models/base";
-import paginate from "mongoose-paginate-v2";
 
 export interface IGoodDocument extends IBaseDocument {
   name: string;

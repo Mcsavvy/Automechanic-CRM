@@ -18,15 +18,9 @@ export default function MainDropdown({ show, setShow }: MainDropdownProps) {
         className="py-2 text-sm text-gray-700"
         aria-labelledby="dropdownDefaultButton"
       >
-        <StaffDropdownItem />
         <li>
           <a href="/inventory/settings" className="block px-4 py-2 hover:bg-gray-100">
             Settings
-          </a>
-        </li>
-        <li>
-          <a href="#" className="block px-4 py-2 hover:bg-gray-100">
-            Earnings
           </a>
         </li>
         <li>
