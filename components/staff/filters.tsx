@@ -116,14 +116,11 @@ export default function StaffsFilters() {
                         </div>
                         <SelectContent>
                             <SelectGroup>
-                                <SelectItem value={"in-stock"}>
-                                    In Stock
+                                <SelectItem value={"active"}>
+                                    Active
                                 </SelectItem>
-                                <SelectItem value={"low-stock"}>
-                                    Low Stock
-                                </SelectItem>
-                                <SelectItem value={"out-of-stock"}>
-                                    Out of Stock
+                                <SelectItem value={"banned"}>
+                                    Banned
                                 </SelectItem>
                             </SelectGroup>
                         </SelectContent>

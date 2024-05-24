@@ -16,20 +16,18 @@ export const GET = permissionRequired(Permission.AllowAny())(async function (
         | "active"
         | "banned"
         | null;
-    // const category = (req.nextUrl.searchParams.get("c") as string | null) || "";
     const query: FilterQuery<IUserDocument> = {};
+    console.log("Search", search, status)
     if (status) {
         query.status = status
     }
     if (search.length > 0) {
         query.$or = [
-            { name: { $regex: search, $options: "i" } },
-            { code: { $regex: search, $options: "i" } },
+            { firstName: { $regex: search, $options: "i" } },
+            { lastName: { $regex: search, $options: "i" } },
+            { email: { $regex: search, $options: "i" } },
         ];
     }
-    // if (category.length > 0) {
-    //     query.categories = { $in: [category] };
-    // }
     const results = await User.paginate(query, {
         limit,
         page,

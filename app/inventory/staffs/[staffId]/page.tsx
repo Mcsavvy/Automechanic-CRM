@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { IoMdClose } from "react-icons/io";
 import React from "react";
 import { toast } from "react-toastify";
 import { CgSpinner } from "react-icons/cg";
@@ -9,7 +8,7 @@ import axios from "axios";
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useAuthStore } from "@/lib/providers/auth-store-provider";
-import { Eye, EyeOff, ChevronRight, ChevronDown } from 'lucide-react'
+import { Pencil } from 'lucide-react'
 async function getGroups() {
     const response = await fetch("/api/group/all");
     const groups: { id: string; name: string }[] = await response.json();
@@ -111,11 +110,6 @@ export default function Settings() {
     const [lastname, setLastname] = useState<string>("");
     const [email, setEmail] = useState<string>("");
     const [phone, setPhone] = useState<string>("");
-    const [showSecurity, setShowSecurity] = useState(false);
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [showPassword, setShowPassword] = useState(false);
-
     const [selectedGroups, setSelectedGroups] = useState<
         readonly { label: string; value: string }[]
     >([]);
@@ -139,7 +133,7 @@ export default function Settings() {
             >
                 <div className="flex items-center justify-between p-4 border-b rounded-t">
                     <h3 className="text-xl font-semibold text-gray-900">
-                        Your Profile
+                        James Baldwin GeorgeCook
                     </h3>
                 </div>
                 <div className="p-4 md:p-5 flex flex-col gap-4">
@@ -212,7 +206,7 @@ export default function Settings() {
                             />
                         </div>
                         <div>
-                            <h3 className="block mb-2 text-sm font-medium text-gray-900">Groups</h3>
+                            <Button variant="ghost" className="block mb-2 flex flex-row items-center justify-start gap-4 cursor-pointer text-sm font-medium text-gray-900">Groups<Pencil strokeWidth={1.5} size={18}/></Button>
                             <ul className="flex flex-row items-center justify-start gap-3">
                                 <li className="text-pri-3 border border-neu-3 rounded-md p-1">Admin</li>
                                 <li className="text-pri-3 border border-neu-3 rounded-md p-1">Mechanic</li>
@@ -270,43 +264,6 @@ export default function Settings() {
                             The Staff&apos;s Password Is The Same As Their Email
                         </div> */}
                     </form>
-                    <div className="w-full">
-                        <h3 className="flex flex-row items-center justify-start gap-6 font-heading font-semibold text-pri-6" onClick={() => setShowSecurity(!showSecurity)}>Security {showSecurity ? <ChevronDown size={20} strokeWidth={1.5} /> : <ChevronRight size={20} strokeWidth={1.5} />}</h3>
-                        {showSecurity &&
-                            <div className="flex flex-col py-5 gap-4 bg-white">
-                                <div>
-                                    <label
-                                        htmlFor="pwd"
-                                        className="block mb-2 text-sm font-medium text-gray-900"
-                                    >
-                                        New Password
-                                    </label>
-                                    <Input
-                                        type="password"
-                                        name="pwd"
-                                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                        placeholder="admin1234"
-                                        required
-                                    />
-                                </div>
-                                <div>
-                                    <label
-                                        htmlFor="confirm-password"
-                                        className="block mb-2 text-sm font-medium text-gray-900"
-                                    >
-                                        Confirm Password
-                                    </label>
-                                    <Input
-                                        type="password"
-                                        name="confirm-password"
-                                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                        placeholder="admin1234"
-                                        required
-                                    />
-                                </div>
-                                <Button>Change Password </Button>
-                            </div>}
-                    </div>
                 </div>
             </div >
         </div >

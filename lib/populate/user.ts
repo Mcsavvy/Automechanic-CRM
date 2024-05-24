@@ -11,7 +11,7 @@ export default async function populateUsers(number: number) {
             password: email,
             firstName: faker.person.firstName(),
             lastName: faker.person.lastName(),
-            phone: faker.phone.number(),
+            phone: `+234${faker.string.numeric(10)}`,
         });
         users.push(user);
     }

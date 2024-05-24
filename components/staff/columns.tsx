@@ -29,9 +29,11 @@ export const columns: ColumnDef<Staff>[] = [
         header: "First Name",
         enableHiding: false,
         cell: ({ row }) => {
+            const firstName = row.original.firstName;
+            const lastName = row.original.lastName;
             return (
-                <div className="text-left font-medium">
-                    {`${row.getValue("firstName")}`}
+                <div className="text-left font-medium capitalize">
+                    {`${firstName} ${lastName}`}
                 </div>
             );
         },
@@ -50,6 +52,13 @@ export const columns: ColumnDef<Staff>[] = [
     {
         accessorKey: "email",
         header: "Email",
+        cell: ({ row }) => {
+            return (
+                <div className="text-left font-medium lowercase">
+                    {`${row.getValue("email")}`}
+                </div>
+            );
+        },
     },
     {
         accessorKey: "phone",
