@@ -3,9 +3,7 @@ import {
   getBaseSchema,
   IBaseDocument,
   defineModel,
-  defineModelWithPaginate,
 } from "../../common/models/base";
-import paginate from "mongoose-paginate-v2";
 
 export interface IGoodDocument extends IBaseDocument {
   name: string;
@@ -27,5 +25,5 @@ const GoodSchema = getBaseSchema().add({
     productId: { type: String, required: true },
 });
 
-export const GoodModel = defineModelWithPaginate<IGoodDocument>("Good", GoodSchema);
+export const GoodModel = defineModel<IGoodDocument>("Good", GoodSchema);
 export default GoodModel;
