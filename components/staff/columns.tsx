@@ -5,28 +5,44 @@ import {
     MoreHorizontal,
     Eye,
 } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-
+import { useStaffStore } from "@/lib/providers/staff-store-provider";
 import Staff from "@/lib/@types/staff";
+import {useState, useEffect } from "react"
+
+const RolesCell = ({ id }: {id: string}) => {
+    const [userGroups, setUserGroups] = useState([])
+    const { groups } = useStaffStore((state) => state);
+    // console.log(groups)
+    // useEffect(() => {
+    //     if (groups?.length > 0) {
+    //         setUserGroups(groups.filter(group => group.members.includes(id)))
+    //     }
+    // }, [groups])
+    return (
+        <div className="flex flex-wrap gap-2">
+            {(groups).filter(g => g.members.includes(id)).map(
+                (group) => (
+                    <span
+                        key={group.id}
+                        className="px-2 py-1 text-xs font-medium text-white bg-blue-500 rounded-sm"
+                    >
+                        {group.name}
+                    </span>
+                )
+            )}
+        </div>
+    )
+}
 
 export const columns: ColumnDef<Staff>[] = [
     {
         accessorKey: "firstName",
-        header: "First Name",
+        header: "Full Name",
         enableHiding: false,
         cell: ({ row }) => {
             const firstName = row.original.firstName;
@@ -39,13 +55,13 @@ export const columns: ColumnDef<Staff>[] = [
         },
     },
     {
-        accessorKey: "permissions",
+        accessorKey: "permissisons",
         header: "Roles",
         cell: ({ row }) => {
+            // display the categories as badges
+            const id = row.original.id
             return (
-                <div className="text-left font-medium">
-                    teller, admin
-                </div>
+                <RolesCell id={id} />
             );
         },
     },
@@ -81,9 +97,9 @@ export const columns: ColumnDef<Staff>[] = [
                         <a
                             href={`/inventory/staffs/${row.id}`}
                             className="px-4 py-2 hover:bg-gray-100 flex flex-row justify-start items-center gap-2"
-                            // onClick={() =>
-                            //     onChangeStaff(row.id, row.productName)
-                            // }
+                        // onClick={() =>
+                        //     onChangeStaff(row.id, row.productName)
+                        // }
                         >
                             <Eye size={20} strokeWidth={1.5} />
                             View

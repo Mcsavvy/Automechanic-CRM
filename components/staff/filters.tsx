@@ -28,16 +28,16 @@ import { useEffect } from "react";
 
 export default function StaffsFilters() {
     // @ts-ignore
-    const [selectedCategory, setSelectedCategory] = useQueryState<string>("category", {defaultValue: ""});
+    const [selectedGroup, setSelectedGroup] = useQueryState<string>("group", {defaultValue: ""});
     // @ts-ignore
     const [selectedStatus, setSelectedStatus] = useQueryState<string>("status", {defaultValue: ""});
-    const {applyFilter, filter, loaded} = useStaffStore((state) => state);
+    const { applyFilter, filter, groups, loaded} = useStaffStore((state) => state);
 
     useEffect(() => {
         if (!loaded) return;
-        applyFilter({...filter, category: selectedCategory});
+        applyFilter({...filter, group: selectedGroup});
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedCategory]);
+    }, [selectedGroup]);
 
     useEffect(() => {
         if (!loaded) return;
@@ -47,10 +47,10 @@ export default function StaffsFilters() {
     
     function handleApplyFilters() {
         const newFilter: StaffFilter = {...filter};
-        if (selectedCategory.length) {
-            newFilter.category = selectedCategory.trim();
+        if (selectedGroup.length) {
+            newFilter.group = selectedGroup.trim();
         } else {
-            delete newFilter.category;
+            delete newFilter.group;
         }
         if (selectedStatus.length) {
             newFilter.status = selectedStatus.trim() as "active" | "banned";
@@ -69,33 +69,33 @@ export default function StaffsFilters() {
             </PopoverTrigger>
             <PopoverContent>
                 <div className="flex flex-col gap-3 overflow-auto h-fit">
-                    <Select
-                        value={selectedCategory}
-                        onValueChange={setSelectedCategory}
+                    {/* <Select
+                        value={selectedGroup}
+                        onValueChange={setSelectedGroup}
                     >
                         <div className="flex flex-row items-center justify-between">
                             <SelectTrigger className="w-[180px] text-left">
-                                <SelectValue placeholder="Select item category" />
+                                <SelectValue placeholder="Select item group" />
                             </SelectTrigger>
                             <Button
                                 variant={"ghost"}
-                                onClick={() => setSelectedCategory("")}
-                                disabled={!selectedCategory.length}
+                                onClick={() => setSelectedGroup("")}
+                                disabled={!selectedGroup.length}
                                 size={"sm"}
                             >
                                 <X size={20} strokeWidth={1.5} />
                             </Button>
                         </div>
-                        {/* <SelectContent>
+                        <SelectContent>
                             <SelectGroup>
-                                {allCategories.map((category) => (
-                                    <SelectItem key={category} value={category}>
-                                        {category}
+                                {groups.map((group) => (
+                                    <SelectItem key={group._id} value={group.name}>
+                                        {group.name}
                                     </SelectItem>
                                 ))}
                             </SelectGroup>
-                        </SelectContent> */}
-                    </Select>
+                        </SelectContent>
+                    </Select> */}
                     <Select
                         value={selectedStatus}
                         // @ts-ignore
@@ -103,7 +103,7 @@ export default function StaffsFilters() {
                     >
                         <div className="flex flex-row items-center justify-between">
                             <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Select item status" />
+                                <SelectValue placeholder="Select staff status" />
                             </SelectTrigger>
                             <Button
                                 variant={"ghost"}

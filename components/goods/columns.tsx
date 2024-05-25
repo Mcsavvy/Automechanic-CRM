@@ -1,18 +1,6 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import {
-    MoreHorizontal,
-    Pencil,
-    Trash,
-} from "lucide-react";
-
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
-
 import Good from "@/lib/@types/goods";
 import GoodActions from "./actions";
 

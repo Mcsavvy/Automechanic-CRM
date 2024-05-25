@@ -1,3 +1,5 @@
+import User, { IUserDocument } from "@/lib/common/models/user";
+import { FilterQuery } from "mongoose";
 import { NextResponse } from "next/server";
 import permissionRequired from "@/lib/decorators/permission";
 import { Permission } from "@/lib/permissions/base";
@@ -5,6 +7,41 @@ import UserDAO from "@/lib/common/dao/user";
 import GroupDAO from "@/lib/common/dao/group";
 import Group, { IGroupDocument } from "@/lib/common/models/group";
 import mongoose from "mongoose";
+export const GET = permissionRequired(Permission.AllowAny())(async function (
+    req
+) {
+    const rawLimit = req.nextUrl.searchParams.get("l");
+    const limit = rawLimit ? parseInt(rawLimit) : 10;
+    const rawPage = req.nextUrl.searchParams.get("p");
+    const page = rawPage ? parseInt(rawPage) : 1;
+    const group = (req.nextUrl.searchParams.get("g") as string | null) || ""
+    const search = (req.nextUrl.searchParams.get("q") as string | null) || "";
+    const status = req.nextUrl.searchParams.get("s") as
+        | "active"
+        | "banned"
+        | null;
+    const query: FilterQuery<IUserDocument> = {};
+    console.log("Search", search, status)
+    if (status) {
+        query.status = status
+    }
+    if (group) {
+        const groupData = await Group.findById(group)
+        console.log("G", groupData.members_ids)
+        if (groupData) {
+            query._id = { $in: groupData.members_ids};
+        }
+    }
+    if (search.length > 0) {
+        query.$or = [
+            { firstName: { $regex: search, $options: "i" } },
+            { lastName: { $regex: search, $options: "i" } },
+        ];
+    }
+    const results = await UserDAO.getUsers({filters: query, page, limit});
+    return NextResponse.json(results);
+});
+
 
 interface NewStaffRequest {
   lastName: string;

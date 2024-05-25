@@ -1,4 +1,5 @@
 import Staff from "../@types/staff";
+import Group from "../@types/group";
 import { createStore } from "zustand/vanilla";
 import axios from "axios";
 import lodash from "lodash";
@@ -19,10 +20,11 @@ interface PaginatedStaffs {
     pageCount: number;
     hasNextPage: boolean;
     hasPrevPage: boolean;
+    totalPages: number;
 }
 
 export type StaffFilter = {
-    category?: string;
+    group?: string;
     status?: "active" | "banned";
     query?: string;
 };
@@ -37,6 +39,8 @@ export type StaffState = {
     hasPrevPage: boolean;
     staffId: string;
     loaded: boolean;
+    totalPages: number;
+    groups: Group[]
 };
 
 export interface StaffActions {
@@ -50,6 +54,7 @@ export interface StaffActions {
     setFilter: (filter: StaffFilter) => void;
     applyFilter: (filter: StaffFilter) => void;
     clearFilter: () => void;
+    getGroups: () => void;
 }
 
 export type StaffStore = StaffState & StaffActions;
@@ -59,11 +64,14 @@ export const defaultStaffState: StaffState = {
     page: 0,
     limit: 5,
     filter: {},
+    totalPages: 0,
     pageCount: 0,
     hasNextPage: false,
     hasPrevPage: false,
     staffId: "",
     loaded: false,
+    groups: []
+    
 };
 
 export const createStaff = async (staff: StaffCreate): Promise<Staff> => {
@@ -153,22 +161,23 @@ export const getStaffs = async (
     queryParams.append("l", limit.toString());
     queryParams.append("p", page.toString());
     if (filter) {
-        // filter.category && queryParams.append("c", filter.category);
+        filter.group && queryParams.append("g", filter.group);
         filter.status && queryParams.append("s", filter.status);
         filter.query && queryParams.append("q", filter.query);
     }
     try {
         const response = await axios.get(
-            `/api/staff/all?${queryParams.toString()}`
+            `/api/staffs?${queryParams.toString()}`
         );
         if (response.status !== 200) {
             throw response;
         }
-        const staffs: any[] = response.data.staffs;
+        console.log(response.data)
+        const staffs: any[] = response.data.users;
         console.log(staffs)
         return {
             staff: staffs.map((staff: any) => ({
-                id: staff.id as string,
+                id: staff._id.toString() as string,
                 firstName: staff.firstName as string,
                 lastName: staff.lastName as string,
                 phone: staff.phone as string,
@@ -181,19 +190,20 @@ export const getStaffs = async (
             pageCount: response.data.totalPages,
             hasNextPage: response.data.hasNextPage,
             hasPrevPage: response.data.hasPrevPage,
+            totalPages: response.data.totalPages
         };
     } catch (error) {
         throw error;
     }
 };
 
-export const getCategories = async (): Promise<string[]> => {
+export const getGroups = async (): Promise<any> => {
     try {
-        const response = await axios.get("/api/staff/categories");
+        const response = await axios.get("/api/groups");
         if (response.status !== 200) {
             throw response;
         }
-        return response.data as string[];
+        return response.data as any
     } catch (error) {
         throw error;
     }
@@ -277,6 +287,12 @@ export const createStaffStore = (state: StaffState) => {
                 });
                 return {};
             }),
+            getGroups: async () => set((state) => {
+                getGroups().then((groups) => {
+                    set({ groups });
+                });
+                return {};
+            })
         };
     });
 };

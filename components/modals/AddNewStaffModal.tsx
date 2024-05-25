@@ -7,7 +7,7 @@ import Select from "react-select";
 import axios from "axios";
 
 async function getGroups() {
-  const response = await fetch("/api/group/all");
+  const response = await fetch("/api/groups/all");
   const groups: { id: string; name: string }[] = await response.json();
   return groups;
 }
@@ -103,7 +103,7 @@ async function createStaff(
   }: FormData
 ) {
   try {
-    const response = await axios.post("/api/staff/new", {
+    const response = await axios.post("/api/staffs", {
       firstName,
       lastName,
       email,
