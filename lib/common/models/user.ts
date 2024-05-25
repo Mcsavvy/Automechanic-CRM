@@ -1,6 +1,5 @@
-import { getBaseSchema, IBaseDocument, defineModelWithPaginate } from './base';
+import { getBaseSchema, IBaseDocument, defineModel } from './base';
 import { hasPermission } from './utils';
-import paginate from "mongoose-paginate-v2";
 
 export interface IUserDocument extends IBaseDocument {
   firstName: string;
@@ -33,4 +32,4 @@ UserSchema.methods.fullName = function() {
 UserSchema.methods.hasPermission = hasPermission;
 
 // export default defineModel<IUserDocument>("User", UserSchema);
-export default defineModelWithPaginate<IUserDocument>("User", UserSchema);
+export default defineModel<IUserDocument>("User", UserSchema);

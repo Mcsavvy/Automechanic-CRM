@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import UserModel from "../models/user";
+import UserModel, { IUserDocument } from "../models/user";
 import {
     validateEmail,
     validateFirstName,
@@ -10,6 +10,7 @@ import {
 } from "../validation";
 import mongoose from "mongoose";
 import LogDAO from "./log";
+import { FilterQuery } from "mongoose";
 
 interface createUserParams {
     firstName: string;
@@ -25,6 +26,18 @@ interface updateUserParams {
     email?: string;
     phone?: string;
     password?: string;
+}
+
+interface PaginatedUsers {
+    users: IUserDocument[];
+    totalDocs: number;
+    limit: number;
+    page: number;
+    totalPages: number;
+    next: number | null;
+    prev: number | null;
+    hasPrevPage: boolean;
+    hasNextPage: boolean;
 }
 
 async function addUser({
@@ -61,7 +74,49 @@ async function addUser({
     return user;
 }
 
-async function getUsers() {}
+async function getUsers({
+  filters,
+  page = 1,
+  limit = 10,
+}: {
+  filters: FilterQuery<IUserDocument>;
+  page: number;
+  limit: number;
+}): Promise<PaginatedUsers> {
+  if (page < 1) {
+    throw new Error("Invalid page number");
+  }
+  if (limit < 1) {
+    throw new Error("Invalid limit");
+  }
+
+  const query = filters ? filters : {};
+  const totalDocs = await UserModel.countDocuments(query).exec();
+  const totalPages = Math.ceil(totalDocs / limit);
+  if (page > totalPages) {
+    throw new Error("Page not found");
+  }
+  const skip = (page - 1) * limit;
+  const users = await UserModel.find(query)
+    .skip(skip)
+    .limit(limit)
+    .lean()
+    .exec();
+  const next = users.length === limit ? page + 1 : null;
+  const prev = page > 1 ? page - 1 : null;
+  return {
+    // @ts-ignore
+    users: users.map((good) => ({ ...good, id: good._id.toString() })),
+    totalDocs,
+    limit,
+    page,
+    totalPages,
+    next,
+    prev,
+    hasPrevPage: prev !== null,
+    hasNextPage: next !== null,
+  };
+}
 
 async function updateUser(
     id: mongoose.Types.ObjectId,

@@ -3,6 +3,7 @@ import User, { IUserDocument } from "@/lib/common/models/user";
 import permissionRequired from "@/lib/decorators/permission";
 import { NextRequest, NextResponse } from "next/server";
 import { FilterQuery } from "mongoose";
+import UserDAO  from "@/lib/common/dao/user";
 
 export const GET = permissionRequired(Permission.AllowAny())(async function (
     req
@@ -16,7 +17,6 @@ export const GET = permissionRequired(Permission.AllowAny())(async function (
         | "active"
         | "banned"
         | null;
-    // const category = (req.nextUrl.searchParams.get("c") as string | null) || "";
     const query: FilterQuery<IUserDocument> = {};
     if (status) {
         query.status = status
@@ -27,19 +27,20 @@ export const GET = permissionRequired(Permission.AllowAny())(async function (
             { code: { $regex: search, $options: "i" } },
         ];
     }
-    // if (category.length > 0) {
-    //     query.categories = { $in: [category] };
-    // }
-    const results = await User.paginate(query, {
-        limit,
+    const results = await UserDAO.getUsers({
+        filters: query,
         page,
-        customLabels: {
-            docs: "staffs",
-            totalDocs: "count",
-            page: "currentPage",
-        },
-        lean: true,
-        leanWithId: true,
+        limit,
     });
-    return NextResponse.json(results);
+    return NextResponse.json({
+        staffs: results.users,
+        totalDocs: results.totalDocs,
+        limit: results.limit,
+        page: results.page,
+        totalPages: results.totalPages,
+        next: results.next,
+        prev: results.prev,
+        hasPrevPage: results.hasPrevPage,
+        hasNextPage: results.hasNextPage,
+    });
 });
