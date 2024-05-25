@@ -3,16 +3,17 @@ import { createStore } from "zustand/vanilla";
 import axios from "axios";
 import lodash from "lodash";
 
-interface GoodCreate {
+export interface GoodCreate {
     name: string;
     costPrice: number;
     qty: number;
     description: string;
+    categories: string[];
     minQty: number;
     productId: string;
 }
 
-interface PaginatedGoods {
+export interface PaginatedGoods {
     goods: Good[];
     page: number;
     limit: number;
@@ -45,9 +46,9 @@ export interface GoodActions {
     setGoods: (goods: Good[]) => void;
     setPage: (page: number) => void;
     setLimit: (limit: number) => void;
-    deleteGood: (goodId: string) => void;
-    createGood: (good: GoodCreate) => void;
-    updateGood: (goodId: string, good: Partial<GoodCreate>) => void;
+    deleteGood: (goodId: string) => Promise<void>;
+    createGood: (good: GoodCreate) => Promise<void>;
+    updateGood: (goodId: string, good: Partial<GoodCreate>) => Promise<void>;
     getGood: (goodId: string) => Promise<Good>;
     setFilter: (filter: GoodFilter) => void;
     applyFilter: (filter: GoodFilter) => void;
@@ -273,33 +274,31 @@ export const createGoodStore = (state: GoodState) => {
                 });
                 return {};
             }),
-            deleteGood: async (goodId: string) => set((state) => {
-                deleteGood(goodId).then(() => {
-                    // check if the good is in the current page
-                    if (state.goods.find((good) => good.id === goodId)) {
-                        // TODO: refetch the goods to maintain correct pagination
-                        const newGoods = state.goods.filter(
-                            (good) => good.id !== goodId
-                        );
-                        set({ goods: newGoods });
-                    }
+            deleteGood: async (goodId: string) => {
+                await deleteGood(goodId);
+                set((state) => {
+                    const newGoods = state.goods.filter(
+                        (good) => good.id !== goodId
+                    );
+                    set({ goods: newGoods });
+                    return {};
                 });
-                return {};
-            }),
+            },
             createGood: async (good: GoodCreate) => {
                 const newGood = await createGood(good);
                 // TODO: refetch the goods to maintain correct pagination
                 set((state) => ({ goods: [...state.goods, newGood] }));
             },
-            updateGood: async (goodId: string, good: Partial<GoodCreate>) => set((state) => {
-                updateGood(goodId, good).then((updatedGood) => {
+            updateGood: async (goodId: string, good: Partial<GoodCreate>) => {
+                const updatedGood = await updateGood(goodId, good);
+                set((state) => {
                     const newGoods = state.goods.map((g) =>
                         g.id === goodId ? updatedGood : g
                     );
                     set({ goods: newGoods });
+                    return {};
                 });
-                return {};
-            }),
+            },
             getGood: async (goodId: string) => {
                 let good = state.goods.find((good) => good.id === goodId);
                 if (!good) {

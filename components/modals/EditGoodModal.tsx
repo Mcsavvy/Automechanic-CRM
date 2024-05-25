@@ -1,77 +1,245 @@
-"use client"
+"use client";
 import { useEffect, useRef, useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import React, { FC } from "react";
 import { toast } from "react-toastify";
 import { CgSpinner } from "react-icons/cg";
-import { Input } from '@/components/ui/input'
-import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useGoodStore } from "@/lib/providers/good-store-provider";
+import { GoodCreate } from "@/lib/stores/good-store";
+import { useQueryState } from "nuqs";
+import CreatableSelect from "react-select/creatable";
+import Good from "@/lib/@types/goods";
+import lodash from "lodash";
 
-function validateName(name: string) {
-  return name.length > 0;
-}
+type FormData = {
+  name: string;
+  description: string;
+  productCode: string;
+  unitPrice: number;
+  categories: readonly string[];
+  qtyInStock: number;
+  minQtyThreshold: number;
+};
 
-function validateForm(
-  productName: string,
-  description: string,
-  productId: string,
-  costPrice: number,
-) {
-  if (!productName.trim()) {
-    toast.error("Product Name is required", { toastId: "fname-required" });
-    return false;
-  } else if (!validateName(productName)) {
-    toast.error("Product Name is not valid", { toastId: "fname-invalid" });
+function validateName({ name }: FormData) {
+  if (!name.trim()) {
+    toast.error("Name is required", { toastId: "name-required" });
     return false;
   }
-  if (!description.trim()) {
-    toast.error("Description is required", { toastId: "lname-required" });
-    return false;
-  } else if (!validateName(description)) {
-    toast.error("Description is not valid", { toastId: "lname-invalid" });
-    return false;
-  }
-  if (!productId.trim()) {
-    toast.error("Product ID is required", { toastId: "productId-required" });
-    return false;
-  }
-  if (!costPrice) {
-    toast.error("Phone number is required", { toastId: "costPrice-required" });
+  if (name.length < 3) {
+    toast.error("Name is too short", { toastId: "name-invalid" });
     return false;
   }
   return true;
 }
-interface EditGoodProps {
-  goodId: string;
-  goodTitle: string
-  onClose: (id: string, title: string) => void;
+
+function validateDescription({ description }: FormData) {
+  if (!description.trim()) {
+    toast.error("Description is required", {
+      toastId: "description-required",
+    });
+    return false;
+  } else if (description.length < 10) {
+    toast.error("Description is too short", {
+      toastId: "description-invalid",
+    });
+    return false;
+  }
+  return true;
 }
 
-const EditGoodModal: FC<EditGoodProps> = ({ goodId, onClose, goodTitle}) => {
+function validateProductId({ productCode }: FormData) {
+  if (!productCode.trim()) {
+    toast.error("Product ID is required", {
+      toastId: "productId-required",
+    });
+    return false;
+  }
+  return true;
+}
+
+function validateCostPrice({ unitPrice }: FormData) {
+  if (unitPrice <= 0) {
+    toast.error("Cost price must be greater than 0", {
+      toastId: "costPrice-required",
+    });
+    return false;
+  }
+  return true;
+}
+
+function validateQtyInStock({ qtyInStock }: FormData) {
+  if (qtyInStock <= 0) {
+    toast.error("Quantity in stock must be greater than 0", {
+      toastId: "qtyInStock-required",
+    });
+    return false;
+  }
+  return true;
+}
+
+function validateMinQtyThreshold({ minQtyThreshold }: FormData) {
+  if (minQtyThreshold <= 0) {
+    toast.error("Minimum quantity threshold must be greater than 0", {
+      toastId: "minQtyThreshold-required",
+    });
+    return false;
+  }
+  return true;
+}
+
+function validateCategory({ categories }: FormData) {
+  if (categories.length === 0) {
+    toast.error("Category is required", { toastId: "category-required" });
+    return false;
+  }
+  return true;
+}
+
+function validateForm(data: FormData) {
+  return (
+    validateName(data) &&
+    validateDescription(data) &&
+    validateProductId(data) &&
+    validateCostPrice(data) &&
+    validateQtyInStock(data) &&
+    validateMinQtyThreshold(data) &&
+    validateCategory(data)
+  );
+}
+
+function getUpdatedFields(
+  good: Good,
+  data: FormData
+): Partial<GoodCreate> | undefined {
+  const updatedFields: Partial<GoodCreate> = {};
+  if (good.name !== data.name) {
+    updatedFields.name = data.name;
+  }
+  if (good.description !== data.description) {
+    updatedFields.description = data.description;
+  }
+  if (good.productCode !== data.productCode) {
+    updatedFields.productId = data.productCode;
+  }
+  if (good.unitPrice !== data.unitPrice) {
+    updatedFields.costPrice = data.unitPrice;
+  }
+  if (good.qtyInStock !== data.qtyInStock) {
+    updatedFields.qty = data.qtyInStock;
+  }
+  if (good.minQtyThreshold !== data.minQtyThreshold) {
+    updatedFields.minQty = data.minQtyThreshold;
+  }
+
+  if (
+    !lodash.isEqual(
+      good.categories.slice().sort(),
+      data.categories.slice().sort()
+    )
+  ) {
+    updatedFields.categories = data.categories.slice();
+  }
+  return Object.keys(updatedFields).length > 0 ? updatedFields : undefined;
+}
+
+interface EditGoodProps {}
+
+const EditGoodModal: FC<EditGoodProps> = () => {
   const modalRef = useRef<HTMLDivElement>(null);
-  const [status, setStatus] = useState<"idle" | "loading">("idle");
-  const [productName, setProductName] = useState<string>("");
+  const [status, setStatus] = useState<"idle" | "ready" | "saving">("idle");
+  const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-  const [productId, setProductId] = useState<string>("");
-  const [costPrice, setCostPrice] = useState<number>(0);
-  const [qty, setQty] = useState<number>(0);
-  const [threshold, setThreshold] = useState<number>(0);
+  const [productCode, setProductCode] = useState<string>("");
+  const [unitPrice, setUnitPrice] = useState<number>(0);
+  const [qtyInStock, setQtyInStock] = useState<number>(0);
+  const [minQtyThreshold, setminQtyThreshold] = useState<number>(0);
+  const goodRef = useRef<Good | null>(null);
+  const [categories, setCategories] = useState<
+    readonly {
+      value: string;
+      label: string;
+    }[]
+  >([]);
+  const { getGood, updateGood, allCategories } = useGoodStore((state) => state);
+  const [goodId, setGoodId] = useQueryState("goodId", {
+    defaultValue: "",
+    clearOnDefault: true,
+  });
+
   const closeModal = () => {
-    onClose('', '')
     window.location.hash = "";
+    setGoodId("");
+    clearForm();
   };
 
-  const clearForm = () => {
-    setProductName("");
+  function handleUpdateGood() {
+    const data: FormData = {
+      name,
+      description,
+      productCode,
+      unitPrice,
+      qtyInStock,
+      minQtyThreshold,
+      categories: categories.map((category) => category.value),
+    };
+    const updatedFields = getUpdatedFields(goodRef.current!, data);
+    if (!updatedFields) {
+      toast.warning("No changes made", { toastId: "no-changes" });
+      return;
+    }
+    if (validateForm(data)) {
+      setStatus("saving");
+      console.log(updatedFields);
+      updateGood(goodRef.current!.id, updatedFields).then(() => {
+        setStatus("ready");
+        toast.success("Product Updated!", {
+          toastId: "good-updated",
+        });
+        closeModal();
+      });
+    }
+  }
+
+  function clearForm() {
+    setName("");
     setDescription("");
-    setProductId("");
-    setCostPrice(0);
-    setQty(0);
-    setThreshold(0);
-  };
+    setProductCode("");
+    setUnitPrice(0);
+    setQtyInStock(0);
+    setminQtyThreshold(0);
+    setCategories([]);
+    setStatus("idle");
+  }
+
+  useEffect(() => {
+    clearForm();
+    if (goodId.length > 0) {
+      getGood(goodId).then((good) => {
+        setName(good.name);
+        setDescription(good.description);
+        setProductCode(good.productCode);
+        setUnitPrice(good.unitPrice);
+        setQtyInStock(good.qtyInStock);
+        setminQtyThreshold(good.minQtyThreshold);
+        setCategories(
+          good.categories.map((category) => ({
+            value: category,
+            label: category,
+          }))
+        );
+        setStatus("ready");
+        goodRef.current = good;
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [goodId]);
+
   return (
     <div
-      id={`goods/${goodId}/edit`}
+      id={`actions/product/edit`}
       tabIndex={-1}
       className="hidden target:flex bg-[rgba(0,0,0,0.5)] overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 h-full justify-center items-center w-full md:inset-0 backdrop-blur-sm"
       onClick={(e) => {
@@ -86,9 +254,7 @@ const EditGoodModal: FC<EditGoodProps> = ({ goodId, onClose, goodTitle}) => {
           ref={modalRef}
         >
           <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
-            <h3 className="text-xl font-semibold text-gray-900">
-              Edit {goodTitle}
-            </h3>
+            <h3 className="text-xl font-semibold text-primary">{name}</h3>
             <button
               type="button"
               className="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
@@ -109,8 +275,8 @@ const EditGoodModal: FC<EditGoodProps> = ({ goodId, onClose, goodTitle}) => {
                 <Input
                   type="text"
                   name="productName"
-                  value={productName}
-                  onChange={(e) => setProductName(e.target.value)}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   required
                 />
               </div>
@@ -123,6 +289,7 @@ const EditGoodModal: FC<EditGoodProps> = ({ goodId, onClose, goodTitle}) => {
                 </label>
                 <Input
                   type="text"
+                  disabled={status !== "ready"}
                   name="description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
@@ -138,9 +305,10 @@ const EditGoodModal: FC<EditGoodProps> = ({ goodId, onClose, goodTitle}) => {
                 </label>
                 <Input
                   type="text"
+                  disabled={status !== "ready"}
                   name="productId"
-                  value={productId}
-                  onChange={(e) => setProductId(e.target.value)}
+                  value={productCode}
+                  onChange={(e) => setProductCode(e.target.value)}
                   required
                 />
               </div>
@@ -153,9 +321,12 @@ const EditGoodModal: FC<EditGoodProps> = ({ goodId, onClose, goodTitle}) => {
                 </label>
                 <Input
                   type="number"
+                  disabled={status !== "ready"}
                   name="costPrice"
-                  value={costPrice}
-                  onChange={(e) => setCostPrice(Number(e.target.value))}
+                  value={unitPrice}
+                  onChange={(e) =>
+                    setUnitPrice(Number.parseInt(e.target.value))
+                  }
                 />
               </div>
               <div>
@@ -167,9 +338,12 @@ const EditGoodModal: FC<EditGoodProps> = ({ goodId, onClose, goodTitle}) => {
                 </label>
                 <Input
                   type="number"
+                  disabled={status !== "ready"}
                   name="qty"
-                  value={qty}
-                  onChange={(e) => setQty(Number(e.target.value))}
+                  value={qtyInStock}
+                  onChange={(e) =>
+                    setQtyInStock(Number.parseInt(e.target.value))
+                  }
                 />
               </div>
               <div>
@@ -181,35 +355,48 @@ const EditGoodModal: FC<EditGoodProps> = ({ goodId, onClose, goodTitle}) => {
                 </label>
                 <Input
                   type="number"
+                  disabled={status !== "ready"}
                   name="threshold"
-                  value={threshold}
-                  onChange={(e) => setThreshold(Number(e.target.value))}
+                  value={minQtyThreshold}
+                  onChange={(e) =>
+                    setminQtyThreshold(Number.parseInt(e.target.value))
+                  }
                 />
               </div>
-               <Button className="w-full"
+              <div>
+                <label
+                  htmlFor="group"
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  Categories
+                </label>
+                <CreatableSelect
+                  isMulti
+                  isClearable
+                  isDisabled={status !== "ready"}
+                  name="categories"
+                  value={categories}
+                  options={allCategories.map((category) => ({
+                    value: category,
+                    label: category,
+                  }))}
+                  className="text-black bg-white"
+                  classNamePrefix="category-select"
+                  onChange={(selectedCategories) =>
+                    setCategories(selectedCategories)
+                  }
+                />
+              </div>
+              <Button
+                className="w-full"
                 type="submit"
+                disabled={status !== "ready"}
                 onClick={(e) => {
                   e.preventDefault();
-                  if (
-                    validateForm(
-                      productName,
-                      description,
-                      productId,
-                      costPrice,
-                    )
-                  ) {
-                  console.log({
-                    productName,
-                    description,
-                    productId,
-                    costPrice,
-                  });
-                }
-                }
-              }
-              disabled={status === "loading"}
+                  handleUpdateGood();
+                }}
               >
-                {status === "loading" ? (
+                {status === "saving" ? (
                   <>
                     <CgSpinner className="animate-spin inline-block" />
                     <span className="ml-2">Saving...</span>
@@ -218,15 +405,12 @@ const EditGoodModal: FC<EditGoodProps> = ({ goodId, onClose, goodTitle}) => {
                   "Save"
                 )}
               </Button>
-              <div className="text-sm font-medium text-red-400 text-center w-full">
-                Something went wrong. Please try again later
-              </div>
             </form>
           </div>
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default EditGoodModal;
