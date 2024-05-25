@@ -1,14 +1,13 @@
 import mongoose, { Document, Schema } from "mongoose";
 
 const dbUri = process.env.MONGODB_URI as string;
-let db: mongoose.mongo.Db | undefined = undefined;
+let db: mongoose.Mongoose | undefined = undefined;
 
 (async () => {
-    if (!mongoose.connections.length) {
+    if (!mongoose.connection.readyState) {
       console.log('Connecting to database:', dbUri);
-      await mongoose.connect(dbUri);
+      db = await mongoose.connect(dbUri);
     }
-    db = mongoose.connections[0].db;
 })();
 
 export interface IBaseDocument extends Document {
