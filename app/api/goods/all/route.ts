@@ -3,6 +3,7 @@ import Good, { IGoodDocument } from "@/lib/inventory/models/good";
 import permissionRequired from "@/lib/decorators/permission";
 import { NextRequest, NextResponse } from "next/server";
 import { FilterQuery } from "mongoose";
+import GoodDAO from "@/lib/inventory/dao/good";
 
 export const GET = permissionRequired(Permission.AllowAny())(async function (
     req
@@ -38,16 +39,7 @@ export const GET = permissionRequired(Permission.AllowAny())(async function (
     if (category.length > 0) {
         query.categories = { $in: [category] };
     }
-    const results = await Good.paginate(query, {
-        limit,
-        page,
-        customLabels: {
-            docs: "goods",
-            totalDocs: "count",
-            page: "currentPage",
-        },
-        lean: true,
-        leanWithId: true,
-    });
+    
+    const results = await GoodDAO.getGoods({ filters: query, page, limit });
     return NextResponse.json(results);
 });

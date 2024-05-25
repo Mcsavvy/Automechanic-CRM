@@ -10,38 +10,22 @@ import axios from "axios";
 import Good from "@/lib/@types/goods";
 import { DataTable } from "@/components/goods/data-table";
 import { GoodStoreProvider, useGoodStore } from "@/lib/providers/good-store-provider";
+import { useQueryState } from "nuqs";
 
 export default function Home() {
-    const [goodId, setGoodId] = useState("");
-    const [goodTitle, setGoodTitle] = useState("");
     const {goods, page, setPage, pageCount, hasNextPage, hasPrevPage} = useGoodStore((state) => state);
-
-    function changeCurrGood(id: string, title: string) {
-        console.log(id, title);
-        setGoodId(id);
-        setGoodTitle(title);
-    }
-
     return (
         <>
-            <EditGoodModal
-                goodId={goodId}
-                goodTitle={goodTitle}
-                onClose={setGoodId}
-            />
-            <DeleteGoodModal
-                goodId={goodId}
-                goodTitle={goodTitle}
-                onClose={changeCurrGood}
-            />
-            <AddGoodModal onClose={changeCurrGood} />
+            <EditGoodModal/>
+            <DeleteGoodModal/>
+            <AddGoodModal />
             <div className="flex flex-col absolute h-[calc(100vh-60px)] top-[60px] w-full">
                 <div className="h-full relative">
                     <div className="flex flex-row justify-between items-center p-4 px-[30px]">
                         <h1 className="text-xl font-heading font-semibold">
                             Inventory Summary
                         </h1>
-                        <a href="#goods/new">
+                        <a href="#actions/product/add-new">
                             <Button className="flex flex-row gap-2">
                                 <Plus size={20} strokeWidth={1.5} />
                                 Add Product
@@ -70,7 +54,6 @@ export default function Home() {
                     </div>
                     <DataTable
                         data={goods}
-                        onChangeGood={changeCurrGood}
                         page={page}
                         pageCount={pageCount}
                         hasNextPage={hasNextPage}

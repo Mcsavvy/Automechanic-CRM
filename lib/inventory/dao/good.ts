@@ -1,7 +1,19 @@
-import { GoodModel } from '../../inventory/models/good';
-import mongoose from 'mongoose';
+import { GoodModel, IGoodDocument } from '../../inventory/models/good';
+import mongoose, { FilterQuery } from 'mongoose';
 import { OrderItemModel } from '../models/orderItem';
 import { OrderModel } from '../models/order';
+
+interface PaginatedGoods {
+    goods: (IGoodDocument & { id: string })[];
+    totalDocs: number;
+    limit: number;
+    page: number;
+    totalPages: number;
+    next: number | null;
+    prev: number | null;
+    hasPrevPage: boolean;
+    hasNextPage: boolean;
+}
 
 interface Good {
     name: string;
@@ -35,16 +47,42 @@ async function getGood(id?: mongoose.Types.ObjectId, filters?: Partial<Good>) {
     return good;
 }
 
-async function getGoods(filters?: Partial<Good>, page: number = 1, limit: number = 30) {
+async function getGoods({
+    filters, page = 1, limit = 10
+}: {
+    filters: FilterQuery<IGoodDocument>;
+    page: number;
+    limit: number;
+}): Promise<PaginatedGoods> {
     if (page < 1) {
         throw new Error("Invalid page number");
     }
+    if (limit < 1) {
+        throw new Error("Invalid limit");
+    }
+
     const query = filters ? filters : {};
+    const totalDocs = await GoodModel.countDocuments(query).exec();
+    const totalPages = Math.ceil(totalDocs / limit);
+    if (page > totalPages) {
+        throw new Error("Page not found");
+    }
     const skip = (page - 1) * limit;
-    const goods = await GoodModel.find(query).skip(skip).limit(limit).exec();
+    const goods = await GoodModel.find(query).skip(skip).limit(limit).lean().exec();
     const next = goods.length === limit ? page + 1 : null;
     const prev = page > 1 ? page - 1 : null;
-    return { goods, next, prev };
+    return {
+        // @ts-ignore
+        goods: goods.map(good => ({ ...good, id: good._id.toString()})),
+        totalDocs,
+        limit,
+        page,
+        totalPages,
+        next, 
+        prev,
+        hasPrevPage: prev !== null,
+        hasNextPage: next !== null
+    };
 }
 
 async function restockGood(id: mongoose.Types.ObjectId, qty: number) {

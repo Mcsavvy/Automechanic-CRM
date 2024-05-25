@@ -62,8 +62,8 @@ const sections: Section[] = [
                 icon: <Package size={20} strokeWidth={1.5} />,
                 content: "Overview",
                 getIsActive: (pathname) =>
-                    pathname.startsWith("/inventory/overview"),
-                link: "/inventory/overview",
+                    pathname.startsWith("/inventory/products"),
+                link: "/inventory/products",
             },
             {
                 icon: <FileLineChart size={20} strokeWidth={1.5} />,
