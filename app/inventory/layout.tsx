@@ -131,8 +131,8 @@ const sections: Section[] = [
                 icon: <CircleUser size={20} strokeWidth={1.5} />,
                 content: "Manage Staff",
                 getIsActive: (pathname) =>
-                    pathname.startsWith("/staff"),
-                link: "/staff",
+                    pathname.startsWith("/inventory/staffs"),
+                link: "/inventory/staffs",
             },
             {
                 icon: <Fingerprint size={20} strokeWidth={1.5} />,
