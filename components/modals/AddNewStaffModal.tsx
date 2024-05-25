@@ -12,55 +12,64 @@ async function getGroups() {
   return groups;
 }
 
-function validateEmail(email: string) {
+type FormData = {
+  firstname: string;
+  lastname: string;
+  email: string;
+  phone: string;
+  selectedGroups: readonly { label: string; value: string }[];
+}
+
+
+function validateEmail({ email }: FormData) {
   const re = /\S+@\S+\.\S+/;
-  return re.test(email);
+  if (!email.length) {
+    toast.error("Email is required", { toastId: "email-required" });
+    return false;
+  }
+  if (!re.test(email)) {
+    toast.error("Email is not valid", { toastId: "email-invalid" });
+    return false;
+  }
+  return true;
 }
 
-function validatePhone(phone: string) {
+function validatePhone({ phone }: FormData) {
   const re = /^\d{11}$/;
-  return re.test(phone);
+  if (!phone.length) {
+    toast.error("Phone number is required", { toastId: "phone-required" });
+    return false;
+  }
+  if (!re.test(phone)) {
+    toast.error("Phone number is not valid", { toastId: "phone-invalid" });
+    return false;
+  }
+  return true;
 }
 
-function validateName(name: string) {
-  return name.length > 0;
-}
-
-function validateForm(
-  firstname: string,
-  lastname: string,
-  email: string,
-  phone: string,
-  selectedGroups: readonly { label: string; value: string }[]
-) {
+function validateName({ firstname, lastname }: FormData) {
   if (!firstname.trim()) {
     toast.error("First name is required", { toastId: "fname-required" });
     return false;
-  } else if (!validateName(firstname)) {
-    toast.error("First name is not valid", { toastId: "fname-invalid" });
+  } else if (firstname.length < 3) {
+    toast.error("First name must be at least 3 characters", {
+      toastId: "fname-invalid",
+    });
     return false;
   }
   if (!lastname.trim()) {
     toast.error("Last name is required", { toastId: "lname-required" });
     return false;
-  } else if (!validateName(lastname)) {
-    toast.error("Last name is not valid", { toastId: "lname-invalid" });
+  } else if (lastname.length < 3) {
+    toast.error("Last name must be at least 3 characters", {
+      toastId: "lname-invalid",
+    });
     return false;
   }
-  if (!email.trim()) {
-    toast.error("Email is required", { toastId: "email-required" });
-    return false;
-  } else if (!validateEmail(email)) {
-    toast.error("Email is not valid", { toastId: "email-invalid" });
-    return false;
-  }
-  if (!phone.trim()) {
-    toast.error("Phone number is required", { toastId: "phone-required" });
-    return false;
-  } else if (!validatePhone(phone)) {
-    toast.error("Phone number is not valid", { toastId: "phone-invalid" });
-    return false;
-  }
+  return true;
+}
+
+function validateRoles({ selectedGroups }: FormData) {
   if (selectedGroups.length === 0) {
     toast.error("At least one group is required", {
       toastId: "group-required",
@@ -70,12 +79,28 @@ function validateForm(
   return true;
 }
 
+
+function validateForm(data: FormData) {
+  if (
+    !validateName(data) ||
+    !validateEmail(data) ||
+    !validatePhone(data) ||
+    !validateRoles(data)
+  ) {
+    return false;
+  }
+  return true;
+}
+
+
 async function createStaff(
-  firstName: string,
-  lastName: string,
-  email: string,
-  phone: string,
-  selectedGroups: readonly { label: string; value: string }[]
+  {
+    firstname: firstName,
+    lastname: lastName,
+    email,
+    phone,
+    selectedGroups,
+  }: FormData
 ) {
   try {
     const response = await axios.post("/api/staff/new", {
@@ -104,12 +129,12 @@ export default function AddNewStaffModal() {
   const modalRef = useRef<HTMLDivElement>(null);
   const [groups, setGroups] = useState<{ label: string; value: string }[]>([]);
   const loadingGroups = useRef(true);
-  const [status, setStatus] = useState<"idle" | "loading">("idle");
+  const [status, setStatus] = useState<"idle" | "creating">("idle");
   const [firstname, setFirstname] = useState<string>("");
   const [lastname, setLastname] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
-  const [selectedGroups, setSelectedGroups] = useState<
+  const [selectedGroups, setSelectedRoles] = useState<
     readonly { label: string; value: string }[]
   >([]);
 
@@ -122,8 +147,31 @@ export default function AddNewStaffModal() {
     setLastname("");
     setEmail("");
     setPhone("");
-    setSelectedGroups([]);
+    setSelectedRoles([]);
   };
+
+  function handleCreateStaff() {
+    const data: FormData = {
+      firstname,
+      lastname,
+      email,
+      phone,
+      selectedGroups,
+    };
+    if (
+      validateForm(data)
+    ) {
+      setStatus("creating");
+      createStaff(data).then(
+        (created) => {
+          setStatus("idle");
+          if (created) {
+            clearForm();
+          }
+        }
+      );
+    }
+  }
 
   useEffect(() => {
     getGroups().then((groups) => {
@@ -243,17 +291,17 @@ export default function AddNewStaffModal() {
                   htmlFor="group"
                   className="block mb-2 text-sm font-medium text-gray-900"
                 >
-                  Group
+                  User Roles
                 </label>
                 <Select
                   isMulti
-                  name="group"
+                  name="roles"
                   options={groups}
                   className="text-black bg-white"
-                  classNamePrefix="grp-select"
+                  classNamePrefix="role-select"
                   isLoading={loadingGroups.current}
-                  onChange={(selectedGroups) =>
-                    setSelectedGroups(selectedGroups)
+                  onChange={(selectedRoles) =>
+                    setSelectedRoles(selectedRoles)
                   }
                 />
               </div>
@@ -261,41 +309,12 @@ export default function AddNewStaffModal() {
                 type="submit"
                 onClick={(e) => {
                   e.preventDefault();
-                  if (
-                    validateForm(
-                      firstname,
-                      lastname,
-                      email,
-                      phone,
-                      selectedGroups
-                    )
-                  ) {
-                    setStatus("loading");
-                    createStaff(
-                      firstname,
-                      lastname,
-                      email,
-                      phone,
-                      selectedGroups
-                    ).then((created) => {
-                      setStatus("idle");
-                      if (created) {
-                        clearForm();
-                      }
-                    });
-                  }
-                  console.log({
-                    firstname,
-                    lastname,
-                    email,
-                    phone,
-                    selectedGroups,
-                  });
+                  handleCreateStaff();
                 }}
-                disabled={status === "loading"}
+                disabled={status === "creating"}
                 className="w-full text-white bg-pri-6 hover:bg-pri-4 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
               >
-                {status === "loading" ? (
+                {status === "creating" ? (
                   <>
                     <CgSpinner className="animate-spin inline-block" />
                     <span className="ml-2">Adding Staff...</span>

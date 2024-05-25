@@ -34,7 +34,6 @@ import GoodsSearch from "./search";
 
 interface DataTableProps {
     data: Good[];
-    onChangeGood: (id: string, title: string) => void;
     onNext: () => void;
     onPrev: () => void;
     page: number;

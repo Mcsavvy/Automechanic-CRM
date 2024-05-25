@@ -2,24 +2,11 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import {
-    ChevronDown,
-    ListFilter,
-    Search,
-    Ellipsis,
     MoreHorizontal,
     Pencil,
     Trash,
 } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
     Popover,
     PopoverContent,
@@ -27,6 +14,8 @@ import {
 } from "@/components/ui/popover";
 
 import Good from "@/lib/@types/goods";
+import GoodActions from "./actions";
+
 
 export const columns: ColumnDef<Good>[] = [
     {
@@ -117,33 +106,7 @@ export const columns: ColumnDef<Good>[] = [
         enableHiding: false,
         cell: ({ row }) => {
             return (
-                <Popover>
-                    <PopoverTrigger>
-                        <MoreHorizontal size={20} strokeWidth={1.5} />
-                    </PopoverTrigger>
-                    <PopoverContent className="w-[120px] px-0 flex flex-col gap-3">
-                        <a
-                            href={`#goods/${row.id}/edit`}
-                            className="px-4 py-2 hover:bg-gray-100 flex flex-row justify-start items-center gap-2"
-                            // onClick={() =>
-                            //     onChangeGood(row.id, row.productName)
-                            // }
-                        >
-                            <Pencil size={20} strokeWidth={1.5} />
-                            Edit
-                        </a>
-                        <a
-                            href={`#goods/${row.id}/delete`}
-                            className="px-4 py-2 hover:bg-gray-100 flex flex-row justify-start items-center gap-2"
-                            // onClick={() =>
-                            //     onChangeGood(row.id, row.productName)
-                            // }
-                        >
-                            <Trash size={20} color="red" strokeWidth={1.5} />
-                            Delete
-                        </a>
-                    </PopoverContent>
-                </Popover>
+                <GoodActions goodId={row.id} />
             );
         },
     },
