@@ -109,6 +109,13 @@ async function getUsers({
         hasNextPage: next !== null
     };
 }
+async function getUser(id: mongoose.Types.ObjectId) {
+    const user = await UserModel.findOne({ _id: id, isDeleted: "false"}, {password: 0, __v: 0})
+    if (!user) {
+        throw new Error("User not found")
+    }
+    return user
+}
 
 async function updateUser(
     id: mongoose.Types.ObjectId,
@@ -210,6 +217,7 @@ const UserDAO = {
     deleteUser,
     updateUser,
     authenticateUser,
+    getUser
 };
 
 export default UserDAO;
