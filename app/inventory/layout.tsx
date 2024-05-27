@@ -35,6 +35,7 @@ import {
     Fingerprint,
     CircleUser,
 } from "lucide-react";
+import InventoryProviders from "./providers";
 
 interface BaseSectionItem {
     icon: React.ReactNode;
@@ -97,8 +98,8 @@ const sections: Section[] = [
                 icon: <Users size={20} strokeWidth={1.5} />,
                 content: "Customers",
                 getIsActive: (pathname) =>
-                    pathname.startsWith("/inventory/customers"),
-                link: "/inventory/customers",
+                    pathname.startsWith("/inventory/buyers"),
+                link: "/inventory/buyers",
             },
             {
                 icon: <TrendingUp size={20} strokeWidth={1.5} />,
@@ -322,7 +323,9 @@ export default function DashboardLayout({
                             </div>
                         </div>
                     </header>
-                    {children}
+                    <InventoryProviders>
+                        {children}
+                    </InventoryProviders>
                 </main>
             </div>
         </React.Fragment>

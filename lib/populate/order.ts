@@ -14,7 +14,8 @@ export default async function populateOrders(number: number) {
             paymentMethod: paymentMethodChoices[Math.floor(Math.random() * paymentMethodChoices.length)],
             buyerId: buyer._id,
             amountPaid: Math.floor(Math.random() * 1000),
-            change: Math.floor(Math.random() * 10)
+            change: Math.floor(Math.random() * 10),
+            discount: Math.floor(Math.random() * 25)
         });
         await order.save();
         orders.push(order);

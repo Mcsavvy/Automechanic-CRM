@@ -27,7 +27,6 @@ export const GET = permissionRequired(Permission.AllowAny())(async function (
     }
     if (group) {
         const groupData = await Group.findById(group)
-        console.log("G", groupData.members_ids)
         if (groupData) {
             query._id = { $in: groupData.members_ids};
         }

@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import UserModel, {IUserDocument } from "../models/user";
+import UserModel, { IUserDocument } from "../models/user";
 import mongoose, { FilterQuery } from 'mongoose';
 import {
     validateEmail,
@@ -28,7 +28,7 @@ interface updateUserParams {
 }
 
 interface PaginatedUsers {
-    users: (IUserDocument & { id: string })[];
+    users: IUserDocument[];
     totalDocs: number;
     limit: number;
     page: number;
@@ -74,47 +74,47 @@ async function addUser({
 }
 
 async function getUsers({
-    filters, page = 1, limit = 10
+  filters,
+  page = 1,
+  limit = 10,
 }: {
-    filters: FilterQuery<IUserDocument>;
-    page: number;
-    limit: number;
+  filters: FilterQuery<IUserDocument>;
+  page: number;
+  limit: number;
 }): Promise<PaginatedUsers> {
-    if (page < 1) {
-        throw new Error("Invalid page number");
-    }
-    if (limit < 1) {
-        throw new Error("Invalid limit");
-    }
-    const query = filters ? filters : {};
-    const totalDocs = await UserModel.countDocuments(query).exec();
-    const totalPages = Math.ceil(totalDocs / limit);
-    if (page > totalPages) {
-        throw new Error("Page not found");
-    }
-    const skip = (page - 1) * limit;
-    const users = await UserModel.find(query, { password: 0, __v: 0, updatedAt: 0}).skip(skip).limit(limit).lean().exec();
-    const next = users.length === limit ? page + 1 : null;
-    const prev = page > 1 ? page - 1 : null;
-    return {
-        // @ts-ignore
-        users: users.map(good => ({ ...good, id: good._id.toString()})),
-        totalDocs,
-        limit,
-        page,
-        totalPages,
-        next, 
-        prev,
-        hasPrevPage: prev !== null,
-        hasNextPage: next !== null
-    };
-}
-async function getUser(id: mongoose.Types.ObjectId) {
-    const user = await UserModel.findOne({ _id: id, isDeleted: "false"}, {password: 0, __v: 0})
-    if (!user) {
-        throw new Error("User not found")
-    }
-    return user
+  if (page < 1) {
+    throw new Error("Invalid page number");
+  }
+  if (limit < 1) {
+    throw new Error("Invalid limit");
+  }
+
+  const query = filters ? filters : {};
+  const totalDocs = await UserModel.countDocuments(query).exec();
+  const totalPages = Math.ceil(totalDocs / limit);
+  if (page > totalPages) {
+    throw new Error("Page not found");
+  }
+  const skip = (page - 1) * limit;
+  const users = await UserModel.find(query)
+    .skip(skip)
+    .limit(limit)
+    .lean()
+    .exec();
+  const next = users.length === limit ? page + 1 : null;
+  const prev = page > 1 ? page - 1 : null;
+  return {
+    // @ts-ignore
+    users: users.map((good) => ({ ...good, id: good._id.toString() })),
+    totalDocs,
+    limit,
+    page,
+    totalPages,
+    next,
+    prev,
+    hasPrevPage: prev !== null,
+    hasNextPage: next !== null,
+  };
 }
 
 async function updateUser(

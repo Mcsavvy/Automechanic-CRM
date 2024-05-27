@@ -1,6 +1,5 @@
 import { getBaseSchema, IBaseDocument, defineModel } from './base';
 import { hasPermission } from './utils';
-import paginate from "mongoose-paginate-v2";
 
 export interface IUserDocument extends IBaseDocument {
   firstName: string;

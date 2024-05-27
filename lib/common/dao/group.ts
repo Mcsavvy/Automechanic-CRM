@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
-import Group from "../models/group";
-import User from "../models/user";
+import Group, { IGroupDocument } from "../models/group";
+import User, { IUserDocument } from "../models/user";
+import { ObjectOrId, getDocument } from "./base";
 
 interface createGroupParams {
     name: string;
@@ -19,17 +20,12 @@ async function createGroup({
     return group;
 }
 
-async function updateGroup(id: mongoose.Types.ObjectId, params: Partial<createGroupParams>) {
-    const group = await Group.findById(id);
+async function updateGroup(groupId: ObjectOrId<IGroupDocument>, data: Partial<createGroupParams>) {
+    const group = await getDocument(Group, groupId);
     if (!group) {
         throw new Error("Group not found");
     }
-    if (params.name) {
-        group.name = params.name;
-    }
-    if (params.description) {
-        group.description = params.description;
-    }
+    Object.assign(group, data);
     await group.save();
 }
 
@@ -37,42 +33,61 @@ async function deleteGroup(id: mongoose.Types.ObjectId) {
     await Group.deleteOne({ _id: id });
 }
 
-async function addMember(groupId: mongoose.Types.ObjectId, memberId: mongoose.Types.ObjectId) {
-    const group = await Group.findById(groupId);
+async function addMember(groupId: ObjectOrId<IGroupDocument>, userId: ObjectOrId<IUserDocument>) {
+    const group = await getDocument(Group, groupId);
     if (!group) {
         throw new Error("Group not found");
     }
-    if (!(await User.findById(memberId))) {
+    const user = await getDocument(User, userId);
+    if (!user) {
         throw new Error("User not found");
     }
-    if (group.members_ids.includes(memberId)) {
+    if (group.members_ids.includes(user._id)) {
         throw new Error("User already in group");
     }
-    group.members_ids.push(memberId);
+    group.members_ids.push(user._id);
     await group.save();
 }
 
-async function removeMember(groupId: mongoose.Types.ObjectId, memberId: mongoose.Types.ObjectId) {
-    const group = await Group.findById(groupId);
+async function removeMember(groupId: ObjectOrId<IGroupDocument>, userId: ObjectOrId<IUserDocument>) {
+    const group = await getDocument(Group, groupId);
     if (!group) {
         throw new Error("Group not found");
     }
-    if (!(await User.findById(memberId))) {
+    const user = await getDocument(User, userId);
+    if (!user) {
         throw new Error("User not found");
     }
-    if (!group.members_ids.includes(memberId)) {
+    if (!group.members_ids.includes(user._id)) {
         throw new Error("User not in group");
     }
-    group.members_ids = group.members_ids.filter((id) => id !== memberId);
+    group.members_ids = group.members_ids.filter((id) => id !== user._id);
     await group.save();
 }
 
-async function setPermission(groupId: mongoose.Types.ObjectId, key: string, value: string[] | boolean) {
-    const group = await Group.findById(groupId);
+async function setPermission(groupId: ObjectOrId<IGroupDocument>, ...permissions: {scope: string, actions: string[] | boolean, merge: boolean}[]) {
+    const group = await getDocument(Group, groupId);
     if (!group) {
         throw new Error("Group not found");
     }
-    group.permissions[key] = value;
+    permissions.forEach(({scope, actions, merge}) => {
+        if (typeof actions === "boolean") {
+            group.permissions[scope] = actions;
+        }
+        else if (merge) {
+            if (typeof group.permissions[scope] === "boolean") {
+                group.permissions[scope] = actions;
+            } else {
+                const uniqueActions = new Set([
+                    ...(group.permissions[scope] as string[]),
+                    ...actions,
+                ]);
+                group.permissions[scope] = Array.from(uniqueActions);
+            }
+        } else {
+            group.permissions[scope] = actions;
+        }
+    });
     await group.save();
 }
 
