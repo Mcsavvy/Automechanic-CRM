@@ -3,12 +3,14 @@ import { useEffect, useRef, useState } from "react";
 import React from "react";
 import { toast } from "react-toastify";
 import { CgSpinner } from "react-icons/cg";
+import { useParams, useRouter } from 'next/navigation'
 import Select from "react-select";
 import axios from "axios";
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { useAuthStore } from "@/lib/providers/auth-store-provider";
-import { Pencil } from 'lucide-react'
+import { useStaffStore } from "@/lib/providers/staff-store-provider";
+import { MoveLeft } from 'lucide-react'
+import EditUserRoles from "@/components/staff/edit-user-roles";
 async function getGroups() {
     const response = await fetch("/api/groups/all");
     const groups: { id: string; name: string }[] = await response.json();
@@ -73,39 +75,16 @@ function validateForm(
     return true;
 }
 
-async function createStaff(
-    firstName: string,
-    lastName: string,
-    email: string,
-    phone: string,
-    selectedGroups: readonly { label: string; value: string }[]
-) {
-    try {
-        const response = await axios.post("/api/staffs", {
-            firstName,
-            lastName,
-            email,
-            phone,
-            groups: selectedGroups,
-        });
-        if (response.status === 200) {
-            toast.success("Staff added successfully", {
-                toastId: "staff-added",
-            });
-        } else {
-            toast.error(response.data.message, { toastId: "staff-add-error" });
-            return false;
-        }
-    } catch (error) {
-        toast.error("Could not add staff", { toastId: "staff-add-error" });
-        return false;
-    }
-    return true;
+async function getUser(id: string) {
+    const response = await axios.get(`/api/staffs/${id}`);
+    const user = response.data;
+    return user;
+
 }
 
 export default function Settings() {
-    const user = useAuthStore((state) => state);
     const [status, setStatus] = useState<"idle" | "loading">("idle");
+    const { groups, loaded } = useStaffStore((state) => state);
     const [firstname, setFirstname] = useState<string>('');
     const [lastname, setLastname] = useState<string>("");
     const [email, setEmail] = useState<string>("");
@@ -113,7 +92,8 @@ export default function Settings() {
     const [selectedGroups, setSelectedGroups] = useState<
         readonly { label: string; value: string }[]
     >([]);
-
+    const params = useParams()
+    const router = useRouter();
     const clearForm = () => {
         setFirstname("");
         setLastname("");
@@ -121,19 +101,28 @@ export default function Settings() {
         setPhone("");
         setSelectedGroups([]);
     };
-
+    const goBack = () => {
+        router.push('/inventory/staffs')
+    }
     useEffect(() => {
-        console.log(user)
-    }, [user]);
+        getUser(params.staffId).then(user => {
+            setFirstname(user.firstName)
+            setLastname(user.lastName)
+            setEmail(user.email)
+            setPhone(user.phone)
+            console.log(user)
+        })
+    }, [params]);
 
     return (
         <div className="relative bg-white py-[30px] px-[30px] w-full h-full overflow-auto">
             <div
                 className="relative max-w-md bg-white"
             >
-                <div className="flex items-center justify-between p-4 border-b rounded-t">
-                    <h3 className="text-xl font-semibold text-gray-900">
-                        James Baldwin GeorgeCook
+                <div className="flex flex-row gap-3 items-center justify-start p-4 border-b rounded-t">
+                    <Button onClick={goBack} variant='ghost'><MoveLeft strokeWidth={1.5} size={20}/></Button>
+                    <h3 className="capitalize text-xl font-semibold text-gray-900">
+                        {`${firstname} ${lastname}`}
                     </h3>
                 </div>
                 <div className="p-4 md:p-5 flex flex-col gap-4">
@@ -150,9 +139,10 @@ export default function Settings() {
                                 name="firstname"
                                 value={firstname}
                                 onChange={(e) => setFirstname(e.target.value)}
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-acc-7 focus:border-acc-7 block w-full p-2.5"
                                 placeholder="John"
                                 required
+                                disabled={true}
                             />
                         </div>
                         <div>
@@ -167,9 +157,10 @@ export default function Settings() {
                                 name="lastname"
                                 value={lastname}
                                 onChange={(e) => setLastname(e.target.value)}
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-acc-7 focus:border-acc-7 block w-full p-2.5"
                                 placeholder="Doe"
                                 required
+                                disabled={true}
                             />
                         </div>
                         <div>
@@ -184,9 +175,10 @@ export default function Settings() {
                                 name="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                className="lowercase bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-acc-7 focus:border-acc-7 block w-full p-2.5"
                                 placeholder="name@company.com"
                                 required
+                                disabled={true}
                             />
                         </div>
                         <div>
@@ -201,68 +193,21 @@ export default function Settings() {
                                 name="phone"
                                 value={phone}
                                 onChange={(e) => setPhone(e.target.value)}
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-acc-7 focus:border-acc-7 block w-full p-2.5"
                                 placeholder="08012345678"
+                                disabled={true}
                             />
                         </div>
                         <div>
-                            <Button variant="ghost" className="block mb-2 flex flex-row items-center justify-start gap-4 cursor-pointer text-sm font-medium text-gray-900">Groups<Pencil strokeWidth={1.5} size={18}/></Button>
+                            <EditUserRoles groups={groups} staffId={params.staffId} />
                             <ul className="flex flex-row items-center justify-start gap-3">
-                                <li className="text-pri-3 border border-neu-3 rounded-md p-1">Admin</li>
-                                <li className="text-pri-3 border border-neu-3 rounded-md p-1">Mechanic</li>
-                                <li className="text-pri-3 border border-neu-3 rounded-md p-1">Teller</li>
+                                {groups.filter(g => g.members.includes(params.staffId))
+                                    .map(group => (
+                                        <li key={group.id} className="px-2 py-1 text-xs font-medium text-white bg-acc-7 rounded-sm">{group.name}</li>
+                                    )
+                                    )}
                             </ul>
                         </div>
-                        <Button
-                            type="submit"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                if (
-                                    validateForm(
-                                        firstname,
-                                        lastname,
-                                        email,
-                                        phone,
-                                        selectedGroups
-                                    )
-                                ) {
-                                    setStatus("loading");
-                                    createStaff(
-                                        firstname,
-                                        lastname,
-                                        email,
-                                        phone,
-                                        selectedGroups
-                                    ).then((created) => {
-                                        setStatus("idle");
-                                        if (created) {
-                                            clearForm();
-                                        }
-                                    });
-                                }
-                                console.log({
-                                    firstname,
-                                    lastname,
-                                    email,
-                                    phone,
-                                    selectedGroups,
-                                });
-                            }}
-                            disabled={status === "loading"}
-                            className=" w-full text-center"
-                        >
-                            {status === "loading" ? (
-                                <>
-                                    <CgSpinner className="animate-spin inline-block" />
-                                    <span className="ml-2">Saving...</span>
-                                </>
-                            ) : (
-                                "Save"
-                            )}
-                        </Button>
-                        {/* <div className="text-sm font-medium text-red-400 text-center w-full">
-                            The Staff&apos;s Password Is The Same As Their Email
-                        </div> */}
                     </form>
                 </div>
             </div >

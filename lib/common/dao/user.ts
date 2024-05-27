@@ -211,6 +211,11 @@ async function authenticateUser(email: string, password: string) {
     return { token, user };
 }
 
+async function getUser(id: mongoose.Types.ObjectId) {
+    const user = await UserModel.findOne({ _id: id, isDeleted: false }, { password: 0 , __v: 0, isDeleted: 0}).exec();
+    return user
+}
+
 const UserDAO = {
     addUser,
     getUsers,
