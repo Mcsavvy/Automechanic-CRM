@@ -14,7 +14,7 @@ export default async function populateOrderItems(number: number) {
             qty: Math.floor(Math.random() * 10),
             sellingPrice: Math.floor(Math.random() * 1000),
             costPrice: Math.floor(Math.random() * 1000),
-            discount: Math.floor(Math.random() * 20),
+            discount: 0,
             orderId: order._id,
             goodId: good._id,
         });
