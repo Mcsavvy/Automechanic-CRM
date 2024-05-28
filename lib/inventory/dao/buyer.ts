@@ -1,11 +1,12 @@
 import mongoose from 'mongoose';
-import { BuyerModel } from '../models/buyer';
+import { BuyerModel, IBuyerDocument } from '../models/buyer';
 import { OrderModel } from '../models/order';
+import { FilterQuery } from 'mongoose';
+import { PaginatedDocs } from '@/lib/@types/pagination';
+import { Buyer } from '@/lib/@types/buyer';
 
-interface Buyer {
-    name: string;
-    phone: string;
-    email?: string;
+interface PaginatedBuyers extends PaginatedDocs {
+    buyers: Buyer[];
 }
 
 async function addBuyer(params: Buyer) {
@@ -22,16 +23,49 @@ async function addBuyer(params: Buyer) {
     return buyer;
 }
 
-async function getBuyers(filters?: Partial<Buyer>, page: number = 1, limit: number = 30) {
-    if (page < 1) {
-        throw new Error("Invalid page number");
-    }
-    const query = filters ? filters : {};
-    const skip = (page - 1) * limit;
-    const buyers = await BuyerModel.find(query).skip(skip).limit(limit).exec();
-    const next = buyers.length === limit ? page + 1 : null;
-    const prev = page > 1 ? page - 1 : null;
-    return { buyers, next, prev };
+async function getBuyers({
+  filters,
+  page = 1,
+  limit = 10,
+}: {
+  filters: FilterQuery<IBuyerDocument>;
+  page: number;
+  limit: number;
+}): Promise<PaginatedBuyers> {
+  if (page < 1) {
+    throw new Error("Invalid page number");
+  }
+  if (limit < 1) {
+    throw new Error("Invalid limit");
+  }
+
+  const query = filters ? filters : {};
+  const totalDocs = await BuyerModel.countDocuments(query).exec();
+  const totalPages = Math.ceil(totalDocs / limit);
+  if (page > totalPages) {
+    throw new Error("Page not found");
+  }
+  const skip = (page - 1) * limit;
+  const buyers = await BuyerModel.find(query)
+    .skip(skip)
+    .sort({ name: 1 })
+    .limit(limit)
+    .lean()
+    .exec();
+  const next = page < totalPages ? page + 1 : null;
+  const prev = page > 1 ? page - 1 : null;
+  return {
+    // @ts-ignore
+    buyers: buyers.map((buyer) => ({ ...buyer, id: buyer._id.toString() })),
+    totalDocs,
+    limit,
+    page,
+    pageCount: totalPages,
+    next,
+    prev,
+    hasPrevPage: prev !== null,
+    hasNextPage: next !== null,
+  };
 }
 
 async function getBuyer(id?: mongoose.Types.ObjectId, filters?: Partial<Buyer>) {
