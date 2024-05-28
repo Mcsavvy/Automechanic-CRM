@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import UserModel, { IUserDocument } from "../models/user";
+import mongoose, { FilterQuery } from 'mongoose';
 import {
     validateEmail,
     validateFirstName,
@@ -8,9 +9,7 @@ import {
     validatePassword,
     validatePhoneNumber,
 } from "../validation";
-import mongoose from "mongoose";
 import LogDAO from "./log";
-import { FilterQuery } from "mongoose";
 
 interface createUserParams {
     firstName: string;
@@ -212,12 +211,18 @@ async function authenticateUser(email: string, password: string) {
     return { token, user };
 }
 
+async function getUser(id: mongoose.Types.ObjectId) {
+    const user = await UserModel.findOne({ _id: id, isDeleted: false }, { password: 0 , __v: 0, isDeleted: 0}).exec();
+    return user
+}
+
 const UserDAO = {
     addUser,
     getUsers,
     deleteUser,
     updateUser,
     authenticateUser,
+    getUser
 };
 
 export default UserDAO;

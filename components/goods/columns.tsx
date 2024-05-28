@@ -1,18 +1,6 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import {
-    MoreHorizontal,
-    Pencil,
-    Trash,
-} from "lucide-react";
-
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
-
 import Good from "@/lib/@types/goods";
 import GoodActions from "./actions";
 
@@ -34,7 +22,7 @@ export const columns: ColumnDef<Good>[] = [
                         (category) => (
                             <span
                                 key={category}
-                                className="px-2 py-1 text-xs font-medium text-white bg-blue-500 rounded-sm"
+                                className="px-2 py-1 text-xs font-medium text-white bg-acc-7 rounded-sm"
                             >
                                 {category}
                             </span>

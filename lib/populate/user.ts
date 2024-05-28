@@ -2,7 +2,6 @@ import User from "../common/models/user";
 import { faker } from "@faker-js/faker";
 import UserDAO from "../common/dao/user";
 import Group from "../common/models/group";
-import mongoose from "mongoose";
 import GroupDAO from "../common/dao/group";
 
 export default async function populateUsers(number: number) {
@@ -20,7 +19,7 @@ export default async function populateUsers(number: number) {
     });
     users.push(user);
     const group = allGroups[Math.floor(Math.random() * allGroups.length)];
-    await GroupDAO.addMember(group, user);
+    await GroupDAO.addMember(group._id, user._id);
   }
   return users;
 }

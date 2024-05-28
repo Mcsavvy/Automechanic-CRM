@@ -68,7 +68,7 @@ const shellContext = {
     populateBuyers,
     populateGoods,
     populateOrderItems,
-    populateOrders
+    populateOrders,
 };
 
 

@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button'
 import { useAuthStore } from "@/lib/providers/auth-store-provider";
 import { Eye, EyeOff, ChevronRight, ChevronDown } from 'lucide-react'
 async function getGroups() {
-    const response = await fetch("/api/group/all");
+    const response = await fetch("/api/groups/all");
     const groups: { id: string; name: string }[] = await response.json();
     return groups;
 }
@@ -82,7 +82,7 @@ async function createStaff(
     selectedGroups: readonly { label: string; value: string }[]
 ) {
     try {
-        const response = await axios.post("/api/staff/new", {
+        const response = await axios.post("/api/staffs", {
             firstName,
             lastName,
             email,
@@ -156,7 +156,7 @@ export default function Settings() {
                                 name="firstname"
                                 value={firstname}
                                 onChange={(e) => setFirstname(e.target.value)}
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-acc-7 focus:border-acc-7 block w-full p-2.5"
                                 placeholder="John"
                                 required
                             />
@@ -173,7 +173,7 @@ export default function Settings() {
                                 name="lastname"
                                 value={lastname}
                                 onChange={(e) => setLastname(e.target.value)}
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-acc-7 focus:border-acc-7 block w-full p-2.5"
                                 placeholder="Doe"
                                 required
                             />
@@ -190,7 +190,7 @@ export default function Settings() {
                                 name="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-acc-7 focus:border-acc-7 block w-full p-2.5"
                                 placeholder="name@company.com"
                                 required
                             />
@@ -207,7 +207,7 @@ export default function Settings() {
                                 name="phone"
                                 value={phone}
                                 onChange={(e) => setPhone(e.target.value)}
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-acc-7 focus:border-acc-7 block w-full p-2.5"
                                 placeholder="08012345678"
                             />
                         </div>
@@ -284,7 +284,7 @@ export default function Settings() {
                                     <Input
                                         type="password"
                                         name="pwd"
-                                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-acc-7 focus:border-acc-7 block w-full p-2.5"
                                         placeholder="admin1234"
                                         required
                                     />
@@ -299,7 +299,7 @@ export default function Settings() {
                                     <Input
                                         type="password"
                                         name="confirm-password"
-                                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-acc-7 focus:border-acc-7 block w-full p-2.5"
                                         placeholder="admin1234"
                                         required
                                     />
