@@ -196,7 +196,6 @@ export default function DashboardLayout({
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
     }, []);
-
     return (
         <React.Fragment>
             <AddNewStaffModal />
@@ -259,10 +258,19 @@ export default function DashboardLayout({
                                                 key={idx}
                                                 onClick={
                                                     "link" in item
-                                                        ? () =>
+                                                        ? () => {
                                                               router.push(
                                                                   item.link
                                                               )
+                                                              if (
+                                                                  window.innerWidth <
+                                                                  768
+                                                              ) {
+                                                                  setShowMenu(
+                                                                      false
+                                                                  );
+                                                              }
+                                                            }
                                                         : item.onClick
                                                 }
                                                 className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[15px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${
