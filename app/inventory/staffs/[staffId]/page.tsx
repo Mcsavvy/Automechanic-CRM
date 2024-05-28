@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { useStaffStore } from "@/lib/providers/staff-store-provider";
 import { MoveLeft, Pencil } from 'lucide-react'
 import EditUserRoles from "@/components/staff/edit-user-roles";
+import Loader from "@/components/ui/loader"
 async function getGroups() {
     const response = await fetch("/api/groups/all");
     const groups: { id: string; name: string }[] = await response.json();
@@ -83,7 +84,7 @@ async function getUser(id: string) {
 }
 
 export default function Settings() {
-    const [status, setStatus] = useState<"idle" | "loading">("idle");
+    const [status, setStatus] = useState<"idle" | "loading">("loading");
     const { groups, loaded } = useStaffStore((state) => state);
     const [firstname, setFirstname] = useState<string>('');
     const [lastname, setLastname] = useState<string>("");
@@ -104,112 +105,125 @@ export default function Settings() {
     const goBack = () => {
         router.push('/inventory/staffs')
     }
+
     useEffect(() => {
         getUser(params.staffId as string).then(user => {
             setFirstname(user.firstName)
             setLastname(user.lastName)
             setEmail(user.email)
             setPhone(user.phone)
-            console.log(user)
         })
     }, [params]);
 
+    useEffect(() => {
+        if (groups && firstname) {
+            setStatus("idle")
+        } else {
+            setStatus("loading")
+        }
+    }, [groups, firstname])
     return (
         <div className="relative bg-white py-[30px] px-[30px] w-full h-full overflow-auto">
             <div
                 className="relative max-w-md bg-white"
             >
                 <div className="flex flex-row gap-3 items-center justify-start p-4 border-b rounded-t">
-                    <Button onClick={goBack} variant='ghost'><MoveLeft strokeWidth={1.5} size={20}/></Button>
+                    <Button onClick={goBack} variant='ghost'><MoveLeft strokeWidth={1.5} size={20} /></Button>
                     <h3 className="capitalize text-xl font-semibold text-gray-900">
                         {`${firstname} ${lastname}`}
                     </h3>
                 </div>
-                <div className="p-4 md:p-5 flex flex-col gap-4">
-                    <form className="space-y-4" action="#">
-                        <div>
-                            <label
-                                htmlFor="firstname"
-                                className="block mb-2 text-sm font-medium text-gray-900"
-                            >
-                                First Name
-                            </label>
-                            <Input
-                                type="text"
-                                name="firstname"
-                                value={firstname}
-                                onChange={(e) => setFirstname(e.target.value)}
-                                className="capitalize bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-acc-7 focus:border-acc-7 block w-full p-2.5"
-                                placeholder="John"
-                                required
-                                disabled={true}
-                            />
-                        </div>
-                        <div>
-                            <label
-                                htmlFor="lastname"
-                                className="block mb-2 text-sm font-medium text-gray-900"
-                            >
-                                Last Name
-                            </label>
-                            <Input
-                                type="text"
-                                name="lastname"
-                                value={lastname}
-                                onChange={(e) => setLastname(e.target.value)}
-                                className="capitalize bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-acc-7 focus:border-acc-7 block w-full p-2.5"
-                                placeholder="Doe"
-                                required
-                                disabled={true}
-                            />
-                        </div>
-                        <div>
-                            <label
-                                htmlFor="email"
-                                className="block mb-2 text-sm font-medium text-gray-900"
-                            >
-                                Email
-                            </label>
-                            <Input
-                                type="email"
-                                name="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                className="lowercase bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-acc-7 focus:border-acc-7 block w-full p-2.5"
-                                placeholder="name@company.com"
-                                required
-                                disabled={true}
-                            />
-                        </div>
-                        <div>
-                            <label
-                                htmlFor="phone"
-                                className="block mb-2 text-sm font-medium text-gray-900"
-                            >
-                                Phone Number
-                            </label>
-                            <Input
-                                type="tel"
-                                name="phone"
-                                value={phone}
-                                onChange={(e) => setPhone(e.target.value)}
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-acc-7 focus:border-acc-7 block w-full p-2.5"
-                                placeholder="08012345678"
-                                disabled={true}
-                            />
-                        </div>
-                        <div>
-                            <EditUserRoles staffId={params.staffId as string} groups={groups} name={firstname} />
-                            <ul className="flex flex-row items-center justify-start gap-3">
-                                {groups.filter(g => g.members.includes(params.staffId as string))
-                                    .map(group => (
-                                        <li key={group.id} className="px-2 py-1 text-xs font-medium text-white bg-acc-7 rounded-sm">{group.name}</li>
-                                    )
-                                    )}
-                            </ul>
-                        </div>
-                    </form>
-                </div>
+                {status == 'loading' ?
+                    <div  className="h-full w-full flex flex-row items-center justify-center p-5">
+                        <Loader />
+                    </div> :
+                    <div className="p-4 md:p-5 flex flex-col gap-4">
+                        <form className="space-y-4" action="#">
+                            <div>
+                                <label
+                                    htmlFor="firstname"
+                                    className="block mb-2 text-sm font-medium text-gray-900"
+                                >
+                                    First Name
+                                </label>
+                                <Input
+                                    type="text"
+                                    name="firstname"
+                                    value={firstname}
+                                    onChange={(e) => setFirstname(e.target.value)}
+                                    className="capitalize bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-acc-7 focus:border-acc-7 block w-full p-2.5"
+                                    placeholder="John"
+                                    required
+                                    disabled={true}
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="lastname"
+                                    className="block mb-2 text-sm font-medium text-gray-900"
+                                >
+                                    Last Name
+                                </label>
+                                <Input
+                                    type="text"
+                                    name="lastname"
+                                    value={lastname}
+                                    onChange={(e) => setLastname(e.target.value)}
+                                    className="capitalize bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-acc-7 focus:border-acc-7 block w-full p-2.5"
+                                    placeholder="Doe"
+                                    required
+                                    disabled={true}
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="email"
+                                    className="block mb-2 text-sm font-medium text-gray-900"
+                                >
+                                    Email
+                                </label>
+                                <Input
+                                    type="email"
+                                    name="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    className="lowercase bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-acc-7 focus:border-acc-7 block w-full p-2.5"
+                                    placeholder="name@company.com"
+                                    required
+                                    disabled={true}
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor="phone"
+                                    className="block mb-2 text-sm font-medium text-gray-900"
+                                >
+                                    Phone Number
+                                </label>
+                                <Input
+                                    type="tel"
+                                    name="phone"
+                                    value={phone}
+                                    onChange={(e) => setPhone(e.target.value)}
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-acc-7 focus:border-acc-7 block w-full p-2.5"
+                                    placeholder="08012345678"
+                                    disabled={true}
+                                />
+                            </div>
+                            <div>
+                                <EditUserRoles staffId={params.staffId as string} name={firstname} />
+                                <ul className="flex flex-row items-center justify-start gap-3">
+                                    {groups.filter(g => g.members.includes(params.staffId as string))
+                                        .map(group => (
+                                            <li key={group.id} className="px-2 py-1 text-xs font-medium text-white bg-acc-7 rounded-sm">{group.name}</li>
+                                        )
+                                        )}
+                                </ul>
+                            </div>
+                        </form>
+                    </div>
+                }
+
             </div >
         </div >
     );

@@ -16,7 +16,8 @@ const Staffs = () => {
 
     useEffect(() => {
         if (!loaded) return;
-        applyFilter({...filter, group: activeTab});
+        if (activeTab == 'all') applyFilter({...filter, group: ''})
+        else applyFilter({...filter, group: activeTab});
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeTab]);
 
@@ -26,6 +27,7 @@ const Staffs = () => {
             <div className="h-full relative bg-white overflow-auto md:rounded-md shadow-xl md:m-6">
                 <div className="mx-[30px] mt-3 flex flex-row justify-between items-center border-b border-neu-6">
                     <ul className="flex flex-row items-start bg-white rounded-md">
+                        <li onClick={() => changeTab('all')} className={`capitalize cursor-pointer relative px-4 py-1 text-center text-[14px] transition-all duration-200 ease-in-out ${activeTab == 'all' ? 'tab' : ''}`}>All</li>
                         {
                             groups.map((group) => (
                                 <li key={group.id} onClick={() => changeTab(group.id)} className={`capitalize cursor-pointer relative px-4 py-1 text-center text-[14px] transition-all duration-200 ease-in-out ${activeTab == group.id ? 'tab' : ''}`}>{group.name}</li>

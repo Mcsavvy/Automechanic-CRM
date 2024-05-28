@@ -61,7 +61,7 @@ async function removeMember(groupId: ObjectOrId<IGroupDocument>, userId: ObjectO
     if (!group.members_ids.includes(user._id)) {
         throw new Error("User not in group");
     }
-    group.members_ids = group.members_ids.filter((id) => id !== user._id);
+    group.members_ids = group.members_ids.filter(id => !id.equals(user._id));
     await group.save();
 }
 

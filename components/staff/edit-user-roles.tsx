@@ -15,13 +15,12 @@ import { Pencil, Minus, Plus } from "lucide-react";
 import { useStaffStore } from "@/lib/providers/staff-store-provider";
 interface EditUserRolesProps {
   staffId: string;
-  groups: Group[];
   name: string;
 }
 
 
-const EditUserRoles: FC<EditUserRolesProps> = ({ staffId, groups, name }) => {
-  const { updateStaffGroup } = useStaffStore((state) => state);
+const EditUserRoles: FC<EditUserRolesProps> = ({ staffId, name }) => {
+  const { updateStaffGroup, groups } = useStaffStore((state) => state);
   const changeRole = async (groupId: string, state: boolean) => {
     await updateStaffGroup({ staffId, groupId, state });
   }
@@ -39,7 +38,7 @@ const EditUserRoles: FC<EditUserRolesProps> = ({ staffId, groups, name }) => {
                     <li key={g.id} className="hover:bg-neu-2 cursor-pointer mb-2 p-2">
                       <h3 className="capitalize text-acc-7 font-semibold flex flex-row items-center justify-between">
                         {g.name}
-                        <Minus onClick={() => changeRole(g.id, false)} color={"red"} strokeWidth={1.5} size={20} /></h3>
+                        <Minus onClick={() => changeRole(g.id, false)} color={"red"} strokeWidth={2} size={20} /></h3>
                       <p className="text-sm">{g.description}</p>
                     </li>
                   )
@@ -55,7 +54,7 @@ const EditUserRoles: FC<EditUserRolesProps> = ({ staffId, groups, name }) => {
                     <li key={g.id} className="hover:bg-neu-2 cursor-pointer mb-2 p-2">
                       <h3 className="capitalize text-acc-7 font-semibold flex flex-row items-center justify-between">
                         {g.name}
-                        <Plus onClick={() => changeRole(g.id, true)} color={"green"} strokeWidth={1.5} size={20} /></h3>
+                        <Plus className="hover:scale(115) transition transition-all" onClick={() => changeRole(g.id, true)} color={"green"} strokeWidth={2} size={20} /></h3>
                       <p className="text-sm">{g.description}</p>
                     </li>
                   )
