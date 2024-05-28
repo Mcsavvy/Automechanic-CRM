@@ -37,7 +37,10 @@ export const initialBuyerState: BuyerState = {
     state: "idle",
     page: 1,
     limit: 10,
+    next: null,
+    prev: null,
     pageCount: 0,
+    totalDocs: 0,
     hasNextPage: false,
     hasPrevPage: false,
     buyers: [],
@@ -89,7 +92,7 @@ export async function updateBuyer(buyerId: string, buyer: BuyerUpdate): Promise<
 export async function deleteBuyer(buyerId: string): Promise<void> {
     const response = await axios.delete(`/api/buyers/${buyerId}`);
     const data = response.data;
-    if (response.status !== 200) {
+    if (response.status !== 204) {
         throw new Error(data.message || "Failed to delete buyer");
     }
 }
@@ -148,7 +151,8 @@ export function createBuyerStore(state: BuyerState) {
         },
         applyFilter: async (filter) => {
             set((state) => {
-                fetchBuyers(state.page, state.limit, filter).then(res => {
+                const page = 1; // Reset page to 1 when applying filter
+                fetchBuyers(page, state.limit, filter).then(res => {
                     set({...res, state: "loaded", filter});
                 });
                 return {state: "loading"};
