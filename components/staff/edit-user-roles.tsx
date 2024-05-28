@@ -20,9 +20,10 @@ interface EditUserRolesProps {
 
 
 const EditUserRoles: FC<EditUserRolesProps> = ({ staffId, name }) => {
-  const { updateStaffGroup, groups } = useStaffStore((state) => state);
+  const { updateStaffGroup, groups, getGroups } = useStaffStore((state) => state);
   const changeRole = async (groupId: string, state: boolean) => {
     await updateStaffGroup({ staffId, groupId, state });
+    await getGroups()
   }
   return (
     <AlertDialog>

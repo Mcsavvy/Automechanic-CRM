@@ -21,7 +21,7 @@ export const GET = permissionRequired(Permission.AllowAny())(async function (
     id: group.id,
     name: group.name,
     permissions: group.permissions,
-    members: group.members_ids,
+    members: group.members_ids.map(id => id.toString()),
     description: group.description,
   }));
   return NextResponse.json(response);

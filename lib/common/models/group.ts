@@ -5,7 +5,7 @@ import { hasPermission } from "./utils";
 
 export interface IGroupDocument extends IBaseDocument {
     name: string;
-    description?: string;
+    description: string;
     members_ids: mongoose.Types.ObjectId[];
     permissions: {
         [key: string]: string[] | boolean;

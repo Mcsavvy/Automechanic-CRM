@@ -332,28 +332,9 @@ export const createStaffStore = (state: StaffState) => {
           });
           return {};
         }),
-      updateStaffGroup: async (data: ChangeGroup) =>
-        set((state) => {
-         let groups = state.groups
-          updateStaffGroup(data).then((result) => {
-            groups = groups.map((g) => {
-              if (g.id === result.groupId) {
-                if (result.state) {
-                  if (!g.members.includes(result.staffId)) {
-                    g.members.push(result.staffId);
-                  }
-                } else {
-                  g.members = g.members.filter(
-                    (memId) => memId !== result.staffId
-                  );
-                }
-              }
-              return g;
-            });
-            return { groups };
-          });
-          return { groups };
-        }),
+      updateStaffGroup: async (data: ChangeGroup) =>{
+          updateStaffGroup(data)
+      }
     };
   });
 };
