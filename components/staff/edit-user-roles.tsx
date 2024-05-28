@@ -1,33 +1,76 @@
 'use client'
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+
 import Group from "@/lib/@types/group";
 import { FC } from 'react'
-import { Button } from '@/components/ui/button'
-import { Pencil } from "lucide-react";
-
+import { Pencil, Minus, Plus } from "lucide-react";
+import { useStaffStore } from "@/lib/providers/staff-store-provider";
 interface EditUserRolesProps {
-  staffId: String;
+  staffId: string;
   groups: Group[];
+  name: string;
 }
 
-const EditUserRoles: FC<EditUserRolesProps> = ({ staffId, groups }) => {
+
+const EditUserRoles: FC<EditUserRolesProps> = ({ staffId, groups, name }) => {
+  const { updateStaffGroup } = useStaffStore((state) => state);
+  const changeRole = async (groupId: string, state: boolean) => {
+    await updateStaffGroup({ staffId, groupId, state });
+  }
   return (
-    <Popover>
-      <PopoverTrigger>
-      <Button variant="ghost" className="block mb-2 flex flex-row items-center justify-start gap-4 cursor-pointer text-sm font-medium text-gray-900"><Pencil strokeWidth={1.5} size={18} />Roles</Button>
-</PopoverTrigger>
-      <PopoverContent>
-        <ul>
-          <li>Option 1</li>
-          <li>Option 2</li>
-          <li>Option 3</li>
-        </ul>
-      </PopoverContent>
-    </Popover>
+    <AlertDialog>
+      <AlertDialogTrigger className="block mb-2 flex flex-row items-center justify-start gap-2 cursor-pointer text-sm font-medium text-gray-900"><Pencil strokeWidth={1.5} size={18} />Roles</AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{`${name}'s roles`}</AlertDialogTitle>
+          <div className="flex flex-col gap-3">
+            <div>
+              <ul>
+                {groups.filter(group => group.members.includes(staffId))
+                  .map(g => (
+                    <li key={g.id} className="hover:bg-neu-2 cursor-pointer mb-2 p-2">
+                      <h3 className="capitalize text-acc-7 font-semibold flex flex-row items-center justify-between">
+                        {g.name}
+                        <Minus onClick={() => changeRole(g.id, false)} color={"red"} strokeWidth={1.5} size={20} /></h3>
+                      <p className="text-sm">{g.description}</p>
+                    </li>
+                  )
+                  )
+                }
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-pri-6 font-bold">Add These roles to {name}</h3>
+              <ul>
+                {groups.filter(group => !group.members.includes(staffId))
+                  .map(g => (
+                    <li key={g.id} className="hover:bg-neu-2 cursor-pointer mb-2 p-2">
+                      <h3 className="capitalize text-acc-7 font-semibold flex flex-row items-center justify-between">
+                        {g.name}
+                        <Plus onClick={() => changeRole(g.id, true)} color={"green"} strokeWidth={1.5} size={20} /></h3>
+                      <p className="text-sm">{g.description}</p>
+                    </li>
+                  )
+                  )
+                }
+              </ul>
+            </div>
+          </div>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Close</AlertDialogCancel>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+
   )
 }
 

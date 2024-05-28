@@ -9,7 +9,7 @@ import axios from "axios";
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useStaffStore } from "@/lib/providers/staff-store-provider";
-import { MoveLeft } from 'lucide-react'
+import { MoveLeft, Pencil } from 'lucide-react'
 import EditUserRoles from "@/components/staff/edit-user-roles";
 async function getGroups() {
     const response = await fetch("/api/groups/all");
@@ -105,7 +105,7 @@ export default function Settings() {
         router.push('/inventory/staffs')
     }
     useEffect(() => {
-        getUser(params.staffId).then(user => {
+        getUser(params.staffId as string).then(user => {
             setFirstname(user.firstName)
             setLastname(user.lastName)
             setEmail(user.email)
@@ -139,7 +139,7 @@ export default function Settings() {
                                 name="firstname"
                                 value={firstname}
                                 onChange={(e) => setFirstname(e.target.value)}
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-acc-7 focus:border-acc-7 block w-full p-2.5"
+                                className="capitalize bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-acc-7 focus:border-acc-7 block w-full p-2.5"
                                 placeholder="John"
                                 required
                                 disabled={true}
@@ -157,7 +157,7 @@ export default function Settings() {
                                 name="lastname"
                                 value={lastname}
                                 onChange={(e) => setLastname(e.target.value)}
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-acc-7 focus:border-acc-7 block w-full p-2.5"
+                                className="capitalize bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-acc-7 focus:border-acc-7 block w-full p-2.5"
                                 placeholder="Doe"
                                 required
                                 disabled={true}
@@ -199,9 +199,9 @@ export default function Settings() {
                             />
                         </div>
                         <div>
-                            <EditUserRoles groups={groups} staffId={params.staffId} />
+                            <EditUserRoles staffId={params.staffId as string} groups={groups} name={firstname} />
                             <ul className="flex flex-row items-center justify-start gap-3">
-                                {groups.filter(g => g.members.includes(params.staffId))
+                                {groups.filter(g => g.members.includes(params.staffId as string))
                                     .map(group => (
                                         <li key={group.id} className="px-2 py-1 text-xs font-medium text-white bg-acc-7 rounded-sm">{group.name}</li>
                                     )

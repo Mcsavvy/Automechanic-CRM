@@ -9,7 +9,8 @@ interface GroupResponse {
   permissions: {
     [scope: string]: string[] | boolean;
   };
-  isMember: boolean;
+  description: string;
+  members: string[]
 }
 
 export const GET = permissionRequired(Permission.AllowAny())(async function (
@@ -20,7 +21,8 @@ export const GET = permissionRequired(Permission.AllowAny())(async function (
     id: group.id,
     name: group.name,
     permissions: group.permissions,
-    members: group.members_ids
+    members: group.members_ids,
+    description: group.description,
   }));
   return NextResponse.json(response);
 });

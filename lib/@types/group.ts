@@ -5,4 +5,5 @@ export default interface Group {
         [scope: string]: string[] | boolean;
     };
     members: string[];
+    description: string;
 }

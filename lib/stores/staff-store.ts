@@ -42,7 +42,11 @@ export type StaffState = {
     totalPages: number;
     groups: Group[]
 };
-
+interface ChangeGroup {
+    groupId: string;
+    state: boolean;
+    staffId: string;
+}
 export interface StaffActions {
     setStaffs: (staff: Staff[]) => void;
     setPage: (page: number) => void;
@@ -55,6 +59,7 @@ export interface StaffActions {
     applyFilter: (filter: StaffFilter) => void;
     clearFilter: () => void;
     getGroups: () => void;
+    updateStaffGroup: (data: ChangeGroup) => void;
 }
 
 export type StaffStore = StaffState & StaffActions;
@@ -209,6 +214,31 @@ export const getGroups = async (): Promise<any> => {
     }
 };
 
+export const updateStaffGroup = async (data: ChangeGroup): Promise<any> => {
+    const { state, groupId, staffId } = data;
+    if (state) {
+        try {
+            const response = await axios.post(`/api/groups/${groupId}/add-member`, { staffId});
+            if (response.status !== 200) {
+                throw response;
+            }
+            return { state, groupId, staffId}
+        } catch (err) {
+            throw err;
+        }
+    } else {
+        try {
+            const response = await axios.post(`/api/groups/${groupId}/remove-member`, { staffId});
+            if (response.status !== 200) {
+                throw response;
+            }
+            return { state, groupId, staffId}
+        } catch (err) {
+            throw err;
+        }
+    }
+
+}
 export const createStaffStore = (state: StaffState) => {
     return createStore<StaffStore>((set) => {
         return {
@@ -289,9 +319,27 @@ export const createStaffStore = (state: StaffState) => {
             }),
             getGroups: async () => set((state) => {
                 getGroups().then((groups) => {
+                    console.log(groups)
                     set({ groups });
                 });
                 return {};
+            }),
+            updateStaffGroup: async (data: ChangeGroup) => set((state) => {
+                updateStaffGroup(data).then((result) => {
+                    if (result) {
+                        const group = state.groups.find(group => group.id === data.groupId)
+                        if (group) {
+                                if (data.state) {
+                                    if (!group.members.includes(data.staffId)) {
+                                        group.members.push(data.staffId);
+                                    }
+                                } else {
+                                    group.members = group.members.filter(memberId => memberId !== data.staffId);
+                                }                            
+                        }
+                    }
+                });
+                return state;
             })
         };
     });
