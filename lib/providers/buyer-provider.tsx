@@ -1,9 +1,11 @@
+"use client";
 import {
   type ReactNode,
   createContext,
   useRef,
   useContext,
   useEffect,
+  useState,
 } from "react";
 import { type StoreApi, useStore } from "zustand";
 import {
@@ -25,11 +27,14 @@ export function BuyerStoreProvider({ children }: { children: ReactNode }) {
   );
   const page = 1;
   const [search, _] = useQueryState("buyer:q", { defaultValue: "" });
-  const limit = localStorage.getItem("buyer:l") as number | null || 10;
+  const [limit, setLimit] = useState(10);
   const storeStatus = useRef("idle");
   const filter = {search};
 
   useEffect(() => {
+    if (localStorage.getItem("buyer:limit")) {
+      setLimit(Number(localStorage.getItem("buyer:limit")));
+    };
     if (storeStatus.current == "idle") {
       storeStatus.current = "loading";
       fetchBuyers(page, limit, filter).then((state) => {
