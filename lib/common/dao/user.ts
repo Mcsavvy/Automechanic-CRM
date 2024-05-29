@@ -99,6 +99,7 @@ async function getUsers({
   const users = await UserModel.find(query)
     .skip(skip)
     .limit(limit)
+    .sort({ firstName: 1, lastName: 1})
     .lean()
     .exec();
   const next = users.length === limit ? page + 1 : null;
