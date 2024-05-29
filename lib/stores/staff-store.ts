@@ -53,13 +53,15 @@ export interface StaffActions {
   setLimit: (limit: number) => void;
   deleteStaff: (staffId: string) => Promise<void>;
   createStaff: (staff: StaffCreate) => Promise<Staff>;
-  updateStaff: (staffId: string, good: Partial<StaffCreate>) => Promise<Staff>;
+  updateStaff: (staffId: string, payload: Partial<StaffCreate>) => Promise<Staff>;
   getStaff: (staffId: string) => Promise<Staff>;
   setFilter: (filter: StaffFilter) => void;
   applyFilter: (filter: StaffFilter) => void;
   clearFilter: () => void;
   getGroups: () => void;
   updateStaffGroup: (data: ChangeGroup) => void;
+  banStaff: (staffId: string) => Promise<void>;
+  unbanStaff: (staffId: string) => Promise<void>;
 }
 
 export type StaffStore = StaffState & StaffActions;
@@ -321,7 +323,21 @@ export const createStaffStore = (state: StaffState) => {
       updateStaffGroup: async (data: ChangeGroup) => {
         await updateStaffGroup(data);
         set({groups: await getGroups()})
-      }
+      },
+      banStaff: async (staffId: string) => {
+        await axios.post(`/api/staffs/${staffId}/ban`);
+        set((state) => {
+          getStaffs(state.page, state.limit, state.filter).then(set);
+          return {};
+        });
+      },
+      unbanStaff: async (staffId: string) => {
+        await axios.post(`/api/staffs/${staffId}/unban`);
+        set((state) => {
+          getStaffs(state.page, state.limit, state.filter).then(set);
+          return {};
+        });
+      },
     };
   });
 };
