@@ -109,11 +109,11 @@ export const POST = permissionRequired(Permission.AllowAny())(async function (
     for (const group of groups) {
       await GroupDAO.addMember(group.id, user.id);
     }
+    return NextResponse.json(user, { status: 201 });
   } catch (e) {
     if (e instanceof Error) {
       return NextResponse.json({ error: e.message }, { status: 400 });
     }
     return NextResponse.json({ error: "Unknown error" }, { status: 500 });
   }
-  return NextResponse.json({});
 });
