@@ -51,9 +51,9 @@ export interface StaffActions {
   setStaffs: (staff: Staff[]) => void;
   setPage: (page: number) => void;
   setLimit: (limit: number) => void;
-  deleteStaff: (staffId: string) => void;
-  createStaff: (good: StaffCreate) => void;
-  updateStaff: (staffId: string, good: Partial<StaffCreate>) => void;
+  deleteStaff: (staffId: string) => Promise<void>;
+  createStaff: (staff: StaffCreate) => Promise<Staff>;
+  updateStaff: (staffId: string, good: Partial<StaffCreate>) => Promise<Staff>;
   getStaff: (staffId: string) => Promise<Staff>;
   setFilter: (filter: StaffFilter) => void;
   applyFilter: (filter: StaffFilter) => void;
