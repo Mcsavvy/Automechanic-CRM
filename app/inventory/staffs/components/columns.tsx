@@ -13,16 +13,10 @@ import {
 import { useStaffStore } from "@/lib/providers/staff-store-provider";
 import Staff from "@/lib/@types/staff";
 import {useState, useEffect } from "react"
+import Link from "next/link";
 
 const RolesCell = ({ id }: {id: string}) => {
-    const [userGroups, setUserGroups] = useState([])
     const { groups } = useStaffStore((state) => state);
-    // console.log(groups)
-    // useEffect(() => {
-    //     if (groups?.length > 0) {
-    //         setUserGroups(groups.filter(group => group.members.includes(id)))
-    //     }
-    // }, [groups])
     return (
         <div className="flex flex-wrap gap-2">
             {(groups).filter(g => g.members.includes(id)).map(
@@ -41,22 +35,30 @@ const RolesCell = ({ id }: {id: string}) => {
 
 export const columns: ColumnDef<Staff>[] = [
     {
-        accessorKey: "firstName",
-        header: "Full Name",
+        id: "fullName",
+        header: () => {
+            return (
+                <span className="text-left font-medium">Name</span>
+            );
+        },
         enableHiding: false,
         cell: ({ row }) => {
             const firstName = row.original.firstName;
             const lastName = row.original.lastName;
             return (
-                <div className="text-left font-medium capitalize">
+                <Link href={`/inventory/staffs/${row.id}`} className="text-left font-medium capitalize">
                     {`${firstName} ${lastName}`}
-                </div>
-            );
+                </Link>
+            )
         },
     },
     {
-        accessorKey: "permissisons",
-        header: "Roles",
+        id: "roles",
+        header: () => {
+            return (
+                <span className="text-left font-medium">Roles</span>
+            );
+        },
         cell: ({ row }) => {
             // display the categories as badges
             const id = row.original.id
@@ -67,22 +69,54 @@ export const columns: ColumnDef<Staff>[] = [
     },
     {
         accessorKey: "email",
-        header: "Email",
+        header: () => {
+            return (
+                <span className="text-left font-medium">Email</span>
+            );
+        },
         cell: ({ row }) => {
             return (
-                <div className="text-left font-medium lowercase">
-                    {`${row.getValue("email")}`}
-                </div>
+                <a className="text-left text-pri-3 font-medium" href={`mailto:${row.original.email}`} target="_blank">
+                    {row.original.email}
+                </a>
             );
         },
     },
     {
         accessorKey: "phone",
-        header: "Phone",
+        header: () => {
+            return (
+                <span className="text-left font-medium">Phone</span>
+            );
+        },
+        cell: ({ row }) => {
+            const phone = row.original.phone.replace("+234", "0");
+            return (
+                <a className="text-left text-pri-3 font-medium" href={`tel:${phone}`} target="_blank">
+                    {phone}
+                </a>
+            );
+        },
     },
     {
         accessorKey: "status",
-        header: "Status",
+        header: () => {
+            return (
+                <span className="text-left font-medium">Status</span>
+            );
+        },
+        cell: ({ row }) => {
+            const status = row.original.status;
+            return status === "active" ? (
+              <span className="bg-green-800 text-green-100 text-xs font-medium me-2 px-2.5 py-0.5 rounded">
+                active
+              </span>
+            ) : (
+              <span className="bg-red-800 text-red-100 text-xs font-medium me-2 px-2.5 py-0.5 rounded">
+                inactive
+              </span>
+            );
+        },
     },
     {
         id: "actions",
