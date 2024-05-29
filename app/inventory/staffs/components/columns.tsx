@@ -1,19 +1,10 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import {
-    MoreHorizontal,
-    Eye,
-} from "lucide-react";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
 import { useStaffStore } from "@/lib/providers/staff-store-provider";
 import Staff from "@/lib/@types/staff";
-import {useState, useEffect } from "react"
 import Link from "next/link";
+import StaffActions from "./actions";
 
 const RolesCell = ({ id }: {id: string}) => {
     const { groups } = useStaffStore((state) => state);
@@ -108,12 +99,12 @@ export const columns: ColumnDef<Staff>[] = [
         cell: ({ row }) => {
             const status = row.original.status;
             return status === "active" ? (
-              <span className="bg-green-800 text-green-100 text-xs font-medium me-2 px-2.5 py-0.5 rounded">
+              <span className="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">
                 active
               </span>
             ) : (
-              <span className="bg-red-800 text-red-100 text-xs font-medium me-2 px-2.5 py-0.5 rounded">
-                inactive
+              <span className="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">
+                banned
               </span>
             );
         },
@@ -122,25 +113,7 @@ export const columns: ColumnDef<Staff>[] = [
         id: "actions",
         enableHiding: false,
         cell: ({ row }) => {
-            return (
-                <Popover>
-                    <PopoverTrigger>
-                        <MoreHorizontal size={20} strokeWidth={1.5} />
-                    </PopoverTrigger>
-                    <PopoverContent className="w-[120px] px-0 flex flex-col gap-3">
-                        <a
-                            href={`/inventory/staffs/${row.id}`}
-                            className="px-4 py-2 hover:bg-gray-100 flex flex-row justify-start items-center gap-2"
-                        // onClick={() =>
-                        //     onChangeStaff(row.id, row.productName)
-                        // }
-                        >
-                            <Eye size={20} strokeWidth={1.5} />
-                            View
-                        </a>
-                    </PopoverContent>
-                </Popover>
-            );
+            return <StaffActions {...row.original} />;
         },
     },
 ];
