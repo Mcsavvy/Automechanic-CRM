@@ -217,13 +217,24 @@ async function getUser(id: mongoose.Types.ObjectId) {
     return user
 }
 
+async function setUserStatus(id: mongoose.Types.ObjectId, status: "banned" | "active") {
+    const user = await UserModel.findOne({ _id: id, isDeleted: false });
+    if (!user) {
+        throw new Error("User not found");
+    }
+    user.status = status;
+    await user.save();
+    return user;
+}
+
 const UserDAO = {
     addUser,
     getUsers,
     deleteUser,
     updateUser,
     authenticateUser,
-    getUser
+    getUser,
+    setUserStatus
 };
 
 export default UserDAO;
