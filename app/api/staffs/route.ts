@@ -31,10 +31,37 @@ export const GET = permissionRequired(Permission.AllowAny())(async function (
             query._id = { $in: groupData.members_ids};
         }
     }
-    if (search.length > 0) {
+    // email and phone search
+    query.$or = [
+      { email: { $regex: search, $options: "i" } },
+      { phone: { $regex: search, $options: "i" } },
+    ];
+    // full name search
+    const names = search.split(" ").slice(0, 2);
+    if (names.length === 2) {
+        // search by first name and last name
         query.$or = [
-            { firstName: { $regex: search, $options: "i" } },
-            { lastName: { $regex: search, $options: "i" } },
+          {
+            $or: [
+              { firstName: { $regex: names[1], $options: "i" } },
+              { lastName: { $regex: names[0], $options: "i" } },
+            ],
+          },
+          // search by last name and first name
+          {
+            $or: [
+              { firstName: { $regex: names[0], $options: "i" } },
+              { lastName: { $regex: names[1], $options: "i" } },
+            ],
+          },
+          ...query.$or
+        ];
+    } else {
+        // search by first name or last name
+        query.$or = [
+          { firstName: { $regex: search, $options: "i" } },
+          { lastName: { $regex: search, $options: "i" } },
+          ...query.$or
         ];
     }
     const results = await UserDAO.getUsers({filters: query, page, limit});
