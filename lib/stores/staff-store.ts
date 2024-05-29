@@ -9,8 +9,8 @@ interface StaffCreate {
   lastName: string;
   email: string;
   phone: string;
-  permissions?: string[];
-  password?: string;
+  password: string;
+  groups: string[];
 }
 
 interface PaginatedStaffs {
@@ -250,9 +250,7 @@ export const createStaffStore = (state: StaffState) => {
           if (page === state.page) {
             return {};
           }
-          getStaffs(page, state.limit, state.filter).then((result) => {
-            set(result);
-          });
+          getStaffs(page, state.limit, state.filter).then(set);
           return {};
         }),
       setLimit: (limit: number) =>
@@ -266,40 +264,33 @@ export const createStaffStore = (state: StaffState) => {
           });
           return {};
         }),
-      deleteStaff: async (staffId: string) =>
+      deleteStaff: async (staffId: string) => {
+        await deleteStaff(staffId);
         set((state) => {
-          deleteStaff(staffId).then(() => {
-            // check if the good is in the current page
-            if (state.staff.find((good) => good.id === staffId)) {
-              // TODO: refetch the staff to maintain correct pagination
-              const newStaffs = state.staff.filter(
-                (good) => good.id !== staffId
-              );
-              set({ staff: newStaffs });
-            }
-          });
+          getStaffs(state.page, state.limit, state.filter).then(set);
           return {};
-        }),
+        });
+      },
       createStaff: async (good: StaffCreate) => {
         const newStaff = await createStaff(good);
-        // TODO: refetch the staff to maintain correct pagination
-        set((state) => ({ staff: [...state.staff, newStaff] }));
-      },
-      updateStaff: async (staffId: string, good: Partial<StaffCreate>) =>
         set((state) => {
-          updateStaff(staffId, good).then((updatedStaff) => {
-            const newStaffs = state.staff.map((g) =>
-              g.id === staffId ? updatedStaff : g
-            );
-            set({ staff: newStaffs });
+          getStaffs(state.page, state.limit, state.filter).then((result) => {
+            set(result);
           });
           return {};
-        }),
+        });
+        return newStaff;
+      },
+      updateStaff: async (staffId, staff) => {
+        const updatedStaff = await updateStaff(staffId, staff);
+        set((state) => {
+          getStaffs(state.page, state.limit, state.filter).then(set);
+          return {};
+        });
+        return updatedStaff;
+      },
       getStaff: async (staffId: string) => {
-        let good = state.staff.find((good) => good.id === staffId);
-        if (!good) {
-          good = await getStaff(staffId);
-        }
+        const good = await getStaff(staffId);
         return good;
       },
       setFilter: (filter: StaffFilter) => set({ filter }),
@@ -324,16 +315,12 @@ export const createStaffStore = (state: StaffState) => {
           });
           return {};
         }),
-      getGroups: async () =>
-        set((state) => {
-          getGroups().then((groups) => {
-            console.log(groups);
-            set({ groups });
-          });
-          return {};
-        }),
-      updateStaffGroup: async (data: ChangeGroup) =>{
-          updateStaffGroup(data)
+      getGroups: async () => {
+        set({ groups: await getGroups() });
+      },
+      updateStaffGroup: async (data: ChangeGroup) => {
+        await updateStaffGroup(data);
+        set({groups: await getGroups()})
       }
     };
   });
