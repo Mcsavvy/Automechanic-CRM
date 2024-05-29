@@ -3,7 +3,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { useStaffStore } from "@/lib/providers/staff-store-provider";
 import Staff from "@/lib/@types/staff";
-import Link from "next/link";
 import StaffActions from "./actions";
 
 const RolesCell = ({ id }: {id: string}) => {
@@ -37,9 +36,9 @@ export const columns: ColumnDef<Staff>[] = [
             const firstName = row.original.firstName;
             const lastName = row.original.lastName;
             return (
-                <Link href={`/inventory/staffs/${row.id}`} className="text-left font-medium capitalize">
+                <span className="text-left font-medium capitalize">
                     {`${firstName} ${lastName}`}
-                </Link>
+                </span>
             )
         },
     },
