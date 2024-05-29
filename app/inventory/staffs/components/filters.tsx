@@ -28,9 +28,9 @@ import { useEffect } from "react";
 
 export default function StaffsFilters() {
     // @ts-ignore
-    const [selectedGroup, setSelectedGroup] = useQueryState<string>("group", {defaultValue: ""});
+    const [selectedGroup] = useQueryState<string>("group", {defaultValue: ""});
     // @ts-ignore
-    const [selectedStatus, setSelectedStatus] = useQueryState<string>("status", {defaultValue: ""});
+    const [selectedStatus, setSelectedStatus] = useQueryState<string>("status", {defaultValue: "", clearOnDefault: true});
     const { applyFilter, filter, groups, loaded} = useStaffStore((state) => state);
 
     useEffect(() => {
@@ -69,33 +69,6 @@ export default function StaffsFilters() {
             </PopoverTrigger>
             <PopoverContent>
                 <div className="flex flex-col gap-3 overflow-auto h-fit">
-                    {/* <Select
-                        value={selectedGroup}
-                        onValueChange={setSelectedGroup}
-                    >
-                        <div className="flex flex-row items-center justify-between">
-                            <SelectTrigger className="w-[180px] text-left">
-                                <SelectValue placeholder="Select item group" />
-                            </SelectTrigger>
-                            <Button
-                                variant={"ghost"}
-                                onClick={() => setSelectedGroup("")}
-                                disabled={!selectedGroup.length}
-                                size={"sm"}
-                            >
-                                <X size={20} strokeWidth={1.5} />
-                            </Button>
-                        </div>
-                        <SelectContent>
-                            <SelectGroup>
-                                {groups.map((group) => (
-                                    <SelectItem key={group._id} value={group.name}>
-                                        {group.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select> */}
                     <Select
                         value={selectedStatus}
                         // @ts-ignore

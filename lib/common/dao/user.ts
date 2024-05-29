@@ -92,13 +92,14 @@ async function getUsers({
   const query = filters ? filters : {};
   const totalDocs = await UserModel.countDocuments(query).exec();
   const totalPages = Math.ceil(totalDocs / limit);
-  if (page > totalPages) {
+  if (page > 1 && page > totalPages) {
     throw new Error("Page not found");
   }
   const skip = (page - 1) * limit;
   const users = await UserModel.find(query)
     .skip(skip)
     .limit(limit)
+    .sort({ firstName: 1, lastName: 1})
     .lean()
     .exec();
   const next = users.length === limit ? page + 1 : null;
@@ -216,13 +217,24 @@ async function getUser(id: mongoose.Types.ObjectId) {
     return user
 }
 
+async function setUserStatus(id: mongoose.Types.ObjectId, status: "banned" | "active") {
+    const user = await UserModel.findOne({ _id: id, isDeleted: false });
+    if (!user) {
+        throw new Error("User not found");
+    }
+    user.status = status;
+    await user.save();
+    return user;
+}
+
 const UserDAO = {
     addUser,
     getUsers,
     deleteUser,
     updateUser,
     authenticateUser,
-    getUser
+    getUser,
+    setUserStatus
 };
 
 export default UserDAO;

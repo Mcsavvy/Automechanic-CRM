@@ -26,7 +26,7 @@ import {
     useReactTable,
 } from "@tanstack/react-table";
 
-import { columns} from "@/components/staff/columns";
+import { columns} from "./columns";
 import Staff from "@/lib/@types/staff";
 import StaffsFilters from "./filters";
 import { useQueryState } from "nuqs";
@@ -67,7 +67,7 @@ export const DataTable: FC<DataTableProps> = ({
     });
     return (
         <div className="relative flex flex-col h-full w-full">
-            <div className=" w-inherit md:w-[calc(100%-60px)] box-border flex flex-col bg-white py-3 overflow-auto rounded-t-md m-[30px] border border-pri-3 h-[calc(100% - 550px)]">
+            <div className=" w-inherit md:w-[calc(100%-60px)] box-border flex flex-col bg-white py-3 overflow-auto sm:m-7 m-2.5 border border-pri-3 rounded-md  h-[calc(100% - 550px)]">
                 <div className="px-3">
                     <div className="flex flex-row justify-between flex-wrap items-center">
                         <Suspense>

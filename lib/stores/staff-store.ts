@@ -9,8 +9,8 @@ interface StaffCreate {
   lastName: string;
   email: string;
   phone: string;
-  permissions?: string[];
-  password?: string;
+  password: string;
+  groups: string[];
 }
 
 interface PaginatedStaffs {
@@ -51,15 +51,17 @@ export interface StaffActions {
   setStaffs: (staff: Staff[]) => void;
   setPage: (page: number) => void;
   setLimit: (limit: number) => void;
-  deleteStaff: (staffId: string) => void;
-  createStaff: (good: StaffCreate) => void;
-  updateStaff: (staffId: string, good: Partial<StaffCreate>) => void;
+  deleteStaff: (staffId: string) => Promise<void>;
+  createStaff: (staff: StaffCreate) => Promise<Staff>;
+  updateStaff: (staffId: string, payload: Partial<StaffCreate>) => Promise<Staff>;
   getStaff: (staffId: string) => Promise<Staff>;
   setFilter: (filter: StaffFilter) => void;
   applyFilter: (filter: StaffFilter) => void;
   clearFilter: () => void;
   getGroups: () => void;
   updateStaffGroup: (data: ChangeGroup) => void;
+  banStaff: (staffId: string) => Promise<void>;
+  unbanStaff: (staffId: string) => Promise<void>;
 }
 
 export type StaffStore = StaffState & StaffActions;
@@ -80,7 +82,7 @@ export const defaultStaffState: StaffState = {
 
 export const createStaff = async (staff: StaffCreate): Promise<Staff> => {
   try {
-    const response = await axios.post("/api/users", staff);
+    const response = await axios.post("/api/staffs", staff);
     if (response.status !== 201) {
       throw response;
     }
@@ -104,7 +106,7 @@ export const updateStaff = async (
   staff: Partial<StaffCreate>
 ): Promise<Staff> => {
   try {
-    const response = await axios.put(`/api/users/${staffId}`, staff);
+    const response = await axios.put(`/api/staffs/${staffId}`, staff);
     if (response.status !== 200) {
       throw response;
     }
@@ -125,7 +127,7 @@ export const updateStaff = async (
 
 export const getStaff = async (staffId: string): Promise<Staff> => {
   try {
-    const response = await axios.get(`/api/users/${staffId}`);
+    const response = await axios.get(`/api/staffs/${staffId}`);
     if (response.status !== 200) {
       throw response;
     }
@@ -146,7 +148,7 @@ export const getStaff = async (staffId: string): Promise<Staff> => {
 
 export const deleteStaff = async (staffId: string): Promise<void> => {
   try {
-    const response = await axios.delete(`/api/users/${staffId}`);
+    const response = await axios.delete(`/api/staffs/${staffId}`);
     if (response.status !== 204) {
       throw response;
     }
@@ -250,9 +252,7 @@ export const createStaffStore = (state: StaffState) => {
           if (page === state.page) {
             return {};
           }
-          getStaffs(page, state.limit, state.filter).then((result) => {
-            set(result);
-          });
+          getStaffs(page, state.limit, state.filter).then(set);
           return {};
         }),
       setLimit: (limit: number) =>
@@ -266,40 +266,33 @@ export const createStaffStore = (state: StaffState) => {
           });
           return {};
         }),
-      deleteStaff: async (staffId: string) =>
+      deleteStaff: async (staffId: string) => {
+        await deleteStaff(staffId);
         set((state) => {
-          deleteStaff(staffId).then(() => {
-            // check if the good is in the current page
-            if (state.staff.find((good) => good.id === staffId)) {
-              // TODO: refetch the staff to maintain correct pagination
-              const newStaffs = state.staff.filter(
-                (good) => good.id !== staffId
-              );
-              set({ staff: newStaffs });
-            }
-          });
+          getStaffs(state.page, state.limit, state.filter).then(set);
           return {};
-        }),
+        });
+      },
       createStaff: async (good: StaffCreate) => {
         const newStaff = await createStaff(good);
-        // TODO: refetch the staff to maintain correct pagination
-        set((state) => ({ staff: [...state.staff, newStaff] }));
-      },
-      updateStaff: async (staffId: string, good: Partial<StaffCreate>) =>
         set((state) => {
-          updateStaff(staffId, good).then((updatedStaff) => {
-            const newStaffs = state.staff.map((g) =>
-              g.id === staffId ? updatedStaff : g
-            );
-            set({ staff: newStaffs });
+          getStaffs(state.page, state.limit, state.filter).then((result) => {
+            set(result);
           });
           return {};
-        }),
+        });
+        return newStaff;
+      },
+      updateStaff: async (staffId, staff) => {
+        const updatedStaff = await updateStaff(staffId, staff);
+        set((state) => {
+          getStaffs(state.page, state.limit, state.filter).then(set);
+          return {};
+        });
+        return updatedStaff;
+      },
       getStaff: async (staffId: string) => {
-        let good = state.staff.find((good) => good.id === staffId);
-        if (!good) {
-          good = await getStaff(staffId);
-        }
+        const good = await getStaff(staffId);
         return good;
       },
       setFilter: (filter: StaffFilter) => set({ filter }),
@@ -324,17 +317,27 @@ export const createStaffStore = (state: StaffState) => {
           });
           return {};
         }),
-      getGroups: async () =>
+      getGroups: async () => {
+        set({ groups: await getGroups() });
+      },
+      updateStaffGroup: async (data: ChangeGroup) => {
+        await updateStaffGroup(data);
+        set({groups: await getGroups()})
+      },
+      banStaff: async (staffId: string) => {
+        await axios.post(`/api/staffs/${staffId}/ban`);
         set((state) => {
-          getGroups().then((groups) => {
-            console.log(groups);
-            set({ groups });
-          });
+          getStaffs(state.page, state.limit, state.filter).then(set);
           return {};
-        }),
-      updateStaffGroup: async (data: ChangeGroup) =>{
-          updateStaffGroup(data)
-      }
+        });
+      },
+      unbanStaff: async (staffId: string) => {
+        await axios.post(`/api/staffs/${staffId}/unban`);
+        set((state) => {
+          getStaffs(state.page, state.limit, state.filter).then(set);
+          return {};
+        });
+      },
     };
   });
 };
