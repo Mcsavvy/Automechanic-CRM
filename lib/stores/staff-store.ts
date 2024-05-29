@@ -80,7 +80,7 @@ export const defaultStaffState: StaffState = {
 
 export const createStaff = async (staff: StaffCreate): Promise<Staff> => {
   try {
-    const response = await axios.post("/api/users", staff);
+    const response = await axios.post("/api/staffs", staff);
     if (response.status !== 201) {
       throw response;
     }
@@ -104,7 +104,7 @@ export const updateStaff = async (
   staff: Partial<StaffCreate>
 ): Promise<Staff> => {
   try {
-    const response = await axios.put(`/api/users/${staffId}`, staff);
+    const response = await axios.put(`/api/staffs/${staffId}`, staff);
     if (response.status !== 200) {
       throw response;
     }
@@ -125,7 +125,7 @@ export const updateStaff = async (
 
 export const getStaff = async (staffId: string): Promise<Staff> => {
   try {
-    const response = await axios.get(`/api/users/${staffId}`);
+    const response = await axios.get(`/api/staffs/${staffId}`);
     if (response.status !== 200) {
       throw response;
     }
@@ -146,7 +146,7 @@ export const getStaff = async (staffId: string): Promise<Staff> => {
 
 export const deleteStaff = async (staffId: string): Promise<void> => {
   try {
-    const response = await axios.delete(`/api/users/${staffId}`);
+    const response = await axios.delete(`/api/staffs/${staffId}`);
     if (response.status !== 204) {
       throw response;
     }
