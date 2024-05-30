@@ -9,7 +9,6 @@ interface InvoiceItem {
     description?: string;
     qty: number;
     sellingPrice: number;
-    discount: number;
     total: number;
     grandTotal: number;
 }
@@ -62,7 +61,7 @@ async function getInvoice(orderId?: mongoose.Types.ObjectId, orderDoc?: any) : P
     let invoiceGrandTotal = 0;
     const invoiceItems = orderItems.map(orderItem => {
         const total = orderItem.qty * orderItem.sellingPrice;
-        const grandTotal = total - getDiscount(total, orderItem.discount);
+        const grandTotal = total;
         
         invoiceTotal += total;
         invoiceGrandTotal += grandTotal;
@@ -74,7 +73,6 @@ async function getInvoice(orderId?: mongoose.Types.ObjectId, orderDoc?: any) : P
             name: orderItem.goodId.name,
             qty: orderItem.qty,
             sellingPrice: orderItem.sellingPrice,
-            discount: orderItem.discount,
             total,
             grandTotal
         };
