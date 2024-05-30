@@ -31,6 +31,14 @@ export interface Order {
     paymentMethod: PaymentMethod;
 }
 
+export type OrderSort = Partial<{
+  costPrice: -1 | 1;
+  discount: -1 | 1;
+  amountPaid: -1 | 1;
+  overdueLimit: -1 | 1;
+  createdAt: -1 | 1;
+}>;
+
 
 export interface PaginatedOrders extends PaginatedDocs {
     orders: Order[];

@@ -1,6 +1,6 @@
 import mongoose, { FilterQuery } from "mongoose";
 import { IOrderDocument, OrderModel } from "../models/order";
-import { Order, OrderItem } from "@/lib/@types/order";
+import { Order, OrderItem, OrderSort } from "@/lib/@types/order";
 import { PaginatedDocs } from "@/lib/@types/pagination";
 import OrderItemDAO from "./orderItem";
 
@@ -145,10 +145,12 @@ async function getOrders({
   page = 1,
   limit = 10,
   filters,
+  sort,
 }: {
   page: number;
   limit: number;
   filters?: FilterQuery<Order>;
+  sort: OrderSort;
 }): Promise<PaginatedOrders> {
   if (page < 1) {
     throw new Error("Invalid page number");
@@ -167,7 +169,7 @@ async function getOrders({
   const orders = await OrderModel.find(query)
     .skip(skip)
     .limit(limit)
-    .sort({ createdAt: -1 })
+    .sort(sort)
     .populate({
       path: "buyerId",
       select: "name email _id phone",
