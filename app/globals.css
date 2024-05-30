@@ -56,7 +56,7 @@
         --acc-600: #B8AD08;
         --acc-700: #877802;
         --acc-800: #574800;
-        --acc-900: #261D00;
+        --acc-900: #050505;
     
         /* Neutral */
         --neu-100: #FAFBFC;
@@ -172,7 +172,8 @@
   width: 100%;
   background: var(--pri-400);
   position: absolute;
-  bottom: -2px;
+  bottom: 0;
+  z-index: 1;
   left:0;
   border-radius: 50px;
 }
