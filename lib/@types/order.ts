@@ -41,4 +41,4 @@ export type UnsavedOrder = Omit<Order, "buyer"> & { items: UnsavedOrderItem[] };
 export type OrderCreate = UnsavedOrder;
 export type OrderUpdate = Omit<Order, "buyer"> & {
     items: (OrderItem | UnsavedOrderItem)[];
-};
+}
