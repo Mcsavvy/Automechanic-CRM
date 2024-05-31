@@ -1,22 +1,8 @@
 import mongoose from 'mongoose';
 import { getBaseSchema, IBaseDocument , defineModel} from '../../common/models/base';
 import { BuyerModel, IBuyerDocument } from './buyer';
-import { PaymentMethod, OrderStatus } from '@/lib/@types/order';
+import { PaymentMethod, OrderStatus, orderStatusChoices, paymentMethodChoices } from '@/lib/@types/order';
 
-export const orderStatusChoices: OrderStatus[] = [
-  "pending",
-  "cancelled",
-  "paid",
-  "overdue",
-];
-export const paymentMethodChoices: PaymentMethod[] = [
-  "cash",
-  "credit",
-  "debit",
-  "voucher",
-  "bank",
-  "cheque",
-];
 
 export interface IOrderDocument extends IBaseDocument {
   discount: number;
@@ -41,3 +27,7 @@ const OrderSchema = getBaseSchema().add({
 
 export const OrderModel = defineModel<IOrderDocument>("Order", OrderSchema);
 export default OrderModel;
+export {
+  orderStatusChoices,
+  paymentMethodChoices,
+}

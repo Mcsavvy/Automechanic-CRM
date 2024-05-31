@@ -2,6 +2,20 @@ import { PaginatedDocs } from "./pagination";
 
 export type OrderStatus = 'pending' | 'cancelled' | 'paid' | 'overdue';
 export type PaymentMethod = 'cash' | 'credit' | 'debit' | 'voucher' | 'bank' | 'cheque';
+export const orderStatusChoices: OrderStatus[] = [
+  "pending",
+  "cancelled",
+  "paid",
+  "overdue",
+];
+export const paymentMethodChoices: PaymentMethod[] = [
+  "cash",
+  "credit",
+  "debit",
+  "voucher",
+  "bank",
+  "cheque",
+];
 
 export interface OrderItem {
     id: string;
