@@ -28,11 +28,11 @@ export interface Order {
     overdueLimit: Date;
     items: OrderItem[];
     status: OrderStatus;
+    createdAt: string;
     paymentMethod: PaymentMethod;
 }
 
 export type OrderSort = Partial<{
-  costPrice: -1 | 1;
   discount: -1 | 1;
   amountPaid: -1 | 1;
   overdueLimit: -1 | 1;
@@ -44,7 +44,7 @@ export interface PaginatedOrders extends PaginatedDocs {
     orders: Order[];
 }
 
-export type UnsavedOrderItem = Omit<Omit<OrderItem, "orderId">, "id">;
+export type UnsavedOrderItem = Omit<OrderItem, "orderId" | "id">;
 export type UnsavedOrder = Omit<Order, "buyer"> & { items: UnsavedOrderItem[] };
 export type OrderCreate = UnsavedOrder;
 export type OrderUpdate = Omit<Order, "buyer"> & {
