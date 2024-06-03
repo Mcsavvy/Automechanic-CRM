@@ -1,10 +1,10 @@
 "use client"
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { faker } from "@faker-js/faker";
 import { OrderDataTable } from "@/components/ui/ordersDataTable";
 import { Plus } from 'lucide-react'
-
+import Insights from './components/insights'
 
 const tableHeaders = [
   { id: 'id', name: "Order ID", isVisible: true, isPresent: true },
@@ -45,27 +45,15 @@ export default function Orders() {
     }
     return data;
   };
+
   return (
     <>
       <div className="flex flex-col relative w-full">
         <div className="h-full relative">
-          <div className="flex flex-row justify-between items-center p-[20px]">
+          {/* <div className="flex flex-row justify-between items-center p-[20px]">
             <a href="#goods/new"><Button className="flex flex-row gap-2"><Plus size={20} strokeWidth={1.5} />Create new order</Button></a>
-          </div>
-          <div className="flex flex-row flex-wrap gap-[30px] px-[30px] items-center justify-evenly">
-            <div className=" min-w-[300px] bg-white p-4 flex grow-1 flex-col rounded-md w-[30%] gap-3 border border-pri-3 shadow-inner">
-              <h3 className="text-2xl text-green-500 font-normal font-heading">Completed Orders</h3>
-              <p className="text-lg text-neu-8">Total: 117 </p>
-            </div>
-            <div className=" min-w-[300px] bg-white p-4 flex grow-1 flex-col rounded-md w-[30%] gap-3 border border-pri-3 shadow-inner">
-              <h3 className="text-2xl text-pri-5 font-normal font-heading">Pending Orders</h3>
-              <p className="text-lg text-neu-8">Total: 45</p>
-            </div>
-            <div className=" min-w-[300px] bg-white p-4 flex grow-1 flex-col rounded-md w-[30%] gap-3 border border-pri-3 shadow-inner">
-              <h3 className="text-2xl text-red-500 font-heading font-normal">Errors</h3>
-              <p className="text-lg text-neu-8">Total: 34</p>
-            </div>
-          </div>
+          </div> */}
+          <Insights/>
           <OrderDataTable data={generateFakeData()} headers={tableHeaders} filters={dataFilters} />
         </div>
       </div>

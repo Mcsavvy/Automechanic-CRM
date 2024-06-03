@@ -15,10 +15,14 @@ export default async function populateOrders(number: number) {
             buyerId: buyer._id,
             amountPaid: Math.floor(Math.random() * 1000),
             change: Math.floor(Math.random() * 10),
-            discount: Math.floor(Math.random() * 25)
+            discount: Math.floor(Math.random() * 25),
+            createdAt: randomDate(new Date(2020, 0, 1, 10), new Date(2032, 11, 31, 12)),
         });
         await order.save();
         orders.push(order);
     }
     return orders;
 };
+function randomDate(start: Date, end: Date) {
+    return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+}

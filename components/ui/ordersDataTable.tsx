@@ -77,7 +77,7 @@ export const OrderDataTable: FC<DataTableProps> = ({ data, headers, filters, onC
         console.log(filterValues);
     };
     return (
-        <div className="relative flex flex-col h-full  border border-red-500 w-full">
+        <div className="relative flex flex-col h-full w-full">
             <div className=" w-inherit md:w-[calc(100%-60px)] box-border flex flex-col bg-white py-3 overflow-auto rounded-t-md m-[30px] border border-pri-3 h-[calc(100% - 550px)]">
                 <div className="px-3">
                     <div className="flex flex-row justify-between flex-wrap items-center">
