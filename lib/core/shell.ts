@@ -75,6 +75,11 @@ const shellContext = {
 const startShell = () => {
     console.log(`${packageJson.name} v${packageJson.version}`);
     const r = repl.start();
+    r.setupHistory(".node_repl_history", (err) => {
+        if (err) {
+            console.error("Error setting up history:", err);
+        }
+    });
     for (const [key, value] of Object.entries(shellContext)) {
         Object.defineProperty(r.context, key, {
             configurable: false,
