@@ -59,7 +59,7 @@ export interface StaffActions {
   applyFilter: (filter: StaffFilter) => void;
   clearFilter: () => void;
   getGroups: () => void;
-  updateStaffGroup: (data: ChangeGroup) => void;
+  updateStaffGroup: (data: ChangeGroup) => Promise<void>;
   banStaff: (staffId: string) => Promise<void>;
   unbanStaff: (staffId: string) => Promise<void>;
 }
