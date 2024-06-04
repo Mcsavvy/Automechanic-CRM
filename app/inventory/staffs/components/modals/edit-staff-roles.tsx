@@ -11,7 +11,7 @@ import {
 
 import Group from "@/lib/@types/group";
 import { FC } from "react";
-import { Pencil, Minus, Plus } from "lucide-react";
+import { LoaderCircle, Minus, Plus } from "lucide-react";
 import { useStaffStore } from "@/lib/providers/staff-store-provider";
 interface EditUserRolesProps {
   staffId: string;
@@ -31,6 +31,7 @@ export default function EditStaffRoles() {
   const [status, setStatus] = useState<"idle" | "banning" | "loading">(
     "loading"
   );
+  const [lo, setLo] = useState<string>("")
   const { getStaff, staff: staffs, groups, updateStaffGroup } = useStaffStore((state) => state);
   const [staffId, setStaffId] = useQueryState("staff", {
     defaultValue: "",
@@ -43,8 +44,11 @@ export default function EditStaffRoles() {
     setStatus("loading");
   };
 
-  const changeRole = async (groupId: string, state: boolean) => {
-    updateStaffGroup({ staffId, groupId, state });
+  const changeRole = (groupId: string, state: boolean) => {
+    setLo(groupId);
+    updateStaffGroup({ staffId, groupId, state }).then(() => {
+       setLo("");
+    })
   };
 
 
@@ -101,12 +105,22 @@ export default function EditStaffRoles() {
                     >
                       <h3 className="capitalize text-acc-7 font-semibold flex flex-row items-center justify-between">
                         {g.name}
-                        <Minus
-                          onClick={() => changeRole(g.id, false)}
-                          color={"red"}
-                          strokeWidth={2}
-                          size={20}
-                        />
+                        {
+                          lo == g.id ?
+                            <LoaderCircle
+                              strokeWidth={2}
+                              size={20}
+                              color={"#877802"}
+                              className="animate-spin" /> :
+                            <Minus
+                              onClick={() => {
+                                changeRole(g.id, false)
+                              }}
+                              color={"red"}
+                              strokeWidth={2}
+                              size={20}
+                            />
+                        }
                       </h3>
                       <p className="text-sm">{g.description}</p>
                     </li>
@@ -127,13 +141,22 @@ export default function EditStaffRoles() {
                     >
                       <h3 className="capitalize text-acc-7 font-semibold flex flex-row items-center justify-between">
                         {g.name}
-                        <Plus
-                          className="hover:scale(115) transition-all"
-                          onClick={() => changeRole(g.id, true)}
-                          color={"green"}
-                          strokeWidth={2}
-                          size={20}
-                        />
+                        {
+                          lo === g.id ?
+                            <LoaderCircle
+                              strokeWidth={2}
+                              size={20}
+                              color={"#877802"}
+                              className="animate-spin" /> :
+
+                            <Plus
+                              className="hover:scale(115) transition-all"
+                              onClick={() => changeRole(g.id, true)}
+                              color={"green"}
+                              strokeWidth={2}
+                              size={20}
+                            />
+                        }
                       </h3>
                       <p className="text-sm">{g.description}</p>
                     </li>

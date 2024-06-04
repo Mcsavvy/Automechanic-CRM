@@ -1,21 +1,20 @@
 import Buyer from "../inventory/models/buyer";
-import Order from "../inventory/models/order";
+import Order, {orderStatusChoices, paymentMethodChoices} from "../inventory/models/order";
+import { choice, randint } from "../utils";
 
 export default async function populateOrders(number: number) {
     const orders = [];
-    const orderStatusChoices = ['pending', 'cancelled', 'error', 'rest', 'paid'];
-    const paymentMethodChoices = ['cash', 'credit', 'debit', 'voucher', 'bank', 'cheque'];
-    const buyers = await Buyer.find();
+    const buyers = await Buyer.find().select({ _id: 1 });
     for (let i = 0; i < number; i++) {
-        const buyer = buyers[Math.floor(Math.random() * buyers.length)];
+        const buyer = choice(buyers);
         const order = new Order({
-            status: orderStatusChoices[Math.floor(Math.random() * orderStatusChoices.length)],
+            status: choice(orderStatusChoices),
             overdueLimit: new Date(),
-            paymentMethod: paymentMethodChoices[Math.floor(Math.random() * paymentMethodChoices.length)],
+            paymentMethod: choice(paymentMethodChoices),
             buyerId: buyer._id,
-            amountPaid: Math.floor(Math.random() * 1000),
-            change: Math.floor(Math.random() * 10),
-            discount: Math.floor(Math.random() * 25)
+            amountPaid: randint(5, 1000),
+            discount: randint(0, 50),
+            cancelReason: null,
         });
         await order.save();
         orders.push(order);
