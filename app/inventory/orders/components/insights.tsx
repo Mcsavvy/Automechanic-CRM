@@ -11,7 +11,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
-import { RefreshCcw } from 'lucide-react';
+import { RefreshCcw, TrendingUp, TrendingDown } from 'lucide-react';
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useState, useEffect } from 'react'
@@ -26,7 +26,7 @@ export default function Insights() {
     const [summary, setSummary] = useState<any>({})
     const [chartData, setCharData] = useState<any>()
     const [chartSummary, setChartSummary] = useState<any>()
-    const [metric, setMetric] = useState<'month' | 'hour' | 'day' | 'year'>('month')
+    const [metric, setMetric] = useState<'month' | 'hour' | 'day' | 'year'>('year')
     const [before, setBefore] = useState('')
     const [after, setAfter] = useState('')
     const [f_b, setFB] = useState('')
@@ -34,13 +34,25 @@ export default function Insights() {
     const [by, setBy] = useState<'month' | 'hour' | 'day' | 'year'>('day')
     const [val, setVal] = useState('today')
     const [clicked, setClicked] = useState(false)
-    const metrics = {
+    const metrics: any = {
         'month': ['Jan', 'Feb', 'Mar', 'April', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
         'day': ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
         'hour': ['12 AM', '1 AM', '2 AM', '3 AM', '4 AM', '5 AM', '6 AM', '7 AM', '8 AM', '9 AM', '10 AM', '11 AM', '12 PM', '1 PM', '2 PM', '3 PM', '4 PM', '5 PM', '6 PM', '7 PM', '8 PM', '9 PM', '10 PM', '11 PM'],
         'year': Array.from({ length: 20 }, (_, i) => i + 2015),
     }
     const options = {
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    label: function (context) {
+                        const totalRevenueDataset = context.chart.data.datasets.find(dataset => dataset.label === 'Total Revenue');
+                        const totalRevenueValue = totalRevenueDataset.data[context.parsed.x];
+                        return `Total Revenue: ${totalRevenueValue}`;
+                    }
+                }
+            }
+        },
+
         scales: {
             y: {
                 display: false,
@@ -60,23 +72,27 @@ export default function Insights() {
         },
     }
     const summaryOptions = {
-        indexAxis: 'y',
+        indexAxis: 'y', // Set the index axis to 'y' for horizontal bars
         scales: {
-            y: {
-                display: false,
-                grid: {
-                    display: false,
-                },
-                stacked: true,
-            },
             x: {
+                stacked: true,
                 grid: {
                     display: false,
                 },
-                stacked: true,
-                barPercentage: 0.6,
-                categoryPercentage: 0.8,
+                ticks: {
+                    display: false, // Add this line to remove the x-axis labels
+                },
             },
+            y: {
+                stacked: true,
+                grid: {
+                    display: false,
+                },
+                ticks: {
+                    display: false, // Add this line to remove the x-axis labels
+                },
+            },
+
         },
     }
 
@@ -139,7 +155,10 @@ export default function Insights() {
             let tableData = []
             let item
             for (let i = 0; i < metrics[metric].length; i++) {
-                item = data.find(item => item.period === (['month', 'day'].includes(metric) ? i + 1 : i))
+                if (metric === "year")
+                    item = data.find(item => item.period === metrics[metric][i])
+                else
+                    item = data.find(item => item.period === (['month', 'day'].includes(metric) ? i + 1 : i))
                 if (item) tableData.push(item)
                 else tableData.push(filler(i))
             }
@@ -211,17 +230,44 @@ export default function Insights() {
     useEffect(() => {
         if (summary)
             setChartSummary({
-                labels: ['paid', 'pending', 'rest', 'cancelled', 'errors'],
+                labels: [''],
                 datasets: [
                     {
                         id: 1,
                         label: 'Paid',
-                        data: [summary.paid, summary.pending, summary.rest, summary.cancelled, summary.errors],
+                        data: [summary.paid],
+                        backgroundColor: 'green',
+                    },
+                    {
+                        id: 2,
+                        label: 'Pending',
+                        data: [summary.pending],
+                        backgroundColor: 'yellow',
+                    },
+                    {
+                        id: 3,
+                        label: 'Rest',
+                        data: [summary.rest],
+                        backgroundColor: 'blue',
+                    },
+                    {
+                        id: 4,
+                        label: 'Cancelled',
+                        data: [summary.cancelled],
+                        backgroundColor: 'red',
+                    },
+                    {
+                        id: 5,
+                        label: 'Errors',
+                        data: [summary.errors],
+                        backgroundColor: 'orange',
                     },
                 ]
-
-        })
+            })
     }, [summary])
+    const totalRevenue = insights.reduce((total, insight) => total + insight.totalRevenue, 0);
+    const totalCost = insights.reduce((total, insight) => total + insight.totalCost, 0);
+    const difference = totalRevenue - totalCost;
 
     return (
         <div className="flex flex-row flex-wrap gap-[30px] px-[30px] items-center justify-evenly">
@@ -276,15 +322,22 @@ export default function Insights() {
                 {insights.length > 0 && <Bar data={chartData} options={options} />}
             </div>
             <div className=" min-w-[300px] w-[30%] min-h-[300px] bg-white p-4 flex grow-1 flex-col rounded-md w-[30%] border border-[#ccc] gap-3 shadow-xl overflow-x-scroll scrollbar-thin">
-                <h3 className="text-lg text-pri-5 font-semibold font-heading">Overview</h3>
-                {Object.keys(summary).length > 0 && 
+                <div>
+                    <h3 className="text-lg text-pri-5 font-semibold font-heading">Order Summary</h3>
+                    <div>
+                        <TrendingUp size={32} strokeWidth={1.5} />
+                        <span className="font-semibold text-xl font-heading">{difference}</span>
+                    </div>
+                </div>
+                {Object.keys(summary).length > 0 &&
                     <>
                         <ul className="flex flex-col gap-2 items-start">
-                            <li className="flex flex-row items-center justify-between">Total issued:<span className="font-semibold text-acc-7">{summary.total}</span></li>
-                            <li className="flex flex-row items-center justify-between">Total paid:<span className="font-semibold text-acc-7">{summary.paid}</span></li>
-                            <li className="flex flex-row items-center justify-between">Total pending:<span className="font-semibold text-acc-7">{summary.pending}</span></li>
-                            <li className="flex flex-row items-center justify-between">Total errors:<span className="font-semibold text-acc-7">{summary.errors}</span></li>
-                            <li className="flex flex-row items-center justify-between">Total interested:<span className="font-semibold text-acc-7">{summary.rest}</span></li>
+                            <li className="w-full px-[30px] flex flex-row items-center justify-between"><span>Paid:</span><span className="font-semibold text-acc-7">{summary.paid}</span></li>
+                            <li className="w-full px-[30px] flex flex-row items-center justify-between"><span>Pending:</span><span className="font-semibold text-acc-7">{summary.pending}</span></li>
+                            <li className="w-full px-[30px] flex flex-row items-center justify-between"><span>Interested:</span><span className="font-semibold text-acc-7">{summary.rest}</span></li>
+                            <li className="w-full px-[30px] flex flex-row items-center justify-between"><span>Cancelled:</span><span className="font-semibold text-acc-7">{summary.rest}</span></li>
+                            <li className="w-full px-[30px] flex flex-row items-center justify-between"><span>Errors:</span><span className="font-semibold text-acc-7">{summary.errors}</span></li>
+                            <li className="w-full px-[30px] flex flex-row items-center justify-between mt-2 text-lg"><span>Total:</span><span className="font-semibold text-acc-7">{summary.total}</span></li>
                         </ul>
                         <Bar data={chartSummary} options={summaryOptions} />
                     </>
