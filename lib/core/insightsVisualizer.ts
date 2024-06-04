@@ -22,7 +22,7 @@ interface RevenueByPeriod {
   totalCost: number,
   totalQuantitySold: number,
   profit: number,
-  period: string
+  period: number
 }
 
 interface buyerRevenueByPeriod {

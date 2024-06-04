@@ -52,3 +52,9 @@ export function choices<T>(choices: T[], num: number, unique: boolean=false): T[
   }
   return result;
 }
+
+export function randDate(start: Date, end: Date) {
+  return new Date(
+    start.getTime() + Math.random() * (end.getTime() - start.getTime())
+  );
+}
