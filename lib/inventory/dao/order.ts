@@ -22,6 +22,7 @@ function transformOrder(order: IOrderDocument) {
     ...order,
     id: order._id.toHexString(),
     buyerId: order.buyerId._id.toHexString(),
+    createdAt: order.createdAt.toISOString(),
     items: [],
   };
   // remove the _id and __v fields
@@ -162,7 +163,7 @@ async function getOrders({
   const query = { ...filters } as FilterQuery<Order>;
   const totalDocs = await OrderModel.countDocuments(query).exec();
   const pageCount = Math.ceil(totalDocs / limit);
-  if (page > pageCount) {
+  if (page > 1 && page > pageCount) {
     throw new Error("Page not found");
   }
   const skip = (page - 1) * limit;
