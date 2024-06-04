@@ -44,8 +44,8 @@ export default function Insights() {
         plugins: {
             tooltip: {
                 callbacks: {
-                    label: function (context) {
-                        const totalRevenueDataset = context.chart.data.datasets.find(dataset => dataset.label === 'Total Revenue');
+                    label: function (context: any) {
+                        const totalRevenueDataset = context.chart.data.datasets.find((dataset: any) => dataset.label === 'Total Revenue');
                         const totalRevenueValue = totalRevenueDataset.data[context.parsed.x];
                         return `Total Revenue: ${totalRevenueValue}`;
                     }
@@ -72,7 +72,7 @@ export default function Insights() {
         },
     }
     const summaryOptions = {
-        indexAxis: 'y', // Set the index axis to 'y' for horizontal bars
+        indexAxis: 'y' as "x" | "y", // Set the index axis to 'y' for horizontal bars
         scales: {
             x: {
                 stacked: true,
@@ -271,7 +271,7 @@ export default function Insights() {
 
     return (
         <div className="flex flex-row flex-wrap gap-[30px] px-[30px] items-center justify-evenly">
-            <div className=" min-w-[300px] w-[60%] min-h-[300px] bg-white p-4 flex  grow-1 flex-col rounded-md w-[30%] gap-3 border border-[#ccc] shadow-xl overflow-x-scroll scrollbar-thin">
+            <div className=" min-w-[300px] min-h-[300px] bg-white p-4 flex  grow-1 flex-col rounded-md w-[30%] gap-3 border border-[#ccc] shadow-xl overflow-x-scroll scrollbar-thin">
                 <div className="flex flex-row justify-between items-center gap-6">
                     <h3 className="text-lg text-pri-5 font-semibold font-heading">Your Revenue</h3>
                     <div className="flex flex-row items-center justify-end gap-3">
@@ -321,7 +321,7 @@ export default function Insights() {
 
                 {insights.length > 0 && <Bar data={chartData} options={options} />}
             </div>
-            <div className=" min-w-[300px] w-[30%] min-h-[300px] bg-white p-4 flex grow-1 flex-col rounded-md w-[30%] border border-[#ccc] gap-3 shadow-xl overflow-x-scroll scrollbar-thin">
+            <div className=" min-w-[300px] min-h-[300px] bg-white p-4 flex grow-1 flex-col rounded-md w-[30%] border border-[#ccc] gap-3 shadow-xl overflow-x-scroll scrollbar-thin">
                 <div>
                     <h3 className="text-lg text-pri-5 font-semibold font-heading">Order Summary</h3>
                     <div>

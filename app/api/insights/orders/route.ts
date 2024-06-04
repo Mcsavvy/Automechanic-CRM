@@ -7,8 +7,16 @@ export const GET = permissionRequired(Permission.AllowAny())(async function (
     req
 ) {
     const before = req.nextUrl.searchParams.get("b");
-    const metric: 'hour' | 'day' | 'month' | 'year' = req.nextUrl.searchParams.get("m");
+    const metric = req.nextUrl.searchParams.get("m") as
+      | "hour"
+      | "day"
+      | "month"
+      | "year"
+      | null;
     const after = req.nextUrl.searchParams.get("a");
+    if (!metric) {
+        return NextResponse.json({error: 'Metric is required'}, {status: 400});
+    }
     if (!['hour', 'day', 'month', 'year'].includes(metric)) {
         return NextResponse.json({error: 'Invalid metric'}, {status: 400});
     }
@@ -18,6 +26,10 @@ export const GET = permissionRequired(Permission.AllowAny())(async function (
     if (after && !Date.parse(after)) {
         return NextResponse.json({error: 'Invalid date'}, {status: 400});
     }
-    const results = await InsightsDAO.revenueByPeriod(metric, before, after);
+    const results = await InsightsDAO.revenueByPeriod(
+        metric,
+        before ? new Date(before) : undefined,
+        after ? new Date(after) : undefined
+    );
     return NextResponse.json(results);
 });
