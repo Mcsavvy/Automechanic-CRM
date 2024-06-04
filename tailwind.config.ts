@@ -22,6 +22,15 @@ const config = {
         body: ["Lato", "sans-serif"],
         heading: ["Quicksand", "sans-serif"],
       },
+      keyframes: {
+        fastspin: {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' },
+        },
+      },
+      animation: {
+        fastspin: 'fastspin 1s linear infinite',
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":

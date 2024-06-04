@@ -193,15 +193,22 @@ async function revenueByPeriod(
         },
       },
       // { $sort: { totalRevenue: 1 } },
+
     ];
 
     const results = await OrderItemModel.aggregate(pipeline);
-
+    const pending = await OrderModel.countDocuments({ status: 'pending', ...query});
+    const errors = await OrderModel.countDocuments({ status: 'error', ...query});
+    const paid = await OrderModel.countDocuments({ status: 'paid', ...query });
+    const rest = await OrderModel.countDocuments({ status: 'rest', ...query});
+    const cancelled = await OrderModel.countDocuments({ status: "cancelled", ...query});
+    const total = pending + errors + paid + rest
+    const summary = { pending, errors, paid, rest, total, cancelled }
     if (visualize) {
       console.table(results);
       createRevenueByPeriodChart(results);
     } else {
-      return results;
+      return { results, summary };
     }
   } catch (error) {
     console.error("Error calculating revenue by period:", error);

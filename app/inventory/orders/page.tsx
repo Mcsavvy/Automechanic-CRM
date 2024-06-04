@@ -1,7 +1,6 @@
 "use client"
 import { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
-import { faker } from "@faker-js/faker";
 import { OrderDataTable } from "@/components/ui/ordersDataTable";
 import { Plus } from 'lucide-react'
 import Insights from './components/insights'
@@ -23,28 +22,6 @@ const dataFilters = [
   { id: 'After', name: "After", type: "date" }
 ]
 export default function Orders() {
-  const generateFakeData = () => {
-    const data = [];
-    for (let i = 0; i < 10; i++) {
-      const buyerId = faker.person.fullName();
-      const id = faker.string.uuid().slice(1,12);
-      const createdAt = faker.date.recent();
-      const isOverdue: boolean = faker.date.recent() < createdAt;
-      const total = Math.floor(parseFloat(faker.commerce.price()) * Math.random() * 100);
-      const status = ["paid", "pending", "cancelled", "error"][Math.random() * 4 | 0];
-      const paymentMethod = ["bank", "cheque", "cash", "voucher"][Math.random() * 4 | 0];
-      data.push({
-        id,
-        buyerId,
-        createdAt : createdAt.toLocaleDateString(),
-        isOverdue,
-        total,
-        paymentMethod,
-        status,
-      });
-    }
-    return data;
-  };
 
   return (
     <>
@@ -54,7 +31,6 @@ export default function Orders() {
             <a href="#goods/new"><Button className="flex flex-row gap-2"><Plus size={20} strokeWidth={1.5} />Create new order</Button></a>
           </div> */}
           <Insights/>
-          <OrderDataTable data={generateFakeData()} headers={tableHeaders} filters={dataFilters} />
         </div>
       </div>
     </>
