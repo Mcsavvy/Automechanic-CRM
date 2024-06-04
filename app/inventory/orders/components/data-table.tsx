@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
 import OrderFilters from "./filters";
+import { LoaderCircle, TriangleAlert } from "lucide-react";
 
 interface DataTableProps {
   data: Order[];
@@ -167,11 +168,11 @@ export const DataTable: FC<DataTableProps> = ({
           </TableHeader>
           <TableBody>
             {(() => {
-              if (status === "loading") {
+              if (["loading", "idle"].includes(status)) {
                 return (
                   <TableRow>
                     <TableCell colSpan={columns.length} className="h-24">
-                      Loading...
+                      <LoaderCircle className="animate-spin h-6 w-6 mx-[49vw]" />
                     </TableCell>
                   </TableRow>
                 );
@@ -180,7 +181,10 @@ export const DataTable: FC<DataTableProps> = ({
                 return (
                   <TableRow>
                     <TableCell colSpan={columns.length} className="h-24">
-                      Error fetching data.
+                      <div className="flex pl-[40vw]">
+                        <TriangleAlert className="h-6 w-6 mr-2 text-yellow-600" />
+                        Error fetching data.
+                      </div>
                     </TableCell>
                   </TableRow>
                 );
