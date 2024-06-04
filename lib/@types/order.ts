@@ -1,25 +1,66 @@
-export type OrderStatus = 'pending' | 'cancelled' | 'error' | 'rest'| 'paid';
+import { PaginatedDocs } from "./pagination";
+
+export type OrderStatus = 'pending' | 'cancelled' | 'paid' | 'overdue';
 export type PaymentMethod = 'cash' | 'credit' | 'debit' | 'voucher' | 'bank' | 'cheque';
-export const orderStatusChoices: OrderStatus[] = ['pending', 'cancelled', 'error', 'rest', 'paid'];
-export const paymentMethodChoices: PaymentMethod[] = ['cash', 'credit', 'debit', 'voucher', 'bank', 'cheque'];
+export const orderStatusChoices: OrderStatus[] = [
+  "pending",
+  "cancelled",
+  "paid",
+  "overdue",
+];
+export const paymentMethodChoices: PaymentMethod[] = [
+  "cash",
+  "credit",
+  "debit",
+  "voucher",
+  "bank",
+  "cheque",
+];
 
 export interface OrderItem {
+    id: string;
     qty: number;
-    sellingPrice: number; // Per unit
-    discount: number; //In percentage
-    orderId: string;
     goodId: string;
+    orderId: string;
     costPrice: number;
+    sellingPrice: number; // Per unit
+}
+
+export interface OrderBuyer {
+    id: string;
+    name: string;
+    email: string;
+    phone: string;
 }
 
 export interface Order {
-    status: OrderStatus;
-    overdueLimit: Date;
-    paymentMethod: PaymentMethod;
+    id: string;
     buyerId: string;
-    amountPaid: number;
-    change: number;
-    items: OrderItem[];
     discount: number;
+    buyer: OrderBuyer;
+    amountPaid: number;
+    overdueLimit: Date;
+    items: OrderItem[];
+    status: OrderStatus;
+    createdAt: string;
+    paymentMethod: PaymentMethod;
 }
 
+export type OrderSort = Partial<{
+  discount: -1 | 1;
+  amountPaid: -1 | 1;
+  overdueLimit: -1 | 1;
+  createdAt: -1 | 1;
+}>;
+
+
+export interface PaginatedOrders extends PaginatedDocs {
+    orders: Order[];
+}
+
+export type UnsavedOrderItem = Omit<OrderItem, "orderId" | "id">;
+export type UnsavedOrder = Omit<Order, "buyer"> & { items: UnsavedOrderItem[] };
+export type OrderCreate = UnsavedOrder;
+export type OrderUpdate = Omit<Order, "buyer"> & {
+    items: (OrderItem | UnsavedOrderItem)[];
+}
