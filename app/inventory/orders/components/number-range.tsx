@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import React from "react";
 import { cn } from "@/lib/utils";
+import { isEqual } from "lodash";
 
 interface NumberRangeProps {
   min: number;
@@ -31,9 +32,9 @@ export default function NumberRangeFilter({
 }: NumberRangeProps) {
   const [minValue, setMinValue] = minState;
   const [maxValue, setMaxValue] = maxState;
-  const initialRange = React.useRef<readonly [number, number]>([minValue, maxValue]);
+  const defaultRange = React.useRef<readonly [number, number]>([min, max]);
   const cachedRange = React.useRef<[number, number]>([minValue, maxValue]);
-  const applyCount = React.useRef(0);
+  const applyCount = React.useRef((min === minValue && max === maxValue) ? 0 : 1);
   const didReset = React.useRef(false);
   
 
@@ -50,16 +51,17 @@ export default function NumberRangeFilter({
   };
 
   const onReset = () => {
-    setMinValue(initialRange.current[0]);
-    setMaxValue(initialRange.current[1]);
-    cachedRange.current[0] = initialRange.current[0];
-    cachedRange.current[1] = initialRange.current[1];
+    setMinValue(defaultRange.current[0]);
+    setMaxValue(defaultRange.current[1]);
+    cachedRange.current[0] = defaultRange.current[0];
+    cachedRange.current[1] = defaultRange.current[1];
     applyCount.current = 0;
     didReset.current = true;
   };
 
   React.useEffect(() => {
     if (didReset.current) {
+      didReset.current = false;
       handleApply();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

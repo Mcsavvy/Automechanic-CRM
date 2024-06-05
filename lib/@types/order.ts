@@ -1,11 +1,23 @@
 import { PaginatedDocs } from "./pagination";
 
-export type OrderStatus = 'pending' | 'cancelled' | 'paid' | 'overdue';
-export type PaymentMethod = 'cash' | 'credit' | 'debit' | 'voucher' | 'bank' | 'cheque';
+export type OrderStatus =
+  | "pending"
+  | "cancelled"
+  | "paid"
+  | "overdue"
+  | "ongoing";
+export type PaymentMethod =
+  | "cash"
+  | "credit"
+  | "debit"
+  | "voucher"
+  | "bank"
+  | "cheque";
 export const orderStatusChoices: OrderStatus[] = [
   "pending",
-  "cancelled",
+  "ongoing",
   "paid",
+  "cancelled",
   "overdue",
 ];
 export const paymentMethodChoices: PaymentMethod[] = [
@@ -17,34 +29,48 @@ export const paymentMethodChoices: PaymentMethod[] = [
   "cheque",
 ];
 
-export interface OrderItem {
-    id: string;
-    qty: number;
-    goodId: string;
-    orderId: string;
-    costPrice: number;
-    sellingPrice: number; // Per unit
+export interface OrderItemGood {
+  name: string;
+  description: string;
+  productId: string;
+  status: "in-stock" | "low-stock" | "out-of-stock";
+  costPrice: number;
 }
 
+export interface OrderItem {
+  id: string;
+  qty: number;
+  goodId: string;
+  orderId: string;
+  costPrice: number;
+  sellingPrice: number; // Per unit
+  good: OrderItemGood;
+}
 export interface OrderBuyer {
-    id: string;
-    name: string;
-    email: string;
-    phone: string;
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
 }
 
 export interface Order {
-    id: string;
-    buyerId: string;
-    discount: number;
-    buyer: OrderBuyer;
-    amountPaid: number;
-    overdueLimit: Date;
-    items: OrderItem[];
-    status: OrderStatus;
-    createdAt: string;
-    paymentMethod: PaymentMethod;
+  id: string;
+  buyerId: string;
+  discount: number;
+  buyer: OrderBuyer;
+  amountPaid: number;
+  overdueLimit: Date;
+  items: OrderItem[];
+  status: OrderStatus;
+  createdAt: string;
+  paymentMethod: PaymentMethod;
 }
+
+export interface OrderSummary extends Omit<Order, "items"> {
+  totalCost: number;
+  numItems: number;
+  totalAmount: number;
+};
 
 export type OrderSort = Partial<{
   discount: -1 | 1;
@@ -53,14 +79,15 @@ export type OrderSort = Partial<{
   createdAt: -1 | 1;
 }>;
 
-
 export interface PaginatedOrders extends PaginatedDocs {
-    orders: Order[];
+  orders: OrderSummary[];
 }
 
-export type UnsavedOrderItem = Omit<OrderItem, "orderId" | "id">;
-export type UnsavedOrder = Omit<Order, "buyer"> & { items: UnsavedOrderItem[] };
+export type UnsavedOrderItem = Omit<OrderItem, "orderId" | "id" | "buyer">;
+export type UnsavedOrder = Omit<Order, "buyer" | "id"> & {
+  items: UnsavedOrderItem[];
+};
 export type OrderCreate = UnsavedOrder;
 export type OrderUpdate = Omit<Order, "buyer"> & {
-    items: (OrderItem | UnsavedOrderItem)[];
-}
+  items: (OrderItem | UnsavedOrderItem)[];
+};
