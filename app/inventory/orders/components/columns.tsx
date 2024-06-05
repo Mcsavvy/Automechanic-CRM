@@ -3,7 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import ProfilePicture from "@/app/inventory/buyers/components/profile-picture";
 
-import { Order, OrderSort } from "@/lib/@types/order";
+import { Order, OrderSort, OrderSummary } from "@/lib/@types/order";
 import {
   Popover,
   PopoverContent,
@@ -54,7 +54,7 @@ function SortableColumnHeader({ children, name }: SortableColumnHeaderProps) {
   );
 }
 
-export const columns: ColumnDef<Order>[] = [
+export const columns: ColumnDef<OrderSummary>[] = [
   {
     id: "id",
     accessorKey: "id",
@@ -133,9 +133,7 @@ export const columns: ColumnDef<Order>[] = [
     header: () => <span className="font-bold">Total Cost</span>,
     cell: ({ row }) => {
       const order = row.original;
-      const total = sum(
-        order.items.map((item) => item.sellingPrice * item.qty)
-      );
+      const total = order.totalAmount;
       const formatted = new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "NGN",
@@ -209,7 +207,7 @@ export const columns: ColumnDef<Order>[] = [
     id: "itemCount",
     header: () => <span className="font-bold">Items</span>,
     cell: ({ row }) => {
-      const itemCount = row.original.items.length;
+      const itemCount = row.original.numItems;
       return (
         <div className="text-left font-medium">
           {itemCount} {itemCount > 1 ? "items" : "item"}

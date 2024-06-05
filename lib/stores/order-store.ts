@@ -7,6 +7,7 @@ import {
   PaginatedOrders,
   PaymentMethod,
   OrderSort,
+  OrderSummary,
 } from "../@types/order";
 import { createStore } from "zustand/vanilla";
 
@@ -37,7 +38,7 @@ export interface OrderState extends PaginatedOrders {
 }
 
 export interface OrderActions {
-  setOrders: (orders: Order[]) => void;
+  setOrders: (orders: OrderSummary[]) => void;
   setPage: (page: number) => void;
   setLimit: (limit: number) => void;
   applyFilter: (filter: OrderFilter) => void;

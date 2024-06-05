@@ -18,7 +18,7 @@ import {
 } from "@tanstack/react-table";
 
 import { columns } from "./columns";
-import { Order } from "@/lib/@types/order";
+import { Order, OrderSummary } from "@/lib/@types/order";
 import OrderSearch from "./search";
 import {
   DropdownMenu,
@@ -31,7 +31,7 @@ import OrderFilters from "./filters";
 import { LoaderCircle, TriangleAlert } from "lucide-react";
 
 interface DataTableProps {
-  data: Order[];
+  data: OrderSummary[];
   onNext: () => void;
   onPrev: () => void;
   status: "idle" | "loading" | "loaded" | "error";
@@ -44,7 +44,7 @@ interface DataTableProps {
 const TableRows = ({
   table,
 }: {
-  table: import("@tanstack/table-core").Table<Order>;
+  table: import("@tanstack/table-core").Table<OrderSummary>;
 }) => {
   return (
     <>
