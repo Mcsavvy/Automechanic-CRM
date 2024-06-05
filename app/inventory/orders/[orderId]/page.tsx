@@ -1,7 +1,9 @@
-export default function Order () {
+
+
+export default function Order ({ params }: {params: {orderId: string }}) {
     return (
-        <div>
-            Home sweet home
-        </div>
+        <h1 className="text-xl">
+            Order {params.orderId}
+        </h1>
     )
 }
