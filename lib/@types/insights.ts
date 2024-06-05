@@ -5,3 +5,6 @@ export interface OrderInsights {
     totalCost: number;
     totalQuantitySold: number;
 }
+export default interface GoodInsights {
+    title: string;
+}
