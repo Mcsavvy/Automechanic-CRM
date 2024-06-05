@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { getBaseSchema, IBaseDocument , defineModel} from '../../common/models/base';
 import { BuyerModel, IBuyerDocument } from './buyer';
-import { PaymentMethod, OrderStatus, orderStatusChoices, paymentMethodChoices } from '@/lib/@types/order';
+import { PaymentMethod, OrderStatus, orderStatusChoices, paymentMethodChoices } from '../../../lib/@types/order';
 
 
 export interface IOrderDocument extends IBaseDocument {
