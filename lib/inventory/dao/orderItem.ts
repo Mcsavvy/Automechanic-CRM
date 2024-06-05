@@ -2,13 +2,29 @@ import mongoose from "mongoose";
 import OrderItemModel, { IOrderItemDocument } from "../models/orderItem";
 import GoodModel from "../models/good";
 import OrderModel from "../models/order";
-import { OrderItem, OrderStatus, UnsavedOrderItem } from "@/lib/@types/order";
+import {
+  OrderItem,
+  OrderItemGood,
+  OrderStatus,
+  UnsavedOrderItem,
+} from "@/lib/@types/order";
+
+export type PopulatedGood = {
+  _id: mongoose.Types.ObjectId;
+  name: string;
+  qty: number;
+  minQty: number;
+  description: string;
+  productId: string;
+  costPrice: number;
+};
 
 export function transformOrderItem(item: IOrderItemDocument) {
   const result = {
     ...item,
     id: item._id.toHexString(),
     goodId: item.goodId._id.toHexString(),
+    good: transformOrderItemGood(item.goodId as PopulatedGood),
     orderId: item.orderId._id.toHexString(),
   };
   // remove the _id and __v fields
@@ -18,6 +34,21 @@ export function transformOrderItem(item: IOrderItemDocument) {
     }
   });
   return result as OrderItem;
+}
+
+export function transformOrderItemGood(good: PopulatedGood) {
+  const result = {
+    ...good,
+    status:
+      good.qty > good.minQty
+        ? "in-stock"
+        : good.qty > 0
+        ? "low-stock"
+        : "out-of-stock",
+  } as OrderItemGood & { _id?: mongoose.Types.ObjectId };
+  //  remove the _id field
+  delete result._id;
+  return result as OrderItemGood;
 }
 
 async function addOrderItem(
@@ -49,7 +80,12 @@ async function addOrderItem(
 }
 
 async function getOrderItem(id: mongoose.Types.ObjectId | string) {
-  const orderItem = await OrderItemModel.findById(id).lean();
+  const orderItem = await OrderItemModel.findById(id)
+    .populate({
+      path: "goodId",
+      select: "name qty minQty description productId costPrice",
+    })
+    .lean();
   if (!orderItem) {
     throw new Error("OrderItem not found");
   }
@@ -57,7 +93,12 @@ async function getOrderItem(id: mongoose.Types.ObjectId | string) {
 }
 
 async function getOrderItems(orderId: mongoose.Types.ObjectId | string) {
-  const orderItems = await OrderItemModel.find({ orderId }).lean();
+  const orderItems = await OrderItemModel.find({ orderId })
+    .populate({
+      path: "goodId",
+      select: "name qty minQty description productId costPrice",
+    })
+    .lean();
   return orderItems.map(transformOrderItem);
 }
 
