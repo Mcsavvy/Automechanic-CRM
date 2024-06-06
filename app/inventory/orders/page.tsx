@@ -20,7 +20,7 @@ export default function Orders() {
           </div> */}
           <Insights/>
           <div className="flex flex-row justify-between items-center p-4 px-[30px]">
-            <h1 className="text-xl font-heading font-semibold">Orders</h1>
+            <h1 className="text-xl font-quicksand font-semibold">Orders</h1>
             <a href="#actions/order/create">
               <Button className="flex flex-row gap-2">
                 <Plus size={20} strokeWidth={1.5} />

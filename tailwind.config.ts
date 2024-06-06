@@ -1,3 +1,4 @@
+import { Nunito } from "next/font/google";
 import type { Config } from "tailwindcss";
 
 const config = {
@@ -19,8 +20,11 @@ const config = {
     },
     extend: {
       fontFamily: {
-        body: ["Lato", "sans-serif"],
-        heading: ["Quicksand", "sans-serif"],
+        lato: ['Lato', 'sans-serif'],
+        nunito: ['Nunito', 'sans-serif'],
+        quicksand: ['Quicksand', 'sans-serif'],
+        rambla: ['Rambla', 'sans-serif'],
+
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

@@ -23,7 +23,7 @@ const Staffs = () => {
       <div className="flex flex-col absolute h-[calc(100vh-60px)] top-[60px] w-full">
         <div className="h-full relative bg-white overflow-auto md:m-6">
           <div className="flex flex-row justify-between items-center p-4 px-[30px]">
-            <h1 className="text-xl font-heading font-semibold">Staffs</h1>
+            <h1 className="text-xl font-quicksand font-semibold">Staffs</h1>
             <a href="#actions/staff/create">
               <Button className="flex flex-row gap-2">
                 <Plus size={20} strokeWidth={1.5} />
@@ -32,10 +32,10 @@ const Staffs = () => {
             </a>
           </div>
           <div className="mx-[30px] mt-3 flex flex-row justify-between items-center">
-            <ul className="font-heading flex flex-row items-start bg-white overflow-x-auto overflow-y-clip">
+            <ul className="font-quicksand flex flex-row items-start bg-white overflow-x-auto overflow-y-clip">
               <li
                 onClick={() => setTab("")}
-                className={`font-heading capitalize cursor-pointer relative px-4 py-1 text-center text-[14px] transition-all duration-200 ease-in-out ${
+                className={`font-quicksand capitalize cursor-pointer relative px-4 py-1 text-center text-[14px] transition-all duration-200 ease-in-out ${
                   activeTab == "" ? "tab" : ""
                 }`}
               >
@@ -45,7 +45,7 @@ const Staffs = () => {
                 <li
                   key={group.id}
                   onClick={() => setTab(group.id)}
-                  className={`font-heading capitalize cursor-pointer relative px-4 py-1 text-center text-[14px] transition-all duration-200 ease-in-out ${
+                  className={`font-quicksand capitalize cursor-pointer relative px-4 py-1 text-center text-[14px] transition-all duration-200 ease-in-out ${
                     activeTab == group.id ? "tab" : ""
                   }`}
                 >

@@ -302,7 +302,7 @@ export default function Insights() {
         <div className="flex flex-row flex-wrap gap-[30px] px-[30px] items-center justify-evenly">
             <div className=" min-w-[300px] h-[350px] bg-white p-4 flex grow-1 flex-col rounded-md gap-3 border border-[#ccc] shadow-xl">
                 <div className="flex flex-row justify-between items-center gap-6">
-                    <h3 className="text-lg text-pri-5 font-semibold font-heading">Your Revenue</h3>
+                    <h3 className="text-lg text-pri-5 font-semibold font-quicksand">Your Revenue</h3>
                     <div className="flex flex-row items-center justify-end gap-3">
                         <RefreshCcw onClick={reset} className={`cursor-pointer ${clicked ? 'animate-spin' : ''}`} size={24} strokeWidth={1.5} />
                         <Select value={val} onValueChange={fetchDefaults}>
@@ -352,18 +352,18 @@ export default function Insights() {
             </div>
             <div className=" w-[300px] min-h-[350px] bg-white p-4 flex grow-1 flex-col rounded-md w-[30%] border border-[#ccc] gap-3 shadow-xl overflow-clip">
                 <div className="flex flex-row items-center justify-start gap-4">
-                    <h3 className="text-lg text-pri-5 font-semibold font-heading">Order Summary</h3>
+                    <h3 className="text-lg text-pri-5 font-semibold font-quicksand">Order Summary</h3>
                     <div className="flex flex-row items-center justify-start gap-2 text-green-500">
                         {profit && profit >= 0 ?
                             <>
                                 <TrendingUp size={32} color={"green"} strokeWidth={2} />
-                                <span className="font-semibold text-xl font-heading text-green-500">{`+ ₦ ${profit}`}</span>
+                                <span className="font-semibold text-xl font-quicksand text-green-500">{`+ ₦ ${profit}`}</span>
                             </>
 
                             : profit && profit < 0 ?
                                 <>
                                     <TrendingDown size={32} color={"red"} strokeWidth={1.5} />
-                                    <span className="font-semibold text-xl font-heading text-red-500">{`- ₦ ${0 - profit}`}</span>
+                                    <span className="font-semibold text-xl font-quicksand text-red-500">{`- ₦ ${0 - profit}`}</span>
                                 </>
 
                                 : <></>

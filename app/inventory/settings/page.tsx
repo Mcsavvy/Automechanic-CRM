@@ -271,7 +271,7 @@ export default function Settings() {
                         </div> */}
                     </form>
                     <div className="w-full">
-                        <h3 className="flex flex-row items-center justify-start gap-6 font-heading font-semibold text-pri-6" onClick={() => setShowSecurity(!showSecurity)}>Security {showSecurity ? <ChevronDown size={20} strokeWidth={1.5} /> : <ChevronRight size={20} strokeWidth={1.5} />}</h3>
+                        <h3 className="flex flex-row items-center justify-start gap-6 font-quicksand font-semibold text-pri-6" onClick={() => setShowSecurity(!showSecurity)}>Security {showSecurity ? <ChevronDown size={20} strokeWidth={1.5} /> : <ChevronRight size={20} strokeWidth={1.5} />}</h3>
                         {showSecurity &&
                             <div className="flex flex-col py-5 gap-4 bg-white">
                                 <div>

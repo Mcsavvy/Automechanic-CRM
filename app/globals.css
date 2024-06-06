@@ -1,8 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato');
+@import url('https://fonts.googleapis.com/css2?family=Nunito');
+@import url('https://fonts.googleapis.com/css2?family=Quicksand');
+@import url('https://fonts.googleapis.com/css2?family=Rambla'); 
 @tailwind base;
   @tailwind components;
   @tailwind utilities;
-  @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Quicksand:wght@300..700&display=swap');  @layer base {
-    :root {
+
+
+  @layer base {
+          :root {
       --background: 0 0% 100%;
       --foreground: 222.2 84% 4.9%;
 
@@ -151,6 +157,30 @@
     color: white;
     background: var(--pri-600);
   }
+  .rambla-regular {
+    font-family: "Rambla", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+  
+  .rambla-bold {
+    font-family: "Rambla", sans-serif;
+    font-weight: 700;
+    font-style: normal;
+  }
+  
+  .rambla-regular-italic {
+    font-family: "Rambla", sans-serif;
+    font-weight: 400;
+    font-style: italic;
+  }
+  
+  .rambla-bold-italic {
+    font-family: "Rambla", sans-serif;
+    font-weight: 700;
+    font-style: italic;
+  }
+  
 .safe-container {
   padding-top: env(safe-area-inset-top, 20px);
   padding-right: env(safe-area-inset-right, 20px);

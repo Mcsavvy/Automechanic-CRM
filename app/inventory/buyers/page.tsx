@@ -18,7 +18,7 @@ export default function Home() {
       <div className="flex flex-col absolute h-[calc(100vh-60px)] top-[60px] w-full">
         <div className="h-full relative">
           <div className="flex flex-row justify-between items-center p-4 px-[30px]">
-            <h1 className="text-xl font-heading font-semibold">
+            <h1 className="text-xl font-quicksand font-semibold">
               Customers
             </h1>
             <a href="#actions/buyer/create">

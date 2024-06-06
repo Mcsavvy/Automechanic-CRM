@@ -9,8 +9,8 @@ export default function Invoices() {
                 <div className="flex flex-col items-start p-4 px-[30px]">
                     <div className="flex flex-row w-full gap-5 items-center justify-between">
                         <div className="flex flex-col flex-wrap">
-                            <h2 className="font-heading text-xl font-semibold text-pri-6">Income</h2>
-                            <p className="font-body text-sm">See your business trend at a glance and know where you&apos;re headed</p>
+                            <h2 className="font-quicksand text-xl font-semibold text-pri-6">Income</h2>
+                            <p className="font-lato text-sm">See your business trend at a glance and know where you&apos;re headed</p>
                         </div>
                         <Button className="flex flex-row items-center justify-start gap-2" variant={"outline"}>Export Table <Download size={20} strokeWidth={1.5} /></Button>
                     </div>
