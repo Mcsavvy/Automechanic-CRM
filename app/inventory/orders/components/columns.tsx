@@ -9,7 +9,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { sum } from "lodash";
 import {
   ArrowUpDown,
   ArrowUp,
@@ -20,13 +19,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { useOrderStore } from "@/lib/providers/order-store-provider";
 import Link from "next/link";
-import {
-  Tooltip as TooltipBase,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { useState } from "react";
+import OrderStatus from "./order-status";
+import PaymentMethod from "./payment-method";
 
 type SortableColumnHeaderProps = {
   children: React.ReactNode;
@@ -67,27 +62,6 @@ function SortableColumnHeader({ children, name }: SortableColumnHeaderProps) {
   );
 }
 
-const Tooltip: React.FC<
-  {
-    children: React.ReactNode;
-    Icon: React.ForwardRefExoticComponent<
-      Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
-    >;
-  } & Omit<LucideProps, "ref"> &
-    React.RefAttributes<SVGSVGElement>
-> = ({ children, Icon, ...props }) => {
-  const [open, setOpen] = useState(false);
-  return (
-    <TooltipProvider>
-      <TooltipBase open={open} onOpenChange={setOpen}>
-        <TooltipTrigger>
-          <Icon onClick={() => setOpen(!open)} {...props} />
-        </TooltipTrigger>
-        <TooltipContent>{children}</TooltipContent>
-      </TooltipBase>
-    </TooltipProvider>
-  );
-};
 
 export const columns: ColumnDef<OrderSummary>[] = [
   {
@@ -185,63 +159,7 @@ export const columns: ColumnDef<OrderSummary>[] = [
   {
     id: "Status",
     header: () => <span className="font-bold">Status</span>,
-    cell: ({ row }) => {
-      const status = row.original.status;
-      const overdueDate = new Date(row.original.overdueLimit);
-      switch (status) {
-        case "pending":
-          return (
-            <span className="bg-yellow-100 text-yellow-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">
-              pending
-            </span>
-          );
-        case "cancelled":
-          return (
-            <div className="flex items-center">
-              <span className="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">
-                cancelled
-              </span>
-              <Tooltip Icon={CircleHelp} strokeWidth={1.5} size={16}>
-                {row.original.cancelReason || "No reason provided"}
-              </Tooltip>
-            </div>
-          );
-        case "overdue":
-          return (
-            <div className="flex items-center">
-              <span className="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">
-                overdue
-              </span>
-              <Tooltip Icon={CircleHelp} strokeWidth={1.5} size={16}>
-                This order as been overdue since{" "}
-                {overdueDate.toLocaleDateString("en-GB", {
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric",
-                })}
-              </Tooltip>
-            </div>
-          );
-        case "paid":
-          return (
-            <span className="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">
-              paid
-            </span>
-          );
-        case "ongoing":
-          return (
-            <span className="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">
-              ongoing
-            </span>
-          );
-        default:
-          return (
-            <span className="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">
-              {status}
-            </span>
-          );
-      }
-    },
+    cell: ({ row }) => <OrderStatus {...row.original} />,
   },
   {
     id: "Discount",
@@ -280,53 +198,7 @@ export const columns: ColumnDef<OrderSummary>[] = [
   {
     id: "Payment Method",
     header: () => <span className="font-bold">Payment Method</span>,
-    cell: ({ row }) => {
-      const paymentMethod = row.original.paymentMethod;
-      switch (paymentMethod) {
-        case "cash":
-          return (
-            <span className="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">
-              cash
-            </span>
-          );
-        case "credit":
-          return (
-            <span className="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">
-              credit
-            </span>
-          );
-        case "debit":
-          return (
-            <span className="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">
-              debit
-            </span>
-          );
-        case "voucher":
-          return (
-            <span className="bg-yellow-100 text-yellow-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">
-              voucher
-            </span>
-          );
-        case "bank":
-          return (
-            <span className="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">
-              bank
-            </span>
-          );
-        case "cheque":
-          return (
-            <span className="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">
-              cheque
-            </span>
-          );
-        default:
-          return (
-            <span className="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">
-              {paymentMethod}
-            </span>
-          );
-      }
-    },
+    cell: ({ row }) => <PaymentMethod paymentMethod={row.original.paymentMethod} />,
   },
   {
     id: "Payment Deadline",
