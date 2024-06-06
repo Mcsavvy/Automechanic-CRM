@@ -62,7 +62,7 @@ export const columns: ColumnDef<OrderSummary>[] = [
     header: () => <span className="font-bold">ID</span>,
     cell: ({ row }) => (
       <Link href={`/inventory/orders/${row.original.id}`} className="font-bold">
-        {row.original.id.slice(-7)}
+        #{`${row.original.orderNo}`.padStart(5, "0")}
       </Link>
     ),
   },
