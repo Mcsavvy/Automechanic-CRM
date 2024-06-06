@@ -1,4 +1,5 @@
 import { Buyer } from "@/lib/@types/buyer"
+import { cn } from "@/lib/utils";
 
 function getInitialsAvatar({ name }: Buyer) {
 
@@ -10,13 +11,13 @@ function getInitialsAvatar({ name }: Buyer) {
 }
 
 
-export default function ProfilePicture({ buyer }: { buyer: Buyer }) {
+export default function ProfilePicture({ buyer, className = "" }: { buyer: Buyer, className?: string }) {
     return (
         // eslint-disable-next-line @next/next/no-img-element
         <img
             src={getInitialsAvatar(buyer)}
             alt={buyer.name}
-            className="rounded-full h-10 w-10"
+            className={cn("rounded-full h-10 w-10", className)}
         />
     );
 }

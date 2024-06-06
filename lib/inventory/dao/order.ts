@@ -27,6 +27,7 @@ function transformOrder(order: IOrderDocument) {
     id: order._id.toHexString(),
     buyerId: order.buyerId._id.toHexString(),
     createdAt: order.createdAt.toISOString(),
+    overdueLimit: order.overdueLimit.toISOString(),
     items: [],
   };
   // remove the _id and __v fields
@@ -140,7 +141,7 @@ async function deleteOrder(id: mongoose.Types.ObjectId) {
 }
 
 async function getOrder(
-  id?: mongoose.Types.ObjectId,
+  id?: mongoose.Types.ObjectId | string,
   filters?: FilterQuery<Order>
 ) {
   let query = {};

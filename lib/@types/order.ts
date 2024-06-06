@@ -55,14 +55,16 @@ export interface OrderBuyer {
 
 export interface Order {
   id: string;
+  orderNo: number;
   buyerId: string;
   discount: number;
   buyer: OrderBuyer;
   amountPaid: number;
-  overdueLimit: Date;
+  overdueLimit: string;
   items: OrderItem[];
   status: OrderStatus;
   createdAt: string;
+  cancelReason: string | null;
   paymentMethod: PaymentMethod;
 }
 
