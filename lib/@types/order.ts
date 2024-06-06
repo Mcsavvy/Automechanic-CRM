@@ -59,7 +59,7 @@ export interface Order {
   discount: number;
   buyer: OrderBuyer;
   amountPaid: number;
-  overdueLimit: Date;
+  overdueLimit: string;
   items: OrderItem[];
   status: OrderStatus;
   createdAt: string;
