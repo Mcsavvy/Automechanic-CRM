@@ -63,6 +63,7 @@ export interface Order {
   items: OrderItem[];
   status: OrderStatus;
   createdAt: string;
+  cancelReason: string | null;
   paymentMethod: PaymentMethod;
 }
 
