@@ -16,12 +16,11 @@ export default function Order() {
             <div className="h-full relative">
                 <Dialog>
                     <DialogTrigger>Preview Invoice</DialogTrigger>
-                    <DialogContent className="max-w-full w-[80vw] h-[100vh]">
+                    <DialogContent className="max-w-full w-[80vw] min-h-[100vh] overflow-scroll">
                         <DialogHeader>
-                            {/* <DialogTitle>Are you absolutely sure?</DialogTitle> */}
-                            <DialogDescription>
+                            <div>
                                 <Invoice/>
-                            </DialogDescription>
+                            </div>
                         </DialogHeader>
                     </DialogContent>
                 </Dialog>
