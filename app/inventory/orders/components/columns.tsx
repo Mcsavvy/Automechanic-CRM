@@ -108,10 +108,10 @@ export const columns: ColumnDef<OrderSummary>[] = [
     },
   },
   {
-    id: "createdAt",
+    id: "Date",
     header: () => (
       <SortableColumnHeader name="createdAt">
-        <span className="font-bold">Order Date</span>
+        <span className="font-bold">Date</span>
       </SortableColumnHeader>
     ),
     cell: ({ row }) => {
@@ -129,7 +129,7 @@ export const columns: ColumnDef<OrderSummary>[] = [
     },
   },
   {
-    id: "total",
+    id: "Total Cost",
     header: () => <span className="font-bold">Total Cost</span>,
     cell: ({ row }) => {
       const order = row.original;
@@ -148,7 +148,7 @@ export const columns: ColumnDef<OrderSummary>[] = [
     },
   },
   {
-    id: "status",
+    id: "Status",
     header: () => <span className="font-bold">Status</span>,
     cell: ({ row }) => {
       const status = row.original.status;
@@ -187,36 +187,19 @@ export const columns: ColumnDef<OrderSummary>[] = [
     },
   },
   {
-    id: "discount",
+    id: "Discount",
     header: () => (
       <SortableColumnHeader name="discount">
-        <span className="font-bold">Discount</span>
+        <span className="font-bold">Discount (%)</span>
       </SortableColumnHeader>
     ),
     cell: ({ row }) => {
       const discount = row.original.discount; // discount in percentage
-      return (
-        <div className="text-center font-bold">
-          {discount > 0 ? "-" : ""}
-          {discount}%
-        </div>
-      );
+      return <div className="ml-4 text-center font-bold">{discount}%</div>;
     },
   },
   {
-    id: "itemCount",
-    header: () => <span className="font-bold">Items</span>,
-    cell: ({ row }) => {
-      const itemCount = row.original.numItems;
-      return (
-        <div className="text-left font-medium">
-          {itemCount} {itemCount > 1 ? "items" : "item"}
-        </div>
-      );
-    },
-  },
-  {
-    id: "amountPaid",
+    id: "Amount Paid",
     header: () => (
       <SortableColumnHeader name="amountPaid">
         <span className="font-bold">Amount Paid</span>
@@ -238,8 +221,8 @@ export const columns: ColumnDef<OrderSummary>[] = [
     },
   },
   {
-    id: "paymentMethod",
-    header: () => <span className="font-bold">Payment Mode</span>,
+    id: "Payment Method",
+    header: () => <span className="font-bold">Payment Method</span>,
     cell: ({ row }) => {
       const paymentMethod = row.original.paymentMethod;
       switch (paymentMethod) {
@@ -289,10 +272,10 @@ export const columns: ColumnDef<OrderSummary>[] = [
     },
   },
   {
-    id: "overdueLimit",
+    id: "Payment Deadline",
     header: () => (
       <SortableColumnHeader name="overdueLimit">
-        <span className="font-bold">Deadline For Payment</span>
+        <span className="font-bold">Payment Deadline</span>
       </SortableColumnHeader>
     ),
     cell: ({ row }) => {
