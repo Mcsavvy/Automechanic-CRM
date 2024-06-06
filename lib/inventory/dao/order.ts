@@ -141,7 +141,7 @@ async function deleteOrder(id: mongoose.Types.ObjectId) {
 }
 
 async function getOrder(
-  id?: mongoose.Types.ObjectId,
+  id?: mongoose.Types.ObjectId | string,
   filters?: FilterQuery<Order>
 ) {
   let query = {};
