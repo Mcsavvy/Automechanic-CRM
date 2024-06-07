@@ -196,7 +196,7 @@ export const DataTable: FC<DataTableProps> = ({
                     </Button>
                 </div>
                 <p>
-                    - Page <span className="text-pri-6">{page}</span> of{" "}
+                    Page <span className="text-pri-6">{page}</span> of{" "}
                     <span className="text-pri-6">{pageCount}</span>
                 </p>
             </div>
