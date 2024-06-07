@@ -3,17 +3,25 @@
 import { ColumnDef } from "@tanstack/react-table";
 import ProfilePicture from "@/app/inventory/buyers/components/profile-picture";
 
-import { Order, OrderSort } from "@/lib/@types/order";
+import { Order, OrderSort, OrderSummary } from "@/lib/@types/order";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { sum } from "lodash";
-import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import {
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+  CircleHelp,
+  LucideProps,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useOrderStore } from "@/lib/providers/order-store-provider";
 import Link from "next/link";
+import { useState } from "react";
+import OrderStatus from "./order-status";
+import PaymentMethod from "./payment-method";
 
 type SortableColumnHeaderProps = {
   children: React.ReactNode;
@@ -54,7 +62,8 @@ function SortableColumnHeader({ children, name }: SortableColumnHeaderProps) {
   );
 }
 
-export const columns: ColumnDef<Order>[] = [
+
+export const columns: ColumnDef<OrderSummary>[] = [
   {
     id: "id",
     accessorKey: "id",
@@ -62,7 +71,7 @@ export const columns: ColumnDef<Order>[] = [
     header: () => <span className="font-bold">ID</span>,
     cell: ({ row }) => (
       <Link href={`/inventory/orders/${row.original.id}`} className="font-bold">
-        {row.original.id.slice(-7)}
+        #{`${row.original.orderNo}`.padStart(5, "0")}
       </Link>
     ),
   },
@@ -108,10 +117,10 @@ export const columns: ColumnDef<Order>[] = [
     },
   },
   {
-    id: "createdAt",
+    id: "Date",
     header: () => (
       <SortableColumnHeader name="createdAt">
-        <span className="font-bold">Order Date</span>
+        <span className="font-bold">Date</span>
       </SortableColumnHeader>
     ),
     cell: ({ row }) => {
@@ -129,13 +138,11 @@ export const columns: ColumnDef<Order>[] = [
     },
   },
   {
-    id: "total",
+    id: "Total Cost",
     header: () => <span className="font-bold">Total Cost</span>,
     cell: ({ row }) => {
       const order = row.original;
-      const total = sum(
-        order.items.map((item) => item.sellingPrice * item.qty)
-      );
+      const total = order.totalAmount;
       const formatted = new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "NGN",
@@ -150,75 +157,24 @@ export const columns: ColumnDef<Order>[] = [
     },
   },
   {
-    id: "status",
+    id: "Status",
     header: () => <span className="font-bold">Status</span>,
-    cell: ({ row }) => {
-      const status = row.original.status;
-      switch (status) {
-        case "pending":
-          return (
-            <span className="bg-yellow-100 text-yellow-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">
-              pending
-            </span>
-          );
-        case "cancelled":
-          return (
-            <span className="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">
-              cancelled
-            </span>
-          );
-        case "overdue":
-          return (
-            <span className="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">
-              overdue
-            </span>
-          );
-        case "paid":
-          return (
-            <span className="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">
-              paid
-            </span>
-          );
-        default:
-          return (
-            <span className="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">
-              {status}
-            </span>
-          );
-      }
-    },
+    cell: ({ row }) => <OrderStatus {...row.original} />,
   },
   {
-    id: "discount",
+    id: "Discount",
     header: () => (
       <SortableColumnHeader name="discount">
-        <span className="font-bold">Discount</span>
+        <span className="font-bold">Discount (%)</span>
       </SortableColumnHeader>
     ),
     cell: ({ row }) => {
       const discount = row.original.discount; // discount in percentage
-      return (
-        <div className="text-center font-bold">
-          {discount > 0 ? "-" : ""}
-          {discount}%
-        </div>
-      );
+      return <div className="ml-4 text-center font-bold">{discount}%</div>;
     },
   },
   {
-    id: "itemCount",
-    header: () => <span className="font-bold">Items</span>,
-    cell: ({ row }) => {
-      const itemCount = row.original.items.length;
-      return (
-        <div className="text-left font-medium">
-          {itemCount} {itemCount > 1 ? "items" : "item"}
-        </div>
-      );
-    },
-  },
-  {
-    id: "amountPaid",
+    id: "Amount Paid",
     header: () => (
       <SortableColumnHeader name="amountPaid">
         <span className="font-bold">Amount Paid</span>
@@ -240,61 +196,15 @@ export const columns: ColumnDef<Order>[] = [
     },
   },
   {
-    id: "paymentMethod",
-    header: () => <span className="font-bold">Payment Mode</span>,
-    cell: ({ row }) => {
-      const paymentMethod = row.original.paymentMethod;
-      switch (paymentMethod) {
-        case "cash":
-          return (
-            <span className="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">
-              cash
-            </span>
-          );
-        case "credit":
-          return (
-            <span className="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">
-              credit
-            </span>
-          );
-        case "debit":
-          return (
-            <span className="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">
-              debit
-            </span>
-          );
-        case "voucher":
-          return (
-            <span className="bg-yellow-100 text-yellow-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">
-              voucher
-            </span>
-          );
-        case "bank":
-          return (
-            <span className="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">
-              bank
-            </span>
-          );
-        case "cheque":
-          return (
-            <span className="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">
-              cheque
-            </span>
-          );
-        default:
-          return (
-            <span className="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">
-              {paymentMethod}
-            </span>
-          );
-      }
-    },
+    id: "Payment Method",
+    header: () => <span className="font-bold">Payment Method</span>,
+    cell: ({ row }) => <PaymentMethod paymentMethod={row.original.paymentMethod} />,
   },
   {
-    id: "overdueLimit",
+    id: "Payment Deadline",
     header: () => (
       <SortableColumnHeader name="overdueLimit">
-        <span className="font-bold">Deadline For Payment</span>
+        <span className="font-bold">Payment Deadline</span>
       </SortableColumnHeader>
     ),
     cell: ({ row }) => {

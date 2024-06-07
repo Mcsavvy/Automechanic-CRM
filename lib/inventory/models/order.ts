@@ -5,6 +5,7 @@ import { PaymentMethod, OrderStatus, orderStatusChoices, paymentMethodChoices } 
 
 
 export interface IOrderDocument extends IBaseDocument {
+  orderNo: number;
   discount: number;
   overdueLimit: Date;
   amountPaid: number;
@@ -19,11 +20,19 @@ const OrderSchema = getBaseSchema().add({
   cancelReason: { type: String, required: false },
   discount: { type: Number, required: true, default: () => 0 },
   amountPaid: { type: Number, required: true, default: () => 0 },
+  orderNo: { type: Number, required: true, default: () => 0 },
   buyerId: { type: mongoose.Types.ObjectId, required: true, ref: BuyerModel },
   status: { type: String, required: true, enum: orderStatusChoices, default: 'pending' },
   paymentMethod: { type: String, required: true, enum: paymentMethodChoices, default: 'cash'},
 })
 
+OrderSchema.pre("save", async function (next) {
+  if (this.isNew) {
+    const lastOrder = await OrderModel.findOne({}, {}, { sort: { orderNo: -1 } });
+    this.$set("orderNo", lastOrder ? lastOrder.orderNo + 1 : 1);
+  }
+  next();
+});
 
 export const OrderModel = defineModel<IOrderDocument>("Order", OrderSchema);
 export default OrderModel;

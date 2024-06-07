@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { isEqual } from "lodash";
 
 export type DateRangePreset = {
   id: string;
@@ -57,14 +58,17 @@ export default function DateRangeFilter({
     from: minValue || undefined,
     to: maxValue || undefined,
   };
-  const initialDate = React.useRef(date);
-  const applyCount = React.useRef(0);
+  const defaultDate = React.useRef({
+    from: min,
+    to: max,
+  } as DateRange);
+  const applyCount = React.useRef((min === minValue && max === maxValue) ? 0 : 1);
   const cachedDate = React.useRef(date);
   const didReset = React.useRef(false);
 
   const hasPendingChanges = () => {
     return (
-      date.from !== cachedDate.current.from || date.to !== cachedDate.current.to
+      date.from != cachedDate.current.from || date.to != cachedDate.current.to
     );
   };
 
@@ -75,18 +79,18 @@ export default function DateRangeFilter({
   };
 
   const onReset = () => {
-    setMinValue(initialDate.current.from || null);
-    setMaxValue(initialDate.current.to || null);
-    cachedDate.current = initialDate.current;
+    setMinValue(defaultDate.current.from || null);
+    setMaxValue(defaultDate.current.to || null);
+    cachedDate.current = defaultDate.current;
     applyCount.current = 0;
     didReset.current = true;
   };
 
   React.useEffect(() => {
     if (didReset.current) {
+      didReset.current = false;
       handleApply();
     }
-    didReset.current = false;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [minValue, maxValue]);
 

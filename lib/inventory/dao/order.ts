@@ -1,7 +1,12 @@
 import mongoose, { FilterQuery } from "mongoose";
 import { IOrderDocument, OrderModel } from "../models/order";
-import { Order, OrderItem, OrderSort } from "@/lib/@types/order";
-import { PaginatedDocs } from "@/lib/@types/pagination";
+import {
+  Order,
+  OrderItem,
+  OrderSort,
+  OrderSummary,
+  PaginatedOrders,
+} from "@/lib/@types/order";
 import OrderItemDAO from "./orderItem";
 
 type UnsavedOrderItem = Omit<Omit<OrderItem, "orderId">, "id">;
@@ -15,7 +20,6 @@ type PopulatedBuyer = {
   phone: string;
   _id: mongoose.Types.ObjectId;
 };
-type PaginatedOrders = PaginatedDocs & { orders: Order[] };
 
 function transformOrder(order: IOrderDocument) {
   const result = {
@@ -23,6 +27,7 @@ function transformOrder(order: IOrderDocument) {
     id: order._id.toHexString(),
     buyerId: order.buyerId._id.toHexString(),
     createdAt: order.createdAt.toISOString(),
+    overdueLimit: order.overdueLimit.toISOString(),
     items: [],
   };
   // remove the _id and __v fields
@@ -44,6 +49,23 @@ function transformBuyer(buyer: PopulatedBuyer) {
       id: buyer._id.toHexString(),
     },
   };
+}
+
+function summarizeOrder(order: Order): OrderSummary {
+  const totalCost = order.items.reduce((acc, item) => {
+    return acc + item.costPrice * item.qty;
+  }, 0);
+  const totalAmount = order.items.reduce((acc, item) => {
+    return acc + item.sellingPrice * item.qty;
+  }, 0);
+  const orderSummary = {
+    ...order,
+    totalCost,
+    totalAmount,
+    numItems: order.items.length,
+  } as OrderSummary & { items?: OrderItem[] };
+  delete orderSummary.items;
+  return orderSummary;
 }
 
 async function addOrder(order: OrderCreate): Promise<Order> {
@@ -119,7 +141,7 @@ async function deleteOrder(id: mongoose.Types.ObjectId) {
 }
 
 async function getOrder(
-  id?: mongoose.Types.ObjectId,
+  id?: mongoose.Types.ObjectId | string,
   filters?: FilterQuery<Order>
 ) {
   let query = {};
@@ -179,17 +201,17 @@ async function getOrders({
     .exec();
   const next = orders.length === limit ? page + 1 : null;
   const prev = page > 1 ? page - 1 : null;
-  const ordersTransformed = await Promise.all(
-    orders.map(async (order) => {
-      return {
+  const transformedAndSummarizedOrders = await Promise.all(
+    orders.map(async (order): Promise<OrderSummary> => {
+      return summarizeOrder({
         ...transformBuyer(order.buyerId as PopulatedBuyer),
         ...transformOrder(order),
         items: await OrderItemDAO.getOrderItems(order._id),
-      };
+      });
     })
   );
   return {
-    orders: ordersTransformed,
+    orders: transformedAndSummarizedOrders,
     totalDocs,
     limit,
     page,
