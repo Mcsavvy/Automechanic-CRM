@@ -1,11 +1,14 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Rambla, Quicksand, Lato } from "next/font/google";
 import "./globals.css";
 import { ToastContainer} from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 import { AuthStoreProvider } from "@/lib/providers/auth-store-provider";
 
 const inter = Inter({ subsets: ["latin"] });
+const rambla = Rambla({ subsets: ["latin"], weight: ["400", "700"]});
+const quicksand = Quicksand({ subsets: ["latin"] });
+const lato = Lato({ subsets: ["latin"], weight: ["100", "300", "400", "700", "900"] });
 
 export const metadata: Metadata = {
   title: "Synergy Corps",

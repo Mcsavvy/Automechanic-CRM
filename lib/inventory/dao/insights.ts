@@ -128,10 +128,14 @@ async function revenueByPeriod(
   }
   const query: any = {};
   if (before) {
-    query["order.createdAt"] = { $lte: before };
+    query["createdAt"] = { $lte: before };
   }
   if (after) {
-    query["order.createdAt"] = { $gte: after };
+    if (!query["createdAt"])
+      query["createdAt"] = { $gte: after };
+    else
+    query["createdAt"]["$gte"] = after;
+
   }
   try {
     let dateOperator;
@@ -202,7 +206,7 @@ async function revenueByPeriod(
     const paid = await OrderModel.countDocuments({ status: 'paid', ...query });
     const rest = await OrderModel.countDocuments({ status: 'rest', ...query});
     const cancelled = await OrderModel.countDocuments({ status: "cancelled", ...query});
-    const total = pending + errors + paid + rest
+    const total = pending + errors + paid + rest + cancelled
     const summary = { pending, errors, paid, rest, total, cancelled }
     if (visualize) {
       console.table(results);

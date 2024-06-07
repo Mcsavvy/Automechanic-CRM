@@ -203,7 +203,7 @@ export default function DashboardLayout({
                 <nav
                     className={`fixed top-0 md:relative h-screen bg-white w-[220px] flex flex-col flex-shrink-0 transition-all duration-300 ease-in-out ${
                         showMenu ? "left-0" : "-left-[219px]"
-                    } border-r border-neu-3 border-1 shadow-lg text-neu-9 font-heading z-50 `}
+                    } border-r border-neu-3 border-1 shadow-lg text-neu-9 font-quicksand z-50 `}
                 >
                     <div className="header">
                         <h1 className="p-[30px]  text-lg font-lg pb-1">
@@ -236,7 +236,7 @@ export default function DashboardLayout({
                                             section.show
                                         )
                                     }
-                                    className="cursor-pointer text-pri-6 font-[600] w-full font-heading flex flex-row items-center justify-between"
+                                    className="cursor-pointer text-pri-6 font-[600] w-full font-quicksand flex flex-row items-center justify-between"
                                 >
                                     {section.content || section.name}
                                     {canShowSection(section.name, section.show) ? (
@@ -294,7 +294,7 @@ export default function DashboardLayout({
                         showMenu ? "md:w-[calc(100vw-220px)]" : "md:w-screen"
                     }  m-small pt-[40px] bg-neu-1 ${
                         showMenu ? "md:left-0" : "md:left-[-220px]"
-                    } flex-grow h-screen overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out font-body`}
+                    } flex-grow h-screen overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out font-lato`}
                 >
                     {showMenu && (
                         <div
