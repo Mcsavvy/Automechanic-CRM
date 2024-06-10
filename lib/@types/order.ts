@@ -46,11 +46,20 @@ export interface OrderItem {
   sellingPrice: number; // Per unit
   good: OrderItemGood;
 }
+
 export interface OrderBuyer {
   id: string;
   name: string;
   email: string;
   phone: string;
+}
+
+export interface OrderPayment {
+  id: string;
+  amount: number;
+  paymentMethod: PaymentMethod;
+  orderId: string;
+  confirmedBy: string;
 }
 
 export interface Order {
