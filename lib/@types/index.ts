@@ -1,3 +1,6 @@
+import mongoose, { mongo } from "mongoose";
+import { IBaseDocument } from "../common/models/base";
+
 /**
  * @summary Extracts 'this' parameter from a function, if it exists. Otherwise, returns fallback.
  * @param {T} T Function type to extract 'this' parameter from.
@@ -17,3 +20,6 @@ export type AddThisParameter<T, D> = {
             : T[K]
         : T[K];
 };
+
+
+export type DocumentOrId<D extends IBaseDocument> = D | mongoose.Types.ObjectId | string;

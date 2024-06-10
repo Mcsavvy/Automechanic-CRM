@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { getBaseSchema, IBaseDocument , defineModel} from '../../common/models/base';
 import { BuyerModel, IBuyerDocument } from './buyer';
-import { PaymentMethod, OrderStatus, orderStatusChoices, paymentMethodChoices } from '../../../lib/@types/order';
+import { OrderStatus, orderStatusChoices, paymentMethodChoices } from '../../../lib/@types/order';
 
 
 export interface IOrderDocument extends IBaseDocument {
@@ -10,7 +10,6 @@ export interface IOrderDocument extends IBaseDocument {
   overdueLimit: Date;
   amountPaid: number;
   status: OrderStatus;
-  paymentMethod: PaymentMethod;
   cancelReason: string | null;
   buyerId: mongoose.Types.ObjectId | IBuyerDocument;
 }
@@ -23,7 +22,6 @@ const OrderSchema = getBaseSchema().add({
   orderNo: { type: Number, required: true, default: () => 0 },
   buyerId: { type: mongoose.Types.ObjectId, required: true, ref: BuyerModel },
   status: { type: String, required: true, enum: orderStatusChoices, default: 'pending' },
-  paymentMethod: { type: String, required: true, enum: paymentMethodChoices, default: 'cash'},
 })
 
 OrderSchema.pre("save", async function (next) {

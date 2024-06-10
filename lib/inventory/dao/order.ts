@@ -8,6 +8,7 @@ import {
   PaginatedOrders,
 } from "@/lib/@types/order";
 import OrderItemDAO from "./orderItem";
+import OrderPaymentDAO from "./orderPayment";
 
 type UnsavedOrderItem = Omit<Omit<OrderItem, "orderId">, "id">;
 type OrderCreate = Omit<Order, "buyer"> & { items: UnsavedOrderItem[] };
@@ -36,7 +37,7 @@ function transformOrder(order: IOrderDocument) {
       delete result[key];
     }
   });
-  return result as Omit<Order, "buyer">;
+  return result as Omit<Order, "buyer" | "buyerId" | "payments">;
 }
 
 function transformBuyer(buyer: PopulatedBuyer) {
@@ -90,6 +91,7 @@ async function addOrder(order: OrderCreate): Promise<Order> {
   return {
     ...transformBuyer(newOrder.buyerId as PopulatedBuyer),
     ...transformOrder(newOrder),
+    payments: await OrderPaymentDAO.getPaymentsForOrder(newOrder._id),
     items,
   };
 }
@@ -124,6 +126,7 @@ async function updateOrder(update: OrderUpdate): Promise<Order> {
   return {
     ...transformBuyer(order.buyerId as PopulatedBuyer),
     ...transformOrder(order),
+    payments: await OrderPaymentDAO.getPaymentsForOrder(order._id),
     items,
   };
 }
@@ -160,6 +163,7 @@ async function getOrder(
   return {
     ...transformBuyer(order.buyerId as PopulatedBuyer),
     ...transformOrder(order),
+    payments: await OrderPaymentDAO.getPaymentsForOrder(order._id),
     items: await OrderItemDAO.getOrderItems(order._id),
   };
 }
@@ -207,6 +211,7 @@ async function getOrders({
         ...transformBuyer(order.buyerId as PopulatedBuyer),
         ...transformOrder(order),
         items: await OrderItemDAO.getOrderItems(order._id),
+        payments: []
       });
     })
   );

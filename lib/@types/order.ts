@@ -46,11 +46,20 @@ export interface OrderItem {
   sellingPrice: number; // Per unit
   good: OrderItemGood;
 }
+
 export interface OrderBuyer {
   id: string;
   name: string;
   email: string;
   phone: string;
+}
+
+export interface OrderPayment {
+  id: string;
+  amount: number;
+  paymentMethod: PaymentMethod;
+  orderId: string;
+  confirmedBy: string;
 }
 
 export interface Order {
@@ -65,10 +74,10 @@ export interface Order {
   status: OrderStatus;
   createdAt: string;
   cancelReason: string | null;
-  paymentMethod: PaymentMethod;
+  payments: OrderPayment[];
 }
 
-export interface OrderSummary extends Omit<Order, "items"> {
+export interface OrderSummary extends Omit<Order, "items" | "payments"> {
   totalCost: number;
   numItems: number;
   totalAmount: number;
@@ -85,11 +94,13 @@ export interface PaginatedOrders extends PaginatedDocs {
   orders: OrderSummary[];
 }
 
-export type UnsavedOrderItem = Omit<OrderItem, "orderId" | "id" | "buyer">;
-export type UnsavedOrder = Omit<Order, "buyer" | "id"> & {
-  items: UnsavedOrderItem[];
+export type NewOrderItem = Omit<OrderItem, "orderId" | "id" | "good">;
+export type NewOrderPayment = Omit<OrderPayment, "id">;
+export type NewOrder = Omit<Order, "id" | "buyer" | "amountPaid"> & {
+  items: NewOrderItem[];
+  payments?: NewOrderPayment[];
 };
-export type OrderCreate = UnsavedOrder;
-export type OrderUpdate = Omit<Order, "buyer"> & {
-  items: (OrderItem | UnsavedOrderItem)[];
+export type OrderModification = Omit<Order, "buyer" | "amountPaid"> & {
+  items: (OrderItem | NewOrderItem)[];
+  payments?: (OrderPayment | NewOrderPayment)[];
 };

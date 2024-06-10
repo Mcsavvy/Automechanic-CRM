@@ -21,12 +21,14 @@ import Buyer from "../inventory/models/buyer";
 import Order from "../inventory/models/order";
 import Good from "../inventory/models/good";
 import OrderItem from "../inventory/models/orderItem";
+import OrderPayment from "../inventory/models/orderPayment";
 import BuyerDAO from "../inventory/dao/buyer";
 import OrderDAO from "../inventory/dao/order";
 import GoodDAO from "../inventory/dao/good";
 import InvoiceDAO from "../inventory/dao/invoice";
 import OrderItemDAO from "../inventory/dao/orderItem";
 import InsightsDAO from "../inventory/dao/insights";
+import OrderPaymentDAO from "../inventory/dao/orderPayment";
 // Import all garage models and database operations
 import Customer from "../garage/models/customer";
 import Vehicle from "../garage/models/vehicle";
@@ -35,12 +37,12 @@ import Job from "../garage/models/job";
 import Mechanic from "../garage/models/mechanic";
 import CustomerDAO from "../garage/dao/customer";
 // Import all populator functions into the repl
-
 import populateUsers from "../populate/user";
 import populateBuyers from "../populate/buyer";
 import populateGoods from "../populate/good";
 import populateOrderItems from "../populate/orderItem";
 import populateOrders from "../populate/order";
+import populateOrderPayments from "../populate/orderPayment";
 const shellContext = {
     User,
     Log,
@@ -49,6 +51,7 @@ const shellContext = {
     Order,
     Good,
     OrderItem,
+    OrderPayment,
     Customer,
     Vehicle,
     Service,
@@ -63,12 +66,14 @@ const shellContext = {
     ...InvoiceDAO,
     ...OrderItemDAO,
     ...CustomerDAO,
+    ...OrderPaymentDAO,
     ...InsightsDAO,
     populateUsers,
     populateBuyers,
     populateGoods,
     populateOrderItems,
     populateOrders,
+    populateOrderPayments,
 };
 
 

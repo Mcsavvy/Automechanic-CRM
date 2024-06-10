@@ -350,7 +350,7 @@ export default function Insights() {
 
                 {insights.length > 0 && <Bar data={chartData} options={options} />}
             </div>
-            <div className=" w-[300px] min-h-[350px] bg-white p-4 flex grow-1 flex-col rounded-md w-[30%] border border-[#ccc] gap-3 shadow-xl overflow-clip">
+            <div className=" w-[300px] min-h-[350px] bg-white p-4 flex grow-1 flex-col rounded-md border border-[#ccc] gap-3 shadow-xl overflow-clip">
                 <div className="flex flex-row items-center justify-start gap-4">
                     <h3 className="text-lg text-pri-5 font-semibold font-quicksand">Order Summary</h3>
                     <div className="flex flex-row items-center justify-start gap-2 text-green-500">

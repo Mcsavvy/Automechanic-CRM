@@ -1,9 +1,9 @@
 import axios from "axios";
 import {
   Order,
-  OrderCreate,
+  NewOrder,
   OrderStatus,
-  OrderUpdate,
+  OrderModification,
   PaginatedOrders,
   PaymentMethod,
   OrderSort,
@@ -46,8 +46,8 @@ export interface OrderActions {
   applySort: (sort: OrderSort) => void;
   clearSort: () => void;
   getOrder: (id: string) => Promise<Order>;
-  createOrder: (order: OrderCreate) => Promise<Order>;
-  updateOrder: (order: OrderUpdate) => Promise<Order>;
+  createOrder: (order: NewOrder) => Promise<Order>;
+  updateOrder: (order: OrderModification) => Promise<Order>;
   deleteOrder: (id: string) => Promise<void>;
   selectOrder: (order: Order) => void;
   clearSelectedOrder: () => void;
@@ -146,7 +146,7 @@ export async function fetchOrder(id: string): Promise<Order> {
   }
 }
 
-export async function createOrder(order: OrderCreate): Promise<Order> {
+export async function createOrder(order: NewOrder): Promise<Order> {
   // Implementation
   try {
     const response = await axios.post(endpoint, order);
@@ -159,7 +159,7 @@ export async function createOrder(order: OrderCreate): Promise<Order> {
   }
 }
 
-export async function updateOrder(order: OrderUpdate): Promise<Order> {
+export async function updateOrder(order: OrderModification): Promise<Order> {
   // Implementation
   try {
     const response = await axios.put(`${endpoint}/${order.id}`, order);

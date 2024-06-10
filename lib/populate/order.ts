@@ -22,9 +22,7 @@ export default async function populateOrders(number: number) {
         const order = new Order({
           status,
           overdueLimit,
-          paymentMethod: choice(paymentMethodChoices),
           buyerId: buyer._id,
-          amountPaid: 0,
           discount: randint(0, 50),
           cancelReason,
           createdAt
