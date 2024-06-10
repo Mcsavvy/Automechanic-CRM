@@ -84,7 +84,6 @@ export default async function OrderDetails({
                                     Order #{order.orderNo.toString().padStart(5, "0")}
                                 </h1>
                                 <div className="flex items-center justify-start mt-2">
-                                    <PaymentMethod paymentMethod={order.paymentMethod} />
                                     <OrderStatus {...order} />
                                 </div>
                             </div>

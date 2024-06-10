@@ -196,11 +196,6 @@ export const columns: ColumnDef<OrderSummary>[] = [
     },
   },
   {
-    id: "Payment Method",
-    header: () => <span className="font-bold">Payment Method</span>,
-    cell: ({ row }) => <PaymentMethod paymentMethod={row.original.paymentMethod} />,
-  },
-  {
     id: "Payment Deadline",
     header: () => (
       <SortableColumnHeader name="overdueLimit">

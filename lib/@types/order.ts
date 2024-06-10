@@ -74,10 +74,10 @@ export interface Order {
   status: OrderStatus;
   createdAt: string;
   cancelReason: string | null;
-  paymentMethod: PaymentMethod;
+  payments: OrderPayment[];
 }
 
-export interface OrderSummary extends Omit<Order, "items"> {
+export interface OrderSummary extends Omit<Order, "items" | "payments"> {
   totalCost: number;
   numItems: number;
   totalAmount: number;
