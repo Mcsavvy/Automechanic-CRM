@@ -58,3 +58,10 @@ export function randDate(start: Date, end: Date) {
     start.getTime() + Math.random() * (end.getTime() - start.getTime())
   );
 }
+
+export function formatMoney(amount: number) {
+  return amount.toLocaleString("en-US", {
+    style: "currency",
+    currency: "NGN",
+  }).replace("NGN", "₦");
+}
