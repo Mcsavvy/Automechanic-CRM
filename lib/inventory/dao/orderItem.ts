@@ -6,7 +6,7 @@ import {
   OrderItem,
   OrderItemGood,
   OrderStatus,
-  UnsavedOrderItem,
+  NewOrderItem,
 } from "@/lib/@types/order";
 
 export type PopulatedGood = {
@@ -54,7 +54,7 @@ export function transformOrderItemGood(good: PopulatedGood) {
 async function addOrderItem(
   orderId: mongoose.Types.ObjectId | string,
   goodId: mongoose.Types.ObjectId | string,
-  params: UnsavedOrderItem
+  params: NewOrderItem
 ) {
   // validate the orderItem data
 

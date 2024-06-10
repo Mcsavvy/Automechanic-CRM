@@ -85,11 +85,13 @@ export interface PaginatedOrders extends PaginatedDocs {
   orders: OrderSummary[];
 }
 
-export type UnsavedOrderItem = Omit<OrderItem, "orderId" | "id" | "buyer">;
-export type UnsavedOrder = Omit<Order, "buyer" | "id"> & {
-  items: UnsavedOrderItem[];
+export type NewOrderItem = Omit<OrderItem, "orderId" | "id" | "good">;
+export type NewOrderPayment = Omit<OrderPayment, "id">;
+export type NewOrder = Omit<Order, "id" | "buyer" | "amountPaid"> & {
+  items: NewOrderItem[];
+  payments?: NewOrderPayment[];
 };
-export type OrderCreate = UnsavedOrder;
-export type OrderUpdate = Omit<Order, "buyer"> & {
-  items: (OrderItem | UnsavedOrderItem)[];
+export type OrderModification = Omit<Order, "buyer" | "amountPaid"> & {
+  items: (OrderItem | NewOrderItem)[];
+  payments?: (OrderPayment | NewOrderPayment)[];
 };
