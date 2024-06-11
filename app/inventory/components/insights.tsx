@@ -299,10 +299,9 @@ export default function Insights() {
 
 
     return (
-        <div className="flex flex-row flex-wrap gap-[30px] px-[30px] items-center justify-evenly">
-            <div className=" min-w-[300px] h-[350px] bg-white p-4 flex grow-1 flex-col rounded-md gap-3 border border-[#ccc] shadow-xl">
+            <div className=" w-full min-w-[300px] bg-white p-4 flex grow flex-col gap-3 border border-[#ccc] shadow-md overflow-clip">
                 <div className="flex flex-row justify-between items-center gap-6">
-                    <h3 className="text-lg text-pri-5 font-semibold font-quicksand">Your Revenue</h3>
+                    <h3 className="text-lg text-pri-5 font-semibold font-quicksand">Revenue Summary</h3>
                     <div className="flex flex-row items-center justify-end gap-3">
                         <RefreshCcw onClick={reset} className={`cursor-pointer ${clicked ? 'animate-spin' : ''}`} size={24} strokeWidth={1.5} />
                         <Select value={val} onValueChange={fetchDefaults}>
@@ -349,8 +348,7 @@ export default function Insights() {
 
 
                 {insights.length > 0 && <Bar data={chartData} options={options} />}
-            </div>
-            <div className=" w-[300px] min-h-[350px] bg-white p-4 flex grow-1 flex-col rounded-md border border-[#ccc] gap-3 shadow-xl overflow-clip">
+            {/* <div className=" w-[300px] min-h-[350px] bg-white p-4 flex grow-1 flex-col rounded-md border border-[#ccc] gap-3 shadow-xl overflow-clip">
                 <div className="flex flex-row items-center justify-start gap-4">
                     <h3 className="text-lg text-pri-5 font-semibold font-quicksand">Order Summary</h3>
                     <div className="flex flex-row items-center justify-start gap-2 text-green-500">
@@ -380,12 +378,10 @@ export default function Insights() {
                             <li className="w-full px-[30px] flex flex-row items-center justify-between"><span>Errors:</span><span className="font-semibold text-acc-7">{summary.errors}</span></li>
                             <li className="w-full px-[30px] flex flex-row items-center justify-between mt-2 text-lg"><span>Total:</span><span className="font-semibold text-acc-7">{summary.total}</span></li>
                         </ul>
-                        {/* <div className='flex flex-col items-center justify-center w-full border border-red-500 h-[35px] overflow-y-clip'> */}
                         <Bar data={chartSummary} options={summaryOptions} />
-                        {/* </div> */}
                     </>
                 }
-            </div>
+            </div> */}
         </div >
     )
 }
