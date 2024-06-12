@@ -299,89 +299,86 @@ export default function Insights() {
 
 
     return (
-            <div className=" w-full min-w-[300px] bg-white p-4 flex grow flex-col gap-3 border border-[#ccc] shadow-md overflow-clip">
-                <div className="flex flex-row justify-between items-center gap-6">
-                    <h3 className="text-lg text-pri-5 font-semibold font-quicksand">Revenue Summary</h3>
-                    <div className="flex flex-row items-center justify-end gap-3">
-                        <RefreshCcw onClick={reset} className={`cursor-pointer ${clicked ? 'animate-spin' : ''}`} size={24} strokeWidth={1.5} />
-                        <Select value={val} onValueChange={fetchDefaults}>
-                            <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Today" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="today">Today</SelectItem>
-                                <SelectItem value="yesterday">Yesterday</SelectItem>
-                                <SelectItem value="last week">Last Week</SelectItem>
-                                <SelectItem value="last month">Last Month</SelectItem>
-                                <SelectItem value="last year">Last Year</SelectItem>
-                                <Popover>
-                                    <PopoverTrigger className="flex items-center justify-start hover:bg-pri-1 text-sm w-full px-[30px] py-1">Custom</PopoverTrigger>
-                                    <PopoverContent>
-                                        <form onSubmit={submitCustom}>
-                                            <label>From:
-                                                <Input required type="date" value={f_a} onChange={(e) => setFA(e.target.value)} />
-                                            </label>
-                                            <label>To:
-                                                <Input required type="date" value={f_b} onChange={(e) => setFB(e.target.value)} />
-                                            </label>
-                                            <label>By:
-                                                <Select value={by} onValueChange={(e) => setBy(e as any)}>
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder="Day" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        <SelectItem value="hour">Hour</SelectItem>
-                                                        <SelectItem value="day">Day</SelectItem>
-                                                        <SelectItem value="month">Month</SelectItem>
-                                                        <SelectItem value="year">Year</SelectItem>
-                                                    </SelectContent>
-                                                </Select>
-                                            </label>
-                                            <Button type="submit">Ok</Button>
-                                        </form>
-                                    </PopoverContent>
-                                </Popover>
-                            </SelectContent>
-                        </Select>
+        <>
+            <div className="w-[60%] min-w-[300px] grow self-stretch flex items-center justify-center">
+                <div className=" w-full min-w-[300px] bg-white p-4 flex grow flex-col gap-3 border border-[#ccc] shadow-md overflow-clip">
+                    <div className="flex flex-row justify-between items-center gap-6">
+                        <h3 className="text-lg text-pri-5 font-semibold font-quicksand">Revenue Summary</h3>
+                        <div className="flex flex-row items-center justify-end gap-3">
+                            <RefreshCcw onClick={reset} className={`cursor-pointer ${clicked ? 'animate-spin' : ''}`} size={24} strokeWidth={1.5} />
+                            <Select value={val} onValueChange={fetchDefaults}>
+                                <SelectTrigger className="w-[180px]">
+                                    <SelectValue placeholder="Today" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="today">Today</SelectItem>
+                                    <SelectItem value="yesterday">Yesterday</SelectItem>
+                                    <SelectItem value="last week">Last Week</SelectItem>
+                                    <SelectItem value="last month">Last Month</SelectItem>
+                                    <SelectItem value="last year">Last Year</SelectItem>
+                                    <Popover>
+                                        <PopoverTrigger className="flex items-center justify-start hover:bg-pri-1 text-sm w-full px-[30px] py-1">Custom</PopoverTrigger>
+                                        <PopoverContent>
+                                            <form onSubmit={submitCustom}>
+                                                <label>From:
+                                                    <Input required type="date" value={f_a} onChange={(e) => setFA(e.target.value)} />
+                                                </label>
+                                                <label>To:
+                                                    <Input required type="date" value={f_b} onChange={(e) => setFB(e.target.value)} />
+                                                </label>
+                                                <label>By:
+                                                    <Select value={by} onValueChange={(e) => setBy(e as any)}>
+                                                        <SelectTrigger>
+                                                            <SelectValue placeholder="Day" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            <SelectItem value="hour">Hour</SelectItem>
+                                                            <SelectItem value="day">Day</SelectItem>
+                                                            <SelectItem value="month">Month</SelectItem>
+                                                            <SelectItem value="year">Year</SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
+                                                </label>
+                                                <Button type="submit">Ok</Button>
+                                            </form>
+                                        </PopoverContent>
+                                    </Popover>
+                                </SelectContent>
+                            </Select>
+                        </div>
                     </div>
-                </div>
 
 
-                {insights.length > 0 && <Bar data={chartData} options={options} />}
-            {/* <div className=" w-[300px] min-h-[350px] bg-white p-4 flex grow-1 flex-col rounded-md border border-[#ccc] gap-3 shadow-xl overflow-clip">
-                <div className="flex flex-row items-center justify-start gap-4">
-                    <h3 className="text-lg text-pri-5 font-semibold font-quicksand">Order Summary</h3>
-                    <div className="flex flex-row items-center justify-start gap-2 text-green-500">
-                        {profit && profit >= 0 ?
-                            <>
-                                <TrendingUp size={32} color={"green"} strokeWidth={2} />
-                                <span className="font-semibold text-xl font-quicksand text-green-500">{`+ ₦ ${profit}`}</span>
-                            </>
+                    {insights.length > 0 && <Bar data={chartData} options={options} />}
+                </div >
+            </div>
 
-                            : profit && profit < 0 ?
-                                <>
-                                    <TrendingDown size={32} color={"red"} strokeWidth={1.5} />
-                                    <span className="font-semibold text-xl font-quicksand text-red-500">{`- ₦ ${0 - profit}`}</span>
-                                </>
-
-                                : <></>
+            <div className=" border border-neu-3 shadow-md self-stretch flex-grow w-[200px] p-4 bg-white">
+                <h3 className="flex flex-col items-start text-lg text-pri-6 font-semibold font-quicksand">Order Summary within this period
+                    <span className={`font-semibold text-xl font-quicksand ${profit >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                        {
+                            Intl.NumberFormat('en-US', {
+                                style: 'currency',
+                                currency: 'NGN'
+                            }).format(profit >= 0 ? profit : 0 - profit)
+                                .replace("NGN", "₦")
                         }
-                    </div>
-                </div>
+                    </span>
+                </h3>
                 {Object.keys(summary).length > 0 &&
                     <>
-                        <ul className="flex flex-col gap-2 items-start">
-                            <li className="w-full px-[30px] flex flex-row items-center justify-between"><span>Paid:</span><span className="font-semibold text-acc-7">{summary.paid}</span></li>
-                            <li className="w-full px-[30px] flex flex-row items-center justify-between"><span>Pending:</span><span className="font-semibold text-acc-7">{summary.pending}</span></li>
-                            <li className="w-full px-[30px] flex flex-row items-center justify-between"><span>Interested:</span><span className="font-semibold text-acc-7">{summary.rest}</span></li>
-                            <li className="w-full px-[30px] flex flex-row items-center justify-between"><span>Cancelled:</span><span className="font-semibold text-acc-7">{summary.cancelled}</span></li>
-                            <li className="w-full px-[30px] flex flex-row items-center justify-between"><span>Errors:</span><span className="font-semibold text-acc-7">{summary.errors}</span></li>
-                            <li className="w-full px-[30px] flex flex-row items-center justify-between mt-2 text-lg"><span>Total:</span><span className="font-semibold text-acc-7">{summary.total}</span></li>
+                        <ul className="flex flex-col gap-1 items-start">
+                            <li className="w-full flex flex-row items-center justify-between"><span>Paid:</span><span className="font-semibold text-acc-7">{summary.paid}</span></li>
+                            <li className="w-full flex flex-row items-center justify-between"><span>Pending:</span><span className="font-semibold text-acc-7">{summary.pending}</span></li>
+                            <li className="w-full flex flex-row items-center justify-between"><span>Interested:</span><span className="font-semibold text-acc-7">{summary.rest}</span></li>
+                            <li className="w-full flex flex-row items-center justify-between"><span>Cancelled:</span><span className="font-semibold text-acc-7">{summary.cancelled}</span></li>
+                            <li className="w-full flex flex-row items-center justify-between"><span>Errors:</span><span className="font-semibold text-acc-7">{summary.errors}</span></li>
+                            <li className="w-full flex flex-row items-center justify-between font-semibold text-lg"><span>Total:</span><span className="font-semibold text-acc-7">{summary.total}</span></li>
                         </ul>
-                        <Bar data={chartSummary} options={summaryOptions} />
+                        {/* <Bar data={chartSummary} options={summaryOptions} /> */}
                     </>
                 }
-            </div> */}
-        </div >
+            </div>
+        </>
     )
 }

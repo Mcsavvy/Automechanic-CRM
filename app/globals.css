@@ -76,6 +76,10 @@
     --neu-900: #222526;
     --body: "Lato", sans-serif;
     --heading: "Quicksand", sans-serif;
+    --progress: #ddd;
+    --red-light: rgb(236, 183, 183);
+    
+    
   }
 
   @media (prefers-color-scheme: dark) {
@@ -230,5 +234,15 @@
       transparent 1px,
       transparent 80px
     );
+  }
+  .progress-bar{
+    background: repeating-linear-gradient(
+      to right,
+      var(--progress),
+      var(--progress) 3px,
+      white 3px,
+      white 6px
+    );
+    background-size: 100% 100%;
   }
 }
