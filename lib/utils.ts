@@ -93,5 +93,5 @@ export function formatCurrencyShort(value: number) {
     maximumFractionDigits: 1,
   });
 
-  return formatter.format(abbreviatedValue).replace("NGN", "₦") + suffix;
+  return formatter.format(parseFloat(abbreviatedValue)).replace("NGN", "₦") + suffix;
 }

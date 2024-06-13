@@ -363,7 +363,7 @@ async function getTopTenOverdueOrders(before? : Date, after?: Date) {
 
 async function getTopTenSellingGoods(before?: Date, after?: Date) {
   try {
-    const matchStage: any = {};
+    const matchStage: any = {'order.status': { $in: ['paid', 'pending'] }};
 
     if (before && after) {
       matchStage.createdAt = { $gte: after, $lte: before };
@@ -374,6 +374,14 @@ async function getTopTenSellingGoods(before?: Date, after?: Date) {
     }
 
     const goods = await OrderItemModel.aggregate([
+      {
+        $lookup: {
+          from: OrderModel.collection.name,
+          localField: 'orderId',
+          foreignField: '_id',
+          as: 'order'
+        }
+      },
       {
         $match: matchStage
       },
@@ -421,33 +429,39 @@ async function getTopTenSellingGoods(before?: Date, after?: Date) {
     throw new Error('Failed to get top ten selling goods');
   }
 }
-async function getMostValuableProduct() {
+async function getMostValuableProduct(before?: Date, after?: Date) {
   try {
-    const products = await OrderItem.aggregate([
+    const matchStage: any = {'order.status': { $in: ['paid', 'pending'] }};
+    if (before && after) {
+      matchStage.createdAt = { $gte: after, $lte: before };
+    } else if (before) {
+      matchStage.createdAt = { $lte: before };
+    } else if (after) {
+      matchStage.createdAt = { $gte: after };
+    }
+    const products = await OrderItemModel.aggregate([
       {
         $lookup: {
-          from: 'orders',
+          from: OrderModel.collection.name,
           localField: 'orderId',
           foreignField: '_id',
           as: 'order'
         }
       },
       {
-        $match: {
-          'order.status': { $in: ['paid', 'pending'] } // Filter by order status
-        }
+        $match: matchStage
       },
       {
         $group: {
           _id: '$goodId',
-          qty: { $sum: '$quantity' },
-          revenue: { $sum: { $multiply: ['$quantity', '$sellingPrice'] } },
+          qtySold: { $sum: '$qty' },
+          revenue: { $sum: { $multiply: ['$qty', '$sellingPrice'] } },
           orderCount: { $sum: 1 } // Count the number of orders
         }
       },
       {
         $lookup: {
-          from: 'goods',
+          from: GoodModel.collection.name,
           localField: '_id',
           foreignField: '_id',
           as: 'productDetails'
@@ -460,8 +474,9 @@ async function getMostValuableProduct() {
         $project: {
           name: '$productDetails.productName',
           id: '$_id',
-          qty: 1,
+          qtySold: 1,
           revenue: 1,
+          qty: "$productDetails.qty",
           orderCount: 1
         }
       },
@@ -490,7 +505,8 @@ const InsightsDAO = {
   revenueByPeriod,
   buyerRevenueByPeriod,
   getTopTenOverdueOrders,
-  getTopTenSellingGoods
+  getTopTenSellingGoods,
+  getMostValuableProduct
 };
 
 export default InsightsDAO;
