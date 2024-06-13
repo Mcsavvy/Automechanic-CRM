@@ -65,9 +65,10 @@ async function updateOrderAmountPaid(
 }
 
 OrderPaymentSchema.post(
-  ["save", "findOneAndDelete", "deleteMany", "findOneAndUpdate", "updateMany"],
+  ["save", "deleteOne", "deleteMany", "updateOne", "updateMany"],
+  { document: true, query: false},
   async function (doc: IOrderPaymentDocument, next) {
-    updateOrderAmountPaid(doc.orderId);
+    updateOrderAmountPaid(this.orderId);
     next();
   }
 );

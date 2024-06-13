@@ -3,10 +3,12 @@ import Buyer from "../inventory/models/buyer";
 import Order, {orderStatusChoices, paymentMethodChoices} from "../inventory/models/order";
 import { choice, randint, randDate } from "../utils";
 import { addDays } from "date-fns";
+import { OrderStatus } from "../@types/order";
 
 export default async function populateOrders(number: number) {
     const orders = [];
     const buyers = await Buyer.find().select({ _id: 1 });
+    const orderStatusChoices: OrderStatus[] = ["pending", "cancelled"];
     for (let i = 0; i < number; i++) {
         const buyer = choice(buyers);
         const createdAt = randDate(
