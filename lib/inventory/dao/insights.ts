@@ -361,13 +361,136 @@ async function getTopTenOverdueOrders(before? : Date, after?: Date) {
   }
 }
 
+async function getTopTenSellingGoods(before?: Date, after?: Date) {
+  try {
+    const matchStage: any = {};
+
+    if (before && after) {
+      matchStage.createdAt = { $gte: after, $lte: before };
+    } else if (before) {
+      matchStage.createdAt = { $lte: before };
+    } else if (after) {
+      matchStage.createdAt = { $gte: after };
+    }
+
+    const goods = await OrderItemModel.aggregate([
+      {
+        $match: matchStage
+      },
+      {
+        $group: {
+          _id: '$goodId',
+          qtySold: { $sum: '$qty' },
+          revenue: { $sum: { $multiply: ['$qty', '$sellingPrice'] } }
+        }
+      },
+      {
+        $lookup: {
+          from: 'goods',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'goodDetails'
+        }
+      },
+      {
+        $unwind: '$goodDetails'
+      },
+      {
+        $project: {
+          id: '$_id',
+          _id: 0,
+          productId: '$goodDetails.productId',
+          name: '$goodDetails.name',
+          category: '$goodDetails.categories',
+          stock: '$goodDetails.qty',
+          qtySold: 1,
+          revenue: 1
+        }
+      },
+      {
+        $sort: { qtySold: -1 } // Sorting by quantity sold in descending order
+      },
+      {
+        $limit: 10
+      }
+    ]);
+
+    return goods;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Failed to get top ten selling goods');
+  }
+}
+async function getMostValuableProduct() {
+  try {
+    const products = await OrderItem.aggregate([
+      {
+        $lookup: {
+          from: 'orders',
+          localField: 'orderId',
+          foreignField: '_id',
+          as: 'order'
+        }
+      },
+      {
+        $match: {
+          'order.status': { $in: ['paid', 'pending'] } // Filter by order status
+        }
+      },
+      {
+        $group: {
+          _id: '$goodId',
+          qty: { $sum: '$quantity' },
+          revenue: { $sum: { $multiply: ['$quantity', '$sellingPrice'] } },
+          orderCount: { $sum: 1 } // Count the number of orders
+        }
+      },
+      {
+        $lookup: {
+          from: 'goods',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'productDetails'
+        }
+      },
+      {
+        $unwind: '$productDetails'
+      },
+      {
+        $project: {
+          name: '$productDetails.productName',
+          id: '$_id',
+          qty: 1,
+          revenue: 1,
+          orderCount: 1
+        }
+      },
+      {
+        $sort: { revenue: -1 }
+      },
+      {
+        $limit: 1
+      }
+    ]);
+
+    if (products.length > 0) {
+      return products[0];
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error(error);
+    throw new Error('Failed to get the most valuable product');
+  }
+}
 
 const InsightsDAO = {
   revenueByBuyer,
   revenueByGood,
   revenueByPeriod,
   buyerRevenueByPeriod,
-  getTopTenOverdueOrders
+  getTopTenOverdueOrders,
+  getTopTenSellingGoods
 };
 
 export default InsightsDAO;
