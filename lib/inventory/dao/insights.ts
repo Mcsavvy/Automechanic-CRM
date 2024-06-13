@@ -288,11 +288,86 @@ async function buyerRevenueByPeriod(
     throw error;
   }
 }
+
+async function getTopTenOverdueOrders(before? : Date, after?: Date) {
+  try {
+    const matchStage: any = {
+      overdueLimit: { $exists: true, $lt: new Date() },
+      status: { $nin: ['paid', 'cancelled'] },
+    };
+
+    if (before && after) {
+      matchStage.createdAt = { $gte: new Date(after), $lte: new Date(before) };
+    } else if (before) {
+      matchStage.createdAt = { $lte: new Date(before) };
+    } else if (after) {
+      matchStage.createdAt = { $gte: new Date(after) };
+    }
+
+    const orders = await OrderModel.aggregate([
+      {
+        $match: matchStage
+      },
+      {
+        $lookup: {
+          from: OrderItemModel.collection.name,
+          localField: '_id',
+          foreignField: 'orderId',
+          as: 'orderItems'
+        }
+      },
+      {
+        $lookup: {
+          from: BuyerModel.collection.name,
+          localField: 'buyerId',
+          foreignField: '_id',
+          as: 'buyer'
+        }
+      },
+      {
+        $unwind: '$buyer'
+      },
+      {
+        $project: {
+          _id: 0,
+          orderNo: '$orderNo',
+          orderId: '$_id',
+          orderAmount: {
+            $sum: {
+              $map: {
+                input: "$orderItems",
+                as: "item",
+                in: { $multiply: ["$$item.sellingPrice", "$$item.qty"] }
+              }
+            }
+          },
+          buyers_name: '$buyer.name',
+          dueDate: '$overdueLimit',
+          amountPaid: '$amountPaid'
+        }
+      },
+      {
+        $sort: { dueDate: 1 }
+      },
+      {
+        $limit: 10
+      }
+    ]);
+
+    return orders;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Failed to get top ten overdue orders');
+  }
+}
+
+
 const InsightsDAO = {
   revenueByBuyer,
   revenueByGood,
   revenueByPeriod,
   buyerRevenueByPeriod,
+  getTopTenOverdueOrders
 };
 
 export default InsightsDAO;

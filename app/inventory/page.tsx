@@ -1,7 +1,12 @@
+"use client"
 import Insights from './components/insights'
+import Overdue from './components/overdue-order'
 import { Button } from "@/components/ui/button"
 import { MoveRight } from "lucide-react"
+import { useState, useEffect } from 'react'
 export default function Home() {
+    const [before, setBefore] = useState('')
+    const [after, setAfter] = useState('')
     return (
         <div className="absolute border border-red-500 h-[calc(100vh-60px)] top-[60px] w-full">
             <div className="p-[30px] flex flex-col justify-start items-center md:grid md:items-start md:grid-cols-3 gap-4 h-full overflow-y-auto scrollbar-thin" style={{ gridAutoRows: 'min-content' }}>
@@ -9,36 +14,7 @@ export default function Home() {
                     <Insights />
                 </div>
                 <div className="flex flex-col gap-3 invoice md:col-span-1 md:row-span-2 h-full w-full">
-                    <div className="h-[400px] flex flex-col gap-2  border border-neu-3 overflow-y-auto scrollbar-thin bg-white rounded-md shadow-inner ">
-                        <h3 className="w-full sticky top-0 bg-white text-lg text-red-500 font-semibold font-quicksand pt-4 px-4">Overdue orders</h3>
-                        <ul className="flex flex-col items-stretch cursor-pointer justify-start gap-2 px-4">
-                            <li className="flex flex-col p-1 bg-neu-1 shadow-md"><span className=" text-bold font-rambla text-acc-7">#001234</span>
-                                <span>Ella James</span>
-                                <span>Due: 23, March 2025</span>
-                            </li>
-                            <li className="flex flex-col p-1 bg-neu-1 shadow-md"><span className=" text-bold font-rambla text-acc-7">#001234</span>
-                                <span>Ella James</span>
-                                <span>Due: 23, March 2025</span>
-                            </li>
-                            <li className="flex flex-col p-1 bg-neu-1 shadow-md"><span className=" text-bold font-rambla text-acc-7">#001234</span>
-                                <span>Ella James</span>
-                                <span>Due: 23, March 2025</span>
-                            </li>
-                            <li className="flex flex-col p-1 bg-neu-1 shadow-md"><span className=" text-bold font-rambla text-acc-7">#001234</span>
-                                <span>Ella James</span>
-                                <span>Due: 23, March 2025</span>
-                            </li>
-                            <li className="flex flex-col p-1 bg-neu-1 shadow-md"><span className=" text-bold font-rambla text-acc-7">#001234</span>
-                                <span>Ella James</span>
-                                <span>Due: 23, March 2025</span>
-                            </li>
-                            <li className="flex flex-col p-1 bg-neu-1 shadow-md"><span className=" text-bold font-rambla text-acc-7">#001234</span>
-                                <span>Ella James</span>
-                                <span>Due: 23, March 2025</span>
-                            </li>
-                        </ul>
-                        <Button variant="ghost" className="w-full flex gap-2 items-center justify-center"><MoveRight />View More</Button>
-                    </div>
+                    <Overdue/>
                     <div className="min-h-[calc(100%-420px)] flex flex-col gap-2  border border-neu-3 overflow-y-auto scrollbar-thin bg-white rounded-md shadow-inner p-4 ">
                         <h3 className="text-lg text-pri-5 font-semibold font-quicksand flex items-center justify-between">Store overview
                             <Button variant={"outline"} className="font-semibold">Go to store</Button>

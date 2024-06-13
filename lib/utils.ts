@@ -65,3 +65,33 @@ export function formatMoney(amount: number) {
     currency: "NGN",
   }).replace("NGN", "₦");
 }
+export function formatCurrencyShort(value: number) {
+  const absValue = Math.abs(value);
+  let abbreviatedValue;
+  let suffix = '';
+
+  if (absValue >= 1e12) {
+    abbreviatedValue = (value / 1e12).toFixed(1);
+    suffix = 'tn';
+  } else if (absValue >= 1e9) {
+    abbreviatedValue = (value / 1e9).toFixed(1);
+    suffix = 'bn';
+  } else if (absValue >= 1e6) {
+    abbreviatedValue = (value / 1e6).toFixed(1);
+    suffix = 'm';
+  } else if (absValue >= 1e3) {
+    abbreviatedValue = (value / 1e3).toFixed(1);
+    suffix = 'k';
+  } else {
+    abbreviatedValue = value.toFixed(2);
+  }
+
+  const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: "NGN",
+    minimumFractionDigits: abbreviatedValue.includes('.') ? 1 : 0,
+    maximumFractionDigits: 1,
+  });
+
+  return formatter.format(abbreviatedValue).replace("NGN", "₦") + suffix;
+}
