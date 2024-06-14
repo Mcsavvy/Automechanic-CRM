@@ -27,28 +27,35 @@ export const GET = permissionRequired(Permission.AllowAny())(async function (
   } else if (after) {
     query.createdAt = { $gte: new Date(after) };
   }
-  // const inStock = await GoodModel.countDocuments({...query, qty: { $gt: "$minQty" }})
-  const inStock = await GoodModel.aggregate([
-    { $match: {$and: [{ $expr: { $gt: ["$qty", "$minqty"] }  }, query]} },
-    { $count: "count" },
-  ]);
-  const lowStock = await GoodModel.aggregate([
-    { $match: {$and: [{ $expr: { $gt: ["$qty", "$minqty"] } }, query ]}},
-    { $count: "count" },
-  ]);
-  const noStock = await GoodModel.aggregate([
-    { $match: { $expr: { $gt: ["$qty", "$minqty"] } } },
-    { $count: "count" },
-  ]);
-  // const lowStock = await GoodModel.countDocuments({
-  //   ...query,
-  //   qty: { $lte: "$minQty", $gt: 0 },
-  // });
-  // const noStock = await GoodModel.countDocuments({
-  //   ...query,
-  //   qty: { $lte: 0 },
-  // });
-  const summary = { inStock, lowStock, noStock };
-  console.log(await GoodModel.countDocuments(query));
-  return NextResponse.json({ results, summary });
+  const summary = await GoodModel.aggregate([
+    { $match: query },
+    {
+      $facet: {
+        inStock: [
+          { $match: { $expr: { $gt: ["$qty", "$minQty"] } } },
+          { $count: "count" },
+        ],
+        lowStock: [
+          { $match: { $and: [{ $expr: { $lte: ["$qty", "$minQty"] } }, { $expr: { $gt: ["$qty", 0] } }] } },
+          { $count: "count" },
+        ],
+        noStock: [
+          { $match: { $expr: { $lte: ["$qty", 0] } } },
+          { $count: "count" },
+        ],
+        total: [
+          { $count: "count" },
+        ],
+      },
+    },
+    {
+      $project: {
+        inStock: { $ifNull: [{ $arrayElemAt: ["$inStock.count", 0] }, 0] },
+        lowStock: { $ifNull: [{ $arrayElemAt: ["$lowStock.count", 0] }, 0] },
+        noStock: { $ifNull: [{ $arrayElemAt: ["$noStock.count", 0] }, 0] },
+        total: { $ifNull: [{ $arrayElemAt: ["$total.count", 0] }, 0] },
+      },
+    },
+  ])
+  return NextResponse.json({ results, ...summary[0] });
 });

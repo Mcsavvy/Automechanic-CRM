@@ -472,7 +472,8 @@ async function getMostValuableProduct(before?: Date, after?: Date) {
       },
       {
         $project: {
-          name: '$productDetails.productName',
+          _id: 0,
+          name: '$productDetails.name',
           id: '$_id',
           qtySold: 1,
           revenue: 1,
