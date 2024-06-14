@@ -30,8 +30,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { getGoods } from "@/lib/stores/good-store";
-import NumberRangeFilter from "./number-range";
-import DateRangeFilter from "./date-range";
+import NumberRangeFilter from "../../../../components/ui/number-range";
+import DateRangeFilter from "../../../../components/ui/date-range";
 import { createdAtPresets, overduePresets } from "./filter-presets";
 
 async function filterItems(inputValue: string) {
