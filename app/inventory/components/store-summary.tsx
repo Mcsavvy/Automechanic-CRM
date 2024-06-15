@@ -91,7 +91,9 @@ const StoreSummary: FC<Partial<StoreSummaryProps>> = ({ before, after }) => {
                 <div className="flex flex-wrap justify-between items-center">
                     <span className="text-lg font-bold text-pri-5">{store.inStock}</span><span className='text-[13px] text-pri-5'>/{store.total}</span>
                     <span className="w-full h-[40px] flex flex-row">
+                        {/* @ts-ignore */}
                         <span className="h-full progress-bar" style={{ "--progress": 'var(--pri-500)', width: inStock }}></span>
+                        {/* @ts-ignore */}
                         <span className="h-full progress-bar" style={{ "--progress": 'var(--pri-200)', width: inDiff }}></span>
                     </span>
                 </div>
@@ -101,7 +103,9 @@ const StoreSummary: FC<Partial<StoreSummaryProps>> = ({ before, after }) => {
                 <div className="flex flex-wrap justify-between items-center">
                     <span className="text-lg font-bold text-acc-6">{store.lowStock}</span ><span className='text-[13px] text-acc-6'>/{store.total}</span>
                     <span className="w-full h-[40px] flex flex-row">
+                        {/* @ts-ignore */}
                         <span className="h-full progress-bar" style={{ "--progress": 'var(--acc-600)', width: lowStock }}></span>
+                        {/* @ts-ignore */}
                         <span className="h-full progress-bar" style={{ "--progress": 'var(--acc-300)', width: lowDiff }}></span>
                     </span>
                 </div>
@@ -111,7 +115,9 @@ const StoreSummary: FC<Partial<StoreSummaryProps>> = ({ before, after }) => {
                 <div className="flex flex-wrap justify-between items-center">
                     <span className="text-lg font-bold text-red-500">{store.noStock}</span><span className='text-[13px] text-red-500'>/{store.total}</span>
                     <span className="w-full h-[40px] flex flex-row">
+                        {/* @ts-ignore */}
                         <span className="h-full progress-bar" style={{ "--progress": 'red', width: noStock }}></span>
+                        {/* @ts-ignore */}
                         <span className="h-full progress-bar" style={{ "--progress": 'var(--red-light)', width: noDiff }}></span>
                     </span>
                 </div>
