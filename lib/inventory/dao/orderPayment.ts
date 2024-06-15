@@ -146,7 +146,7 @@ async function getPayments<T extends IOrderPaymentDocument>({
   let payments: (IOrderPaymentDocument | T)[] = [];
   let totalDocs = 0;
   if (filters) {
-    totalDocs = await OrderModel.countDocuments(filters).exec();
+    totalDocs = await OrderPaymentModel.countDocuments(filters).exec();
     payments = await OrderPaymentModel.find(filters, null, {
       sort,
       skip: (page - 1) * limit,
@@ -175,7 +175,7 @@ async function getPayments<T extends IOrderPaymentDocument>({
     throw new Error("Page not found");
   }
   const transformedPayments = await Promise.all(payments.map(transformPayment));
-  const next = payments.length === limit ? page + 1 : null;
+  const next = page < pageCount ? page + 1 : null;
   const prev = page > 1 ? page - 1 : null;
   return {
     payments: transformedPayments,

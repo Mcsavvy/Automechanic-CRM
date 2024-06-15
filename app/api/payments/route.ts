@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import permissionRequired from "@/lib/decorators/permission";
 import { Permission } from "@/lib/permissions/base";
-import { NewOrderPayment } from "@/lib/@types/order";
 import OrderPaymentDAO from "@/lib/inventory/dao/orderPayment";
 import { NewPayment, PaymentSort } from "@/lib/@types/payments";
 import qs from "qs";
 import { FilterQuery } from "mongoose";
-import OrderPaymentModel, { IOrderPaymentDocument } from "@/lib/inventory/models/orderPayment";
+import { IOrderPaymentDocument } from "@/lib/inventory/models/orderPayment";
 import OrderDAO from "@/lib/inventory/dao/order";
 
 type CreateOrderPaymentPayload = Omit<NewPayment, "staffId">;
@@ -27,6 +26,7 @@ export const GET = permissionRequired(Permission.AllowAny())(async function (
   const page = params.page ? parseInt(params.page as string) : 1;
   const limit = params.limit ? parseInt(params.limit as string) : 10;
   const order = params.order as string | undefined;
+  const paymentMethod = params.method as string | undefined;
   const customer = params.customer as string | undefined;
   const amount = params.amount as HasMinMax | undefined;
   const createdAt = params.created as HasBeforeAfter | undefined;
@@ -66,6 +66,9 @@ export const GET = permissionRequired(Permission.AllowAny())(async function (
     if (createdAt.before) {
       query.createdAt.$lte = new Date(createdAt.before);
     }
+  }
+  if (paymentMethod) {
+    query.paymentMethod = paymentMethod;
   }
   const paginatedPayments = await OrderPaymentDAO.getPayments({
     page,

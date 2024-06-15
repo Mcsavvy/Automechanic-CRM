@@ -1,16 +1,12 @@
 import axios from "axios";
 import { createStore } from "zustand/vanilla";
-import {
-  NewPayment,
-  PaginatedPayments,
-  Payment,
-  PaymentModification,
-  PaymentSort,
-} from "../@types/payments";
+import { PaginatedPayments, Payment, PaymentSort } from "../@types/payments";
+import { PaymentMethod } from "../@types/order";
 
 const endpoint = "/api/payments";
 
 export type PaymentFilter = {
+  paymentMethod?: PaymentMethod;
   orderId?: string;
   customerId?: string;
   minAmount?: number;
@@ -19,10 +15,13 @@ export type PaymentFilter = {
   maxCreatedAt?: Date;
 };
 
+export type Status = "idle" | "loading" | "loaded" | "error";
+
 export interface PaymentState extends PaginatedPayments {
   filter: PaymentFilter;
+  sort: PaymentSort;
   payments: Payment[];
-  status: "idle" | "loading" | "loaded" | "error";
+  status: Status;
 }
 
 export interface PaymentActions {
@@ -31,10 +30,8 @@ export interface PaymentActions {
   setLimit: (limit: number) => void;
   applyFilter: (filter: PaymentFilter) => void;
   clearFilter: () => void;
-  getPayment: (id: string) => Promise<Payment>;
-  createPayment: (payment: NewPayment) => Promise<Payment>;
-  updatePayment: (payment: PaymentModification) => Promise<Payment>;
-  deletePayment: (id: string) => Promise<void>;
+  applySort: (sort: PaymentSort) => void;
+  clearSort: () => void;
   reset: () => void;
 }
 
@@ -47,6 +44,7 @@ const filterParamNames: Record<keyof PaymentFilter, string> = {
   maxAmount: "amount[lte]",
   minCreatedAt: "created[after]",
   maxCreatedAt: "created[before]",
+  paymentMethod: "method",
 };
 
 const sortParamNames: Record<keyof PaymentSort, string> = {
@@ -65,7 +63,7 @@ export async function fetchPayments(
     if (value) {
       params.append(
         filterParamNames[key as keyof PaymentFilter],
-        value.toString()
+        (value instanceof Date ? value.toISOString() : value.toString())
       );
     }
   });
@@ -85,32 +83,9 @@ export async function fetchPayments(
   return data;
 }
 
-export async function fetchPayment(id: string): Promise<Payment> {
-  const { data } = await axios.get<Payment>(`${endpoint}/${id}`);
-  return data;
-}
-
-export async function createPayment(payment: NewPayment): Promise<Payment> {
-  const { data } = await axios.post<Payment>(endpoint, payment);
-  return data;
-}
-
-export async function updatePayment(
-  payment: PaymentModification
-): Promise<Payment> {
-  const { data } = await axios.put<Payment>(
-    `${endpoint}/${payment.id}`,
-    payment
-  );
-  return data;
-}
-
-export async function deletePayment(id: string): Promise<void> {
-  await axios.delete(`${endpoint}/${id}`);
-}
-
 export const initialPaymentState: PaymentState = {
   filter: {},
+  sort: {},
   payments: [],
   status: "idle",
   page: 1,
@@ -123,55 +98,59 @@ export const initialPaymentState: PaymentState = {
   hasPrevPage: false,
 };
 
-export const usePaymentStore = createStore<PaymentStore>((set) => ({
-  ...initialPaymentState,
-  setPayments: (payments) => set({ payments }),
-  setPage: (page) => set({ page }),
-  setLimit: (limit) => set({ limit }),
-  applyFilter: (filter) => set({ filter }),
-  clearFilter: () => set({ filter: {} }),
-  getPayment: async (id) => {
-    set({ status: "loading" });
-    try {
-      const payment = await fetchPayment(id);
-      set({ status: "loaded" });
-      return payment;
-    } catch (error) {
-      set({ status: "error" });
-      throw error;
-    }
-  },
-  createPayment: async (payment) => {
-    set({ status: "loading" });
-    try {
-      const newPayment = await createPayment(payment);
-      set({ status: "loaded" });
-      return newPayment;
-    } catch (error) {
-      set({ status: "error" });
-      throw error;
-    }
-  },
-  updatePayment: async (payment) => {
-    set({ status: "loading" });
-    try {
-      const updatedPayment = await updatePayment(payment);
-      set({ status: "loaded" });
-      return updatedPayment;
-    } catch (error) {
-      set({ status: "error" });
-      throw error;
-    }
-  },
-  deletePayment: async (id) => {
-    set({ status: "loading" });
-    try {
-      await deletePayment(id);
-      set({ status: "loaded" });
-    } catch (error) {
-      set({ status: "error" });
-      throw error;
-    }
-  },
-  reset: () => set(initialPaymentState),
-}));
+export const createPaymentStore = (state: PaymentState = initialPaymentState) =>
+  createStore<PaymentStore>((set) => ({
+    ...state,
+    setPayments: (payments) => set({ payments }),
+    setPage: (page) =>
+      set((state) => {
+        if (page < 1 || page > state.pageCount || page === state.page) {
+          return {};
+        }
+        fetchPayments(state.filter, state.sort, page, state.limit).then(
+          (data) => {
+            set({ ...data, page, status: "loaded"});
+          }
+        );
+        return { status: "loading" };
+      }),
+    setLimit: (limit) =>
+      set((state) => {
+        if (limit < 1 || limit === state.limit) {
+          return {};
+        }
+        fetchPayments(state.filter, state.sort, 1, limit).then((data) => {
+          set({ ...data, limit, status: "loaded" });
+        });
+        return { status: "loading" };
+      }),
+    applyFilter: (filter) =>
+      set((state) => {
+        fetchPayments(filter, state.sort, 1, state.limit).then((data) => {
+          set({ ...data, filter, status: "loaded" });
+        });
+        return { status: "loading" };
+      }),
+    clearFilter: () =>
+      set((state) => {
+        fetchPayments({}, state.sort, 1, state.limit).then((data) => {
+          set({ ...data, filter: {}, status: "loaded"});
+        });
+        return { status: "loading" };
+      }),
+    applySort: (sort) =>
+      set((state) => {
+        fetchPayments(state.filter, sort, 1, state.limit).then((data) => {
+          set({ ...data, sort, status: "loaded" });
+        });
+        return { status: "loading" };
+      }),
+    clearSort: () =>
+      set((state) => {
+        fetchPayments(state.filter, {}, 1, state.limit).then((data) => {
+          set({ ...data, sort: {}, status: "loaded" });
+        });
+        return { status: "loading" };
+      }),
+    reset: () => set(initialPaymentState),
+  }));
