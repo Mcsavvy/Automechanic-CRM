@@ -30,7 +30,7 @@ export default function OrderStatus({ status, overdueLimit, cancelReason }: (Ord
             overdue
           </span>
           <ClickableTooltip Trigger={CircleHelp} strokeWidth={1.5} size={16}>
-            This order as been overdue since{" "}
+            This order has been overdue since{" "}
             {overdueDate.toLocaleDateString("en-GB", {
               day: "numeric",
               month: "short",

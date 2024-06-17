@@ -1,20 +1,17 @@
 import mongoose, { FilterQuery } from "mongoose";
 import { IOrderDocument, OrderModel } from "../models/order";
 import {
+  NewOrder,
+  NewOrderItem,
   Order,
   OrderItem,
+  OrderModification,
   OrderSort,
   OrderSummary,
   PaginatedOrders,
 } from "@/lib/@types/order";
 import OrderItemDAO from "./orderItem";
-import OrderPaymentDAO from "./orderPayment";
 
-type UnsavedOrderItem = Omit<Omit<OrderItem, "orderId">, "id">;
-type OrderCreate = Omit<Order, "buyer"> & { items: UnsavedOrderItem[] };
-type OrderUpdate = Omit<Order, "buyer"> & {
-  items: (OrderItem | UnsavedOrderItem)[];
-};
 type PopulatedBuyer = {
   name: string;
   email: string;
@@ -69,7 +66,7 @@ function summarizeOrder(order: Order): OrderSummary {
   return orderSummary;
 }
 
-async function addOrder(order: OrderCreate): Promise<Order> {
+async function addOrder(order: NewOrder): Promise<Order> {
   // validate the order data
 
   const buyerId = new mongoose.Types.ObjectId(order.buyerId);
@@ -91,12 +88,11 @@ async function addOrder(order: OrderCreate): Promise<Order> {
   return {
     ...transformBuyer(newOrder.buyerId as PopulatedBuyer),
     ...transformOrder(newOrder),
-    payments: await OrderPaymentDAO.getPaymentsForOrder(newOrder._id),
     items,
   };
 }
 
-async function updateOrder(update: OrderUpdate): Promise<Order> {
+async function updateOrder(update: OrderModification): Promise<Order> {
   // Validate the order data
   const order = await OrderModel.findByIdAndUpdate(
     update.id,
@@ -110,7 +106,7 @@ async function updateOrder(update: OrderUpdate): Promise<Order> {
     throw new Error("Order not found");
   }
   const items = await Promise.all(
-    update.items.map(async (item: OrderItem | UnsavedOrderItem) => {
+    update.items.map(async (item: OrderItem | NewOrderItem) => {
       const goodId = new mongoose.Types.ObjectId(item.goodId);
       if ("id" in item) {
         return await OrderItemDAO.updateOrderItem(item.id, item);
@@ -126,7 +122,6 @@ async function updateOrder(update: OrderUpdate): Promise<Order> {
   return {
     ...transformBuyer(order.buyerId as PopulatedBuyer),
     ...transformOrder(order),
-    payments: await OrderPaymentDAO.getPaymentsForOrder(order._id),
     items,
   };
 }
@@ -163,7 +158,6 @@ async function getOrder(
   return {
     ...transformBuyer(order.buyerId as PopulatedBuyer),
     ...transformOrder(order),
-    payments: await OrderPaymentDAO.getPaymentsForOrder(order._id),
     items: await OrderItemDAO.getOrderItems(order._id),
   };
 }
@@ -211,7 +205,6 @@ async function getOrders({
         ...transformBuyer(order.buyerId as PopulatedBuyer),
         ...transformOrder(order),
         items: await OrderItemDAO.getOrderItems(order._id),
-        payments: []
       });
     })
   );
