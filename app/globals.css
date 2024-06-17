@@ -189,8 +189,18 @@
   }
 
   .tab {
-    font-weight: 600;
-    color: var(--pri-300);
+    /* font-weight: 500; */
+    color: white;
+    font-weight: bold;
+    text-shadow: 2px 2px 0 var(--pri-400),  
+    -2px -2px 0 var(--pri-400),  
+    2px -2px 0 var(--pri-400),  
+    -2px 2px 0 var(--pri-400),  
+    0px 2px 2px var(--pri-400),  
+    2px 0px 2px var(--pri-400),  
+    0px -2px 2px var(--pri-400),  
+    -2px 0px 2px var(--pri-400);
+
   }
 
   .tab::before {
@@ -244,5 +254,17 @@
       white 6px
     );
     background-size: 100% 100%;
+  }
+  .perspective {
+    perspective: 1000px;
+  }
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+  .rotate-y-180 {
+    transform: rotateY(180deg);
+  }
+  .card-inner:hover {
+    transform: rotateY(180deg);
   }
 }
