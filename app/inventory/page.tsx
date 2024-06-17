@@ -33,7 +33,7 @@ export default function Home() {
         }
     ]
     return (
-        <div className="absolute border border-red-500 h-[calc(100vh-60px)] top-[60px] w-full  overflow-auto    ">
+        <div className="absolute h-[calc(100vh-60px)] top-[60px] w-full  overflow-auto">
             <div className="sticky top-0 w-full z-10 overflow-x-clip">
                 <ul className="  px-[30px] pt-3 pb-0 font-quicksand flex flex-row items-start bg-white overflow-x-auto overflow-y-clip">
                     <li
