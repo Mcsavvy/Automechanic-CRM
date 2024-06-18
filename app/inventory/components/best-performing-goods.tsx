@@ -54,7 +54,7 @@ const BestPerformer: FC<Partial<BestPerformerProps>> = ({ before, after }) => {
                 </thead>
                 <tbody>
                     {
-                        goods.map((good: any, idx: number) => {
+                        goods && goods.map((good: any, idx: number) => {
                             return (
                                 <tr key={idx} className="text-[13px] border-b border-neu-3 p-1">
                                     <td className="font-rambla font-semibold sticky left-0 z-1 bg-neu-1 px-4 py-2 hover:underline hover:cursor-pointer"><Link href={`/inventory/products?product=${good.id}`} className="h-full w-full">{good.name}</Link></td>

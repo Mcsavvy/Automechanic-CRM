@@ -7,25 +7,28 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { formatDate } from "@/lib/utils"
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import { RefreshCcw, TrendingUp, TrendingDown } from 'lucide-react';
+import { Hourglass, TrendingUp, TrendingDown } from 'lucide-react';
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 
 interface RangeBarProps {
-    setBefore: (val: string) => void
-    setAfter: (val: string) => void
-    setMetric: (val: 'month' | 'hour' | 'day' | 'year') => void
+    setBefore: (val: string) => void;
+    setAfter: (val: string) => void;
+    setMetric: (val: 'month' | 'hour' | 'day' | 'year') => void;
+    before: string;
+    after: string;
 }
-const RangeBar: FC<RangeBarProps> = ({ setBefore, setAfter, setMetric }) => {
+const RangeBar: FC<RangeBarProps> = ({before, after, setBefore, setAfter, setMetric }) => {
     const [f_b, setFB] = useState('')
     const [f_a, setFA] = useState('')
     const [by, setBy] = useState<'month' | 'hour' | 'day' | 'year'>('month')
-    const [val, setVal] = useState('today')
+    const [val, setVal] = useState('this week')
     const [clicked, setClicked] = useState(false)
     const submitCustom = (e: any) => {
         e.preventDefault()
@@ -36,9 +39,11 @@ const RangeBar: FC<RangeBarProps> = ({ setBefore, setAfter, setMetric }) => {
     const reset = () => {
         setClicked(true)
         setTimeout(() => {
+            const today = new Date()
             setMetric('month')
-            setBefore('')
-            setAfter('')
+            setBefore((new Date(today.setDate(today.getDate() - today.getDay() + 6)).toISOString()))
+            setAfter((new Date(today.setDate(today.getDate() - today.getDay())).toISOString()))
+            setVal('this week')
             setClicked(false)
         }, 100)
     }
@@ -110,10 +115,13 @@ const RangeBar: FC<RangeBarProps> = ({ setBefore, setAfter, setMetric }) => {
     };
 
     return (
-        <div className="flex flex-row items-center justify-end gap-3">
-            <RefreshCcw onClick={reset} className={`cursor-pointer ${clicked ? 'animate-spin' : ''}`} size={24} strokeWidth={1.5} />
+        <div className="flex flex-row flex-wrap items-center justify-between gap-2 w-full bg-white border border-neu-2 rounded-md p-2">
+            <p className="font-rambla text-[16px]">From <span className="font-semibold text-pri-6">{formatDate(after)}</span> to <span className="font-semibold text-acc-7">{formatDate(before)}</span></p>
+            <div className="flex flex-row items-center justify-start gap-2">
+            <Hourglass onClick={reset} className={`cursor-pointer ${clicked ? 'animate-spin' : ''}`} size={24} strokeWidth={1.5} color={"#003056"}/>
+
             <Select value={val} onValueChange={fetchDefaults}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-[150px]">
                     <SelectValue placeholder="Today" />
                 </SelectTrigger>
                 <SelectContent>
@@ -154,6 +162,8 @@ const RangeBar: FC<RangeBarProps> = ({ setBefore, setAfter, setMetric }) => {
                     </Popover>
                 </SelectContent>
             </Select>
+            </div>
+
         </div>
     )
 

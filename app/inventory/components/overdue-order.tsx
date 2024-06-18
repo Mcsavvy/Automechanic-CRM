@@ -25,7 +25,7 @@ const Overdue: FC<Partial<OverdueProps>> = ({ before, after }) => {
                 throw response;
             }
             let data = response.data;
-            return data
+            return data || []
         } catch (err) {
             console.error(err)
         }
@@ -43,7 +43,7 @@ const Overdue: FC<Partial<OverdueProps>> = ({ before, after }) => {
             <h3 className="w-full sticky top-0 bg-white text-lg text-red-500 font-semibold font-quicksand pt-4 px-4">Overdue orders</h3>
             <ul className="flex flex-col items-stretch cursor-pointer justify-start gap-2 px-4">
                 {
-                    orders.map((order: any, idx: number) => {
+                    orders && orders.map((order: any, idx: number) => {
                         return (
                             <Link key={idx} href={`/inventory/orders/${order.orderId}`}>
                                 <li className="flex flex-col p-1 bg-neu-1 shadow-md">

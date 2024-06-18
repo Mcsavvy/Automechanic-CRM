@@ -138,13 +138,13 @@ const Insights: FC<Partial<InsightProps>> = () => {
 
     return (
         <>
-            <div className="w-[60%] h-full min-w-[300px] bg-white grow self-stretch flex items-center justify-center border border-neu-3 shadow-md overflow-clip">
-                <div className=" w-full min-w-[300px] bg-white p-4 flex grow flex-col gap-3">
+            <div className="w-full bg-white flex items-center justify-center border border-neu-3 shadow-md overflow-auto">
+                <div className=" w-full bg-white p-4 flex grow flex-col gap-3">
                     <h3 className="text-lg text-pri-5 font-semibold font-quicksand">Revenue Summary</h3>
                     {insights.length > 0 && <Bar data={chartData} options={options} />}
                 </div >
             </div>
-            <div className=" border border-neu-3 shadow-md self-stretch flex-grow w-[200px] p-4 bg-white">
+            <div className=" border border-neu-3 shadow-md min-w-[200px] w-full p-4 bg-white">
                 <h3 className="flex flex-col items-start text-lg text-pri-6 font-semibold font-quicksand">Order Summary within this period
                     <span className={`font-semibold text-xl font-quicksand ${profit >= 0 ? 'text-green-500' : 'text-red-500'}`}>
                         {

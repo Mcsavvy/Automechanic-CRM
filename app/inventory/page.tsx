@@ -10,10 +10,11 @@ import { useState, useEffect } from 'react'
 import { Boxes, Users, ReceiptText, UsersRound } from 'lucide-react'
 import QuickAction from './components/quick-action'
 export default function Home() {
-    const [before, setBefore] = useState('')
-    const [after, setAfter] = useState('')
+    const today = new Date()
+    const [before, setBefore] = useState((new Date(today.setDate(today.getDate() - today.getDay() + 6)).toISOString()))
+    const [after, setAfter] = useState((new Date(today.setDate(today.getDate() - today.getDay())).toISOString()))
     const [metric, setMetric] = useState<'month' | 'hour' | 'day' | 'year'>('month')
-    const [tab, setTab] = useState("quickstart")
+    const [tab, setTab] = useState("chart")
     const quickstartOptions = [
         {
             front: "Generate new invoice",
@@ -51,8 +52,8 @@ export default function Home() {
                         Recent Actions
                     </li>
                     <li
-                        onClick={() => setTab("charts")}
-                        className={`font-quicksand capitalize cursor-pointer relative px-4 py-1 text-center transition-all duration-200 ease-in-out ${tab == "charts" ? "tab" : ""
+                        onClick={() => setTab("chart")}
+                        className={`font-quicksand capitalize cursor-pointer relative px-4 py-1 text-center transition-all duration-200 ease-in-out ${tab == "chart" ? "tab" : ""
                             }`}
                     >
                         Quick Charts
@@ -61,23 +62,23 @@ export default function Home() {
                 </ul>
             </div>
 
-            <div className="flex p-[30px] flex-row flex-wrap gap-3 items-center justify-evenly w-full h-full">
+            <div className="flex p-[30px] flex-row flex-wrap gap-3 items-center justify-evenly w-full">
                 {tab == "quickstart" &&
                     quickstartOptions.map((item, idx) => <QuickAction key={idx} {...item} />)
                 }
-                {tab == "charts" &&
-                    <div className="p-[30px] flex flex-col justify-start items-center md:items-stretch md:grid md:items-start md:grid-cols-3 gap-4 h-full overflow-y-visible scrollbar-thin" style={{ gridAutoRows: 'min-content' }}>
-                        <div className="md:col-span-3 flex flex-row flex-wrap items-center justify-between">
-                            <RangeBar {...{ setBefore, setAfter, setMetric }} />
+                {tab == "chart" &&
+                    <div className="w-full my-grid flex flex-col justify-start items-center gap-4 md:grid md:items-start overflow-y-visible scrollbar-thin">
+                        <div className="md:col-start-1 md:col-span-3 md:row-span-1 w-full">
+                            <RangeBar {...{ setBefore, setAfter, setMetric, before, after }} />
                         </div>
-                        <div className="md:col-span-2 rounded-md w-full h-auto items-stretch flex-wrap flex flex-row gap-2 justify-evenly">
+                        <div className="md:col-start-1 md:col-span-2 md:row-start-2 md:row-span-2 rounded-md w-full items-stretch flex-wrap flex flex-row gap-2 justify-evenly">
                             <Insights {...{ metric, before, after }} />
                         </div>
-                        <div className="flex flex-col min-w-[250px] gap-3 invoice md:col-span-1 md:row-span-2 h-full w-full">
+                        <div className="flex flex-col min-w-[250px] gap-3 invoice md:col-start-3 md:col-span-1 md:row-start-2 md:row-span-2 h-full w-full">
                             <Overdue {...{ before, after }} />
                             <StoreSummary {...{ before, after }} />
                         </div>
-                        <BestPerformer {...{ before, after }} />
+                        {/* <BestPerformer {...{ before, after }} /> */}
                     </div>
                 }
             </div>

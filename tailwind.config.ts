@@ -26,6 +26,13 @@ const config = {
         rambla: ['Rambla', 'sans-serif'],
 
       },
+      gridTemplateColumns: {
+        // Simple 16 column grid
+        'dashboard': '1fr 1fr 250px',
+      },
+      gridTemplateRows: {
+        'dashboard': '100px 1fr 1fr',
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":

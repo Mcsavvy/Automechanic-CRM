@@ -267,4 +267,9 @@
   .card-inner:hover {
     transform: rotateY(180deg);
   }
+  .my-grid {
+    grid-auto-rows: min-content;
+    grid-template-rows: auto 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
 }

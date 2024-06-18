@@ -65,6 +65,11 @@ export function formatMoney(amount: number) {
     currency: "NGN",
   }).replace("NGN", "₦");
 }
+export function formatDate(val: string) {
+  const date = new Date(val);
+  const options = { year: 'numeric' as "numeric", month: 'long' as "long", day: 'numeric' as "numeric" };
+  return date.toLocaleDateString('en-US', options);
+}
 export function formatCurrencyShort(value: number) {
   const absValue = Math.abs(value);
   let abbreviatedValue;
