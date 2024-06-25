@@ -12,21 +12,20 @@ interface InsightProps {
     before: string;
     after: string;
 }
-const Insights: FC<Partial<InsightProps>> = () => {
+const Insights: FC<InsightProps> = ({metric, before, after}) => {
     const [insights, setInsights] = useState<OrderInsights[]>([])
     const [summary, setSummary] = useState<any>({})
     const [chartData, setCharData] = useState<any>()
-    const [chartSummary, setChartSummary] = useState<any>()
-    const [metric, setMetric] = useState<'month' | 'hour' | 'day' | 'year'>('month')
-    const [before, setBefore] = useState('')
-    const [after, setAfter] = useState('')
     const [profit, setP] = useState(0)
-    const metrics: any = {
-        'month': ['Jan', 'Feb', 'Mar', 'April', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-        'day': ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-        'hour': ['12 AM', '1 AM', '2 AM', '3 AM', '4 AM', '5 AM', '6 AM', '7 AM', '8 AM', '9 AM', '10 AM', '11 AM', '12 PM', '1 PM', '2 PM', '3 PM', '4 PM', '5 PM', '6 PM', '7 PM', '8 PM', '9 PM', '10 PM', '11 PM'],
-        'year': Array.from({ length: 20 }, (_, i) => i + 2015),
-    }
+
+    const generateYearRange = (before: string, after: string): string[] => {
+        const startYear = new Date(after).getFullYear();
+        const endYear = new Date(before).getFullYear();
+        return Array.from(
+          { length: endYear - startYear + 1 }, 
+          (_, index) => (startYear + index).toString()
+        );
+      };
     const options = {
         plugins: {
             tooltip: {
@@ -58,46 +57,34 @@ const Insights: FC<Partial<InsightProps>> = () => {
             },
         },
     }
+    const metrics: { [key: string]: string[] } = {
+        'month': ['Jan', 'Feb', 'Mar', 'April', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        'day': ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+        'hour': ['12 AM', '1 AM', '2 AM', '3 AM', '4 AM', '5 AM', '6 AM', '7 AM', '8 AM', '9 AM', '10 AM', '11 AM', '12 PM', '1 PM', '2 PM', '3 PM', '4 PM', '5 PM', '6 PM', '7 PM', '8 PM', '9 PM', '10 PM', '11 PM'],
+        'year': generateYearRange(before, after)
+    }
 
-    const fetchInsights = async (val: string, _before?: string, _after?: string) => {
+    const fetchInsights = async () => {
         try {
             let query = ''
             if (before) query += `&b=${encodeURIComponent(before)}`;
             if (after) query += `&a=${encodeURIComponent(after)}`;
-            const response = await axios.get(`/api/insights/orders?m=${val}${query}`)
+            const response = await axios.get(`/api/insights/orders?m=${metric}${query}`)
             if (response.status !== 200) {
                 throw response;
             }
-            const filler = (period: number) => {
-                return {
-                    period,
-                    totalRevenue: 0,
-                    totalCost: 0,
-                    totalQuantitySold: 0,
-                }
-            }
-            let data: OrderInsights[] = response.data.results;
+            const data: OrderInsights[] = response.data.results;
             const summary = response.data.summary
-            let tableData = []
-            let item
-            for (let i = 0; i < metrics[metric].length; i++) {
-                if (metric === "year")
-                    item = data.find(item => item.period === metrics[metric][i])
-                else
-                    item = data.find(item => item.period === (['month', 'day'].includes(metric) ? i + 1 : i))
-                if (item) tableData.push(item)
-                else tableData.push(filler(i))
-            }
-            return { tableData, summary }
+            return { data, summary }
         } catch (err) {
             console.error(err)
         }
     }
     useEffect(() => {
-        fetchInsights(metric, before, after)
+        fetchInsights()
             .then((data) => {
-                if (data && data.tableData && data.summary) {
-                    setInsights(data.tableData)
+                if (data && data.data && data.summary) {
+                    setInsights(data.data)
                     setSummary(data.summary)
                 }
             })
@@ -105,12 +92,15 @@ const Insights: FC<Partial<InsightProps>> = () => {
     }, [metric, before, after])
     useEffect(() => {
         if (insights) {
+            console.log("years", generateYearRange(before, after))
+            const labels = metrics[metric] as string[];
+            console.log("labels", labels)
             const totalRevenue = insights.reduce((total, insight) => total + insight.totalRevenue, 0);
             const totalCost = insights.reduce((total, insight) => total + insight.totalCost, 0);
             setP(Math.round((totalRevenue - totalCost) * 100) / 100);
             const maxRevenue = Math.max(...insights.map(item => item.totalRevenue));
             setCharData({
-                labels: metrics[metric] as string[],
+                labels,
                 datasets: [
                     {
                         id: 1,
@@ -133,8 +123,6 @@ const Insights: FC<Partial<InsightProps>> = () => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [insights, metric]);
-
-
 
     return (
         <>

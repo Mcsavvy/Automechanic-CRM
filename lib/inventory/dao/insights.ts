@@ -121,45 +121,40 @@ async function revenueByPeriod(
   metric: "hour" | "day" | "month" | "year",
   before?: Date,
   after?: Date,
-  visualize: boolean = false
 ) {
-  if (before && after && before < after) {
-    throw new Error("Invalid date range: before must be after after");
+  const matchStage: any = { 'order.status': { $in: ['paid', 'pending'] } };
+  if (before || after) {
+    matchStage['order.createdAt'] = {};
+    if (before) matchStage['order.createdAt'].$lte = before;
+    if (after) matchStage['order.createdAt'].$gte = after;
   }
-  const query: any = {};
-  if (before) {
-    query["createdAt"] = { $lte: before };
-  }
-  if (after) {
-    if (!query["createdAt"])
-      query["createdAt"] = { $gte: after };
-    else
-    query["createdAt"]["$gte"] = after;
 
-  }
   try {
     let dateOperator;
-    let groupOperator;
+    let range;
     switch (metric) {
       case "hour":
         dateOperator = { $hour: "$order.createdAt" };
-        groupOperator = { $dayOfYear: "$order.createdAt" };
+        range = Array.from({ length: 24 }, (_, i) => i);
         break;
       case "day":
-        dateOperator = { $dayOfWeek: "$order.createdAt" };
-        groupOperator = { $week: "$order.createdAt" };
+        dateOperator = { $subtract: [{ $dayOfWeek: "$order.createdAt" }, 1] };
+        range = Array.from({ length: 7 }, (_, i) => i);
         break;
       case "month":
-        dateOperator = { $month: "$order.createdAt" };
-        groupOperator = { $year: "$order.createdAt" };
+        dateOperator = { $subtract: [{ $month: "$order.createdAt" }, 1] };
+        range = Array.from({ length: 12 }, (_, i) => i);
         break;
       case "year":
         dateOperator = { $year: "$order.createdAt" };
-        groupOperator = dateOperator;
+        const startYear = after ? after.getFullYear() : new Date().getFullYear() - 5;
+        const endYear = before ? before.getFullYear() : new Date().getFullYear();
+        range = Array.from({ length: endYear - startYear + 1 }, (_, i) => startYear + i);
         break;
       default:
         throw new Error(`Invalid metric: ${metric}`);
     }
+
     const pipeline = [
       {
         $lookup: {
@@ -170,16 +165,10 @@ async function revenueByPeriod(
         },
       },
       { $unwind: "$order" },
-      {
-        $match: {
-          "order.status": { $in: ["pending", "paid"] },
-          ...query,
-        },
-      },
+      { $match: matchStage },
       {
         $group: {
           _id: dateOperator,
-          period: { $first: dateOperator},
           totalRevenue: { $sum: { $multiply: ["$qty", "$sellingPrice"] } },
           totalCost: { $sum: { $multiply: ["$qty", "$costPrice"] } },
           totalQuantitySold: { $sum: "$qty" },
@@ -188,32 +177,49 @@ async function revenueByPeriod(
       {
         $project: {
           _id: 0,
-          period: 1,
+          period: "$_id",
           totalRevenue: 1,
           totalCost: 1,
           totalQuantitySold: 1,
           profit: { $subtract: ["$totalRevenue", "$totalCost"] },
-
         },
       },
-      // { $sort: { totalRevenue: 1 } },
-
     ];
 
     const results = await OrderItemModel.aggregate(pipeline);
-    const pending = await OrderModel.countDocuments({ status: 'pending', ...query});
-    const errors = await OrderModel.countDocuments({ status: 'error', ...query});
-    const paid = await OrderModel.countDocuments({ status: 'paid', ...query });
-    const rest = await OrderModel.countDocuments({ status: 'rest', ...query});
-    const cancelled = await OrderModel.countDocuments({ status: "cancelled", ...query});
-    const total = pending + errors + paid + rest + cancelled
-    const summary = { pending, errors, paid, rest, total, cancelled }
-    if (visualize) {
-      console.table(results);
-      createRevenueByPeriodChart(results);
-    } else {
-      return { results, summary };
+
+    // Pad the results with empty values for missing periods
+    const paddedResults = range.map(period => {
+      const existingResult = results.find(r => r.period === period);
+      return existingResult || {
+        period,
+        totalRevenue: 0,
+        totalCost: 0,
+        totalQuantitySold: 0,
+        profit: 0
+      };
+    });
+
+    // Query for order statistics
+    const orderQuery: any = {};
+    if (before || after) {
+      orderQuery['createdAt'] = {};
+      if (before) orderQuery['createdAt'].$lte = before;
+      if (after) orderQuery['createdAt'].$gte = after;
     }
+
+    const [pending, errors, paid, rest, cancelled] = await Promise.all([
+      OrderModel.countDocuments({ status: 'pending', ...orderQuery }),
+      OrderModel.countDocuments({ status: 'error', ...orderQuery }),
+      OrderModel.countDocuments({ status: 'paid', ...orderQuery }),
+      OrderModel.countDocuments({ status: 'rest', ...orderQuery }),
+      OrderModel.countDocuments({ status: 'cancelled', ...orderQuery }),
+    ]);
+
+    const total = pending + errors + paid + rest + cancelled;
+    const summary = { pending, errors, paid, rest, cancelled, total };
+    console.log("Res", paddedResults, "Summ", summary)
+    return { results: paddedResults, summary };
   } catch (error) {
     console.error("Error calculating revenue by period:", error);
     throw error;

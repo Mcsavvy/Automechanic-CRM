@@ -189,17 +189,19 @@
   }
 
   .tab {
-    /* font-weight: 500; */
-    color: white;
-    font-weight: bold;
-    text-shadow: 2px 2px 0 var(--pri-400),  
-    -2px -2px 0 var(--pri-400),  
-    2px -2px 0 var(--pri-400),  
-    -2px 2px 0 var(--pri-400),  
-    0px 2px 2px var(--pri-400),  
-    2px 0px 2px var(--pri-400),  
-    0px -2px 2px var(--pri-400),  
-    -2px 0px 2px var(--pri-400);
+    letter-spacing: 0.0015em;
+    font-size: 1.15em;
+    color: var(--pri-800);
+    text-shadow: 
+        0 0.23px var(--pri-300), -0.23px 0 var(--pri-100), 
+        -0.23px 0.46px var(--pri-300), -0.46px 0.23px var(--pri-100),
+        -0.46px 0.69px var(--pri-300), -0.69px 0.46px var(--pri-100),
+        -0.69px 0.92px var(--pri-300), -0.92px 0.69px var(--pri-100),
+        -0.92px 1.15px var(--pri-300), -1.15px 0.92px var(--pri-100), 
+        -1.15px 1.38px var(--pri-300), -1.38px 1.15px var(--pri-100),
+        -1.38px 1.61px var(--pri-300), -1.61px 1.38px var(--pri-100), 
+        -1.61px 1.84px var(--pri-300), -1.84px 1.61px var(--pri-100);
+    text-align: center;
 
   }
 
