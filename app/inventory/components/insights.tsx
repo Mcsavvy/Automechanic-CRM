@@ -41,9 +41,9 @@ const Insights: FC<InsightProps> = ({metric, before, after}) => {
 
         scales: {
             y: {
-                display: false,
+                display: true,
                 grid: {
-                    display: false,
+                    display: true,
                 },
                 stacked: true,
             },
@@ -74,6 +74,7 @@ const Insights: FC<InsightProps> = ({metric, before, after}) => {
                 throw response;
             }
             const data: OrderInsights[] = response.data.results;
+            console.log("Dydyd", data)
             const summary = response.data.summary
             return { data, summary }
         } catch (err) {

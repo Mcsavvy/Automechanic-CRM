@@ -56,6 +56,5 @@ export const GET = permissionRequired(Permission.AllowAny())(async function (
       },
     },
   ])
-  console.log("Dudu", results)
   return NextResponse.json({ ...results, ...summary[0] });
 });
