@@ -39,7 +39,7 @@ const Overdue: FC<Partial<OverdueProps>> = ({ before, after }) => {
         console.log("Orders", orders)
     })
     return (
-        <div className="h-[500px] flex flex-col gap-2  border border-neu-3 overflow-y-auto scrollbar-thin bg-white rounded-md shadow-inner ">
+        <div className="max-h-[350px] flex flex-col gap-2  border border-neu-3 overflow-y-auto scrollbar-thin bg-white rounded-md shadow-inner ">
             <h3 className="w-full sticky top-0 bg-white text-lg text-red-500 font-semibold font-quicksand pt-4 px-4">Overdue orders</h3>
             <ul className="flex flex-col items-stretch cursor-pointer justify-start gap-2 px-4">
                 {

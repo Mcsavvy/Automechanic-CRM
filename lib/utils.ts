@@ -70,6 +70,20 @@ export function formatDate(val: string) {
   const options = { year: 'numeric' as "numeric", month: 'long' as "long", day: 'numeric' as "numeric" };
   return date.toLocaleDateString('en-US', options);
 }
+/**
+ * Formats a number as a percentage.
+ * 
+ * @param {number} value - The number to format.
+ * @param {number} [digits=0] - The number of digits to display after the decimal point.
+ * @returns {string} - The formatted percentage string.
+ */
+export function formatPercentage(value: number, digits: number = 2) {
+  return new Intl.NumberFormat('en-US', {
+    style: 'percent',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: digits,
+  }).format(value);
+}
 export function formatCurrencyShort(value: number) {
   const absValue = Math.abs(value);
   let abbreviatedValue;

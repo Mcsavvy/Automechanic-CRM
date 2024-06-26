@@ -40,7 +40,7 @@ const RangeBar: FC<RangeBarProps> = ({before, after, setBefore, setAfter, setMet
         setClicked(true)
         setTimeout(() => {
             const today = new Date()
-            setMetric('month')
+            setMetric('day')
             setBefore((new Date(today.setDate(today.getDate() - today.getDay() + 6)).toISOString()))
             setAfter((new Date(today.setDate(today.getDate() - today.getDay())).toISOString()))
             setVal('this week')
@@ -48,70 +48,70 @@ const RangeBar: FC<RangeBarProps> = ({before, after, setBefore, setAfter, setMet
         }, 100)
     }
 
-    const fetchDefaults = (period: 'today' | 'this week' | 'this month' | 'this year' | 'yesterday' | 'last week' | 'last month' | 'last year' | 'yesterday') => {
+    const fetchDefaults = (period: 'today' | 'this week' | 'this month' | 'this year' | 'yesterday' | 'last week' | 'last month' | 'last year') => {
         let result;
-        setVal(period)
-        const today = new Date();
-        const startOfDay = new Date(today.setHours(0, 0, 0, 0));
+        setVal(period);
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const startOfDay = new Date(today);
         const endOfDay = new Date(today.setHours(23, 59, 59, 999));
-
         const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
-        const endOfWeek = new Date(today.setDate(today.getDate() - today.getDay() + 6));
-
+        const endOfWeek = new Date(new Date(startOfWeek).setDate(startOfWeek.getDate() + 6));
         const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
         const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-
         const startOfYear = new Date(today.getFullYear(), 0, 1);
-        const endOfYear = new Date(today.getFullYear(), 11, 31);
-
-        const yesterday = new Date(today.setDate(today.getDate() - 1));
-
-        const lastWeekStart = new Date(today.setDate(today.getDate() - 7));
-        const lastWeekEnd = new Date(today.setDate(today.getDate() - 1));
-
+        const endOfYear = new Date(today.getFullYear(), 11, 31, 23, 59, 59, 999);
+        const yesterday = new Date(now);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const startOfYesterday = new Date(yesterday.setHours(0, 0, 0, 0));
+        const endOfYesterday = new Date(yesterday.setHours(23, 59, 59, 999));
+        const lastWeekStart = new Date(now);
+        lastWeekStart.setDate(lastWeekStart.getDate() - 7 - lastWeekStart.getDay());
+        const lastWeekEnd = new Date(new Date(lastWeekStart).setDate(lastWeekStart.getDate() + 6));
+        lastWeekEnd.setHours(23, 59, 59, 999);
         const lastMonthStart = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-        const lastMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0);
-
+        const lastMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0, 23, 59, 59, 999);
         const lastYearStart = new Date(today.getFullYear() - 1, 0, 1);
-        const lastYearEnd = new Date(today.getFullYear() - 1, 11, 31);
-
+        const lastYearEnd = new Date(today.getFullYear() - 1, 11, 31, 23, 59, 59, 999);
+    
         switch (period) {
             case 'today':
                 result = { before: endOfDay, after: startOfDay };
-                setMetric('hour')
-                break
+                setMetric('hour');
+                break;
             case 'this week':
                 result = { before: endOfWeek, after: startOfWeek };
-                setMetric('day')
-                break
+                setMetric('day');
+                break;
             case 'this month':
                 result = { before: endOfMonth, after: startOfMonth };
-                setMetric('day')
-                break
+                setMetric('day');
+                break;
             case 'this year':
                 result = { before: endOfYear, after: startOfYear };
-                break
+                setMetric('month');
+                break;
             case 'yesterday':
-                result = { before: yesterday, after: yesterday };
-                setMetric('hour')
-                break
+                result = { before: endOfYesterday, after: startOfYesterday };
+                setMetric('hour');
+                break;
             case 'last week':
                 result = { before: lastWeekEnd, after: lastWeekStart };
-                setMetric('day')
-                break
+                setMetric('day');
+                break;
             case 'last month':
                 result = { before: lastMonthEnd, after: lastMonthStart };
-                setMetric('day')
-                break
+                setMetric('day');
+                break;
             case 'last year':
                 result = { before: lastYearEnd, after: lastYearStart };
-                setMetric('month')
-                break
+                setMetric('month');
+                break;
             default:
-                return
+                return;
         }
-        setBefore(result.before.toISOString())
-        setAfter(result.after.toISOString())
+        setBefore(result.before.toISOString());
+        setAfter(result.after.toISOString());
     };
 
     return (
@@ -136,7 +136,7 @@ const RangeBar: FC<RangeBarProps> = ({before, after, setBefore, setAfter, setMet
                     <Popover>
                         <PopoverTrigger className="flex items-center justify-start hover:bg-pri-1 text-sm w-full px-[30px] py-1">Custom</PopoverTrigger>
                         <PopoverContent>
-                            <form onSubmit={submitCustom}>
+                            <form onSubmit={submitCustom} className="flex flex-col gap-2">
                                 <label>From:
                                     <Input required type="date" value={f_a} onChange={(e) => setFA(e.target.value)} />
                                 </label>

@@ -13,7 +13,7 @@ export default function Home() {
     const today = new Date()
     const [before, setBefore] = useState((new Date(today.setDate(today.getDate() - today.getDay() + 6)).toISOString()))
     const [after, setAfter] = useState((new Date(today.setDate(today.getDate() - today.getDay())).toISOString()))
-    const [metric, setMetric] = useState<'month' | 'hour' | 'day' | 'year'>('month')
+    const [metric, setMetric] = useState<'month' | 'hour' | 'day' | 'year'>('day')
     const [tab, setTab] = useState("chart")
     const quickstartOptions = [
         {
@@ -67,18 +67,17 @@ export default function Home() {
                     quickstartOptions.map((item, idx) => <QuickAction key={idx} {...item} />)
                 }
                 {tab == "chart" &&
-                    <div className="w-full my-grid flex flex-col justify-start items-center gap-4 md:grid md:items-start overflow-y-visible scrollbar-thin">
-                        <div className="md:col-start-1 md:col-span-3 md:row-span-1 w-full">
+                    <div className="w-full md:grid my-grid gap-4 md:items-start overflow-y-visible scrollbar-thin flex flex-col items-center">
+                        <div className="md:col-span-2 md:row-start-1">
                             <RangeBar {...{ setBefore, setAfter, setMetric, before, after }} />
                         </div>
-                        <div className="md:col-start-1 md:col-span-2 md:row-start-2 md:row-span-2 rounded-md w-full items-stretch flex-wrap flex flex-row gap-2 justify-evenly">
+                        <div className="md:col-start-1 md:row-start-2 rounded-md w-full items-stretch flex-wrap flex flex-row gap-2 justify-evenly">
                             <Insights {...{ metric, before, after }} />
                         </div>
-                        <div className="flex flex-col min-w-[250px] gap-3 invoice md:col-start-3 md:col-span-1 md:row-start-2 md:row-span-2 h-full w-full">
+                        <div className="col-start-2 row-start-2 flex flex-col min-w-[250px] gap-3 invoice h-full w-full">
                             <Overdue {...{ before, after }} />
                             <StoreSummary {...{ before, after }} />
                         </div>
-                        {/* <BestPerformer {...{ before, after }} /> */}
                     </div>
                 }
             </div>

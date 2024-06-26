@@ -92,13 +92,11 @@ const Insights: FC<InsightProps> = ({metric, before, after}) => {
     }, [metric, before, after])
     useEffect(() => {
         if (insights) {
-            console.log("years", generateYearRange(before, after))
             const labels = metrics[metric] as string[];
-            console.log("labels", labels)
             const totalRevenue = insights.reduce((total, insight) => total + insight.totalRevenue, 0);
             const totalCost = insights.reduce((total, insight) => total + insight.totalCost, 0);
             setP(Math.round((totalRevenue - totalCost) * 100) / 100);
-            const maxRevenue = Math.max(...insights.map(item => item.totalRevenue));
+            const maxRevenue = Math.max(...insights.map(item => item.totalRevenue)) || 1000;
             setCharData({
                 labels,
                 datasets: [

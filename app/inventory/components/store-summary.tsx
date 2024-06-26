@@ -2,23 +2,26 @@
 import { FC, useState, useEffect } from 'react';
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
-import { formatCurrencyShort } from '@/lib/utils';
+import { formatCurrencyShort, formatPercentage } from '@/lib/utils';
 import Link from 'next/link';
-import { CircleDollarSign, ShoppingCart, ReceiptText } from 'lucide-react'
+import { CircleDollarSign, ShoppingCart, ReceiptText, TrendingUp, TrendingDown } from 'lucide-react'
 
 interface StoreSummaryProps {
     before: string;
     after: string;
 }
+interface ProductVal {
+    name: string;
+    id: string;
+    qtySold: number;
+    revenue: number;
+    orderCount: number;
+    profitPercentage: number
+
+}
 const StoreSummary: FC<Partial<StoreSummaryProps>> = ({ before, after }) => {
-    const [summary, setSummary] = useState({
-        name: '',
-        id: '',
-        qtySold: 0,
-        revenue: 0,
-        qty: 0,
-        orderCount: 0
-    })
+    const [mvp, setMVP] = useState<ProductVal | null>(null)
+    const [mpp, setMPP] = useState<ProductVal | null>(null)
     const [store, setStore] = useState({ inStock: 0, lowStock: 0, noStock: 0, total: 0 })
     const toPercent = (val: number, rev: boolean = false) => {
         let percentage;
@@ -54,13 +57,14 @@ const StoreSummary: FC<Partial<StoreSummaryProps>> = ({ before, after }) => {
 
     useEffect(() => {
         fetchSummary(before, after).
-            then(({ results, ...storeSummary }) => {
-                setSummary(results)
+            then(({ mvp, mpp, ...storeSummary }) => {
+                setMVP(mvp)
+                setMPP(mpp)
                 setStore(storeSummary || {})
             })
     }, [before, after])
     useEffect(() => {
-        console.log("Summary", summary)
+        console.log("Summary", mvp)
     })
     return (
         <div className="flex flex-col gap-2  border border-neu-3 overflow-y-auto scrollbar-thin bg-white rounded-md shadow-inner p-4">
@@ -70,20 +74,45 @@ const StoreSummary: FC<Partial<StoreSummaryProps>> = ({ before, after }) => {
                 </Link>
             </h3>
             <div className="flex flex-col items-start justify-start" >
-                <p className="text-sm text-neu-6">MVP</p>
-                {(summary && <Link className='hover:cursor-pointer hover:bg-neu-1 w-full p-2' href={`/inventory/products?query=${summary.name}`}>
-                    <div className="flex flex-row items-center justify-start gap-3">
-                        <p className="font-semibold text-pri-6 text-lg font-rambla">{summary.name}</p>
+                <p className="text-sm text-neu-6">Most valuable</p>
+                {(mvp && <Link className='hover:cursor-pointer hover:bg-neu-1 w-full p-2' href={`/inventory/products?query=${mvp.name}`}>
+                    <div className="flex flex-row items-center justify-start gap-4">
+                        <p className="font-semibold text-pri-6 text-lg font-rambla">{mvp.name}</p>
                         <ul className="grow flex flex-col gap-1">
-                            <li className="flex flex-row items-center justify-start gap-2"><ShoppingCart strokeWidth={1.5} size={20} /> <span>{summary.qtySold} sold</span></li>
-                            <li className="flex flex-row items-center justify-start gap-2"><CircleDollarSign strokeWidth={1.5} size={20} /> <span>{formatCurrencyShort(summary.revenue)}</span></li>
-                            <li className="flex flex-row items-center justify-start gap-2"><ReceiptText strokeWidth={1.5} size={20} /> <span>{summary.orderCount} order{summary.orderCount > 0? 's': ''}</span></li>
+                            <li className="flex flex-row items-center justify-start gap-2"><ShoppingCart strokeWidth={1.5} size={20} /> <span>{mvp.qtySold} sold</span></li>
+                            <li className="flex flex-row items-center justify-start gap-2"><CircleDollarSign strokeWidth={1.5} size={20} /> <span>{formatCurrencyShort(mvp.revenue)}</span></li>
+                            <li className="flex flex-row items-center justify-start gap-2"><ReceiptText strokeWidth={1.5} size={20} /> <span>{mvp.orderCount} order{mvp.orderCount > 0 ? 's' : ''}</span></li>
+                            <li className={` text-${mvp.profitPercentage >= 0 ? 'green-500' : 'red-500'} flex flex-row items-center justify-start gap-2`}>
+                                {mvp.profitPercentage >= 0 ? <TrendingUp strokeWidth={1.5} size={20} /> : <TrendingDown strokeWidth={1.5} size={20} />}
+                                <span>{mvp.profitPercentage >= 0 ? '+ ' : '- '}{formatPercentage(mvp.profitPercentage)}</span>
+                            </li>
                         </ul>
                     </div>
                 </Link>) ||
-                <div>
-                    <h2 className='text-xl font-bold font-rambla font-acc-7'>No record sales within the period</h2>
-                </div>
+                    <div>
+                        <h2 className='text-xl font-bold font-rambla font-acc-7'>No record sales within the period</h2>
+                    </div>
+                }
+            </div>
+            <div className="flex flex-col items-start justify-start" >
+                <p className="text-sm text-neu-6">Most Profitable</p>
+                {(mpp && <Link className='hover:cursor-pointer hover:bg-neu-1 w-full p-2' href={`/inventory/products?query=${mpp.name}`}>
+                    <div className="flex flex-row items-center justify-start gap-4">
+                        <p className="font-semibold text-pri-6 text-lg font-rambla">{mpp.name}</p>
+                        <ul className="grow flex flex-col gap-1">
+                            <li className="flex flex-row items-center justify-start gap-2"><ShoppingCart strokeWidth={1.5} size={20} /> <span>{mpp.qtySold} sold</span></li>
+                            <li className="flex flex-row items-center justify-start gap-2"><CircleDollarSign strokeWidth={1.5} size={20} /> <span>{formatCurrencyShort(mpp.revenue)}</span></li>
+                            <li className="flex flex-row items-center justify-start gap-2"><ReceiptText strokeWidth={1.5} size={20} /> <span>{mpp.orderCount} order{mpp.orderCount > 1 ? 's' : ''}</span></li>
+                            <li className={` text-${mpp.profitPercentage >= 0 ? 'green-500' : 'red-500'} flex flex-row items-center justify-start gap-2`}>
+                                {mpp.profitPercentage >= 0 ? <TrendingUp strokeWidth={1.5} size={20} /> : <TrendingDown strokeWidth={1.5} size={20} />}
+                                <span>{mpp.profitPercentage >= 0 ? '+ ' : '- '}{formatPercentage(mpp.profitPercentage)}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </Link>) ||
+                    <div>
+                        <h2 className='text-xl font-bold font-rambla font-acc-7'>No record sales within the period</h2>
+                    </div>
                 }
             </div>
             <div>

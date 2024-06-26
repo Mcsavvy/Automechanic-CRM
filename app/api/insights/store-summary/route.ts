@@ -15,7 +15,7 @@ export const GET = permissionRequired(Permission.AllowAny())(async function (
   if (after && !Date.parse(after)) {
     return NextResponse.json({ error: "Invalid date" }, { status: 400 });
   }
-  const results = await InsightsDAO.getMostValuableProduct(
+  const results = await InsightsDAO.getMostValuableAndProfitableProducts(
     before ? new Date(before) : undefined,
     after ? new Date(after) : undefined
   );
@@ -28,7 +28,6 @@ export const GET = permissionRequired(Permission.AllowAny())(async function (
     query.createdAt = { $gte: new Date(after) };
   }
   const summary = await GoodModel.aggregate([
-    { $match: query },
     {
       $facet: {
         inStock: [
@@ -57,5 +56,6 @@ export const GET = permissionRequired(Permission.AllowAny())(async function (
       },
     },
   ])
-  return NextResponse.json({ results, ...summary[0] });
+  console.log("Dudu", results)
+  return NextResponse.json({ ...results, ...summary[0] });
 });

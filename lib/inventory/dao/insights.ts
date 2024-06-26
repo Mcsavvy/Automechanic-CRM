@@ -184,6 +184,7 @@ async function revenueByPeriod(
           profit: { $subtract: ["$totalRevenue", "$totalCost"] },
         },
       },
+      // { $sort: { profit: 1} }
     ];
 
     const results = await OrderItemModel.aggregate(pipeline);
@@ -218,7 +219,6 @@ async function revenueByPeriod(
 
     const total = pending + errors + paid + rest + cancelled;
     const summary = { pending, errors, paid, rest, cancelled, total };
-    console.log("Res", paddedResults, "Summ", summary)
     return { results: paddedResults, summary };
   } catch (error) {
     console.error("Error calculating revenue by period:", error);
@@ -435,16 +435,17 @@ async function getTopTenSellingGoods(before?: Date, after?: Date) {
     throw new Error('Failed to get top ten selling goods');
   }
 }
-async function getMostValuableProduct(before?: Date, after?: Date) {
+async function getMostValuableAndProfitableProducts(before?: Date, after?: Date) {
   try {
     const matchStage: any = {'order.status': { $in: ['paid', 'pending'] }};
     if (before && after) {
-      matchStage.createdAt = { $gte: after, $lte: before };
+      matchStage['order.createdAt'] = { $gte: after, $lte: before };
     } else if (before) {
-      matchStage.createdAt = { $lte: before };
+      matchStage['order.createdAt'] = { $lte: before };
     } else if (after) {
-      matchStage.createdAt = { $gte: after };
+      matchStage['order.createdAt'] = { $gte: after };
     }
+
     const products = await OrderItemModel.aggregate([
       {
         $lookup: {
@@ -455,6 +456,9 @@ async function getMostValuableProduct(before?: Date, after?: Date) {
         }
       },
       {
+        $unwind: '$order'
+      },
+      {
         $match: matchStage
       },
       {
@@ -462,7 +466,8 @@ async function getMostValuableProduct(before?: Date, after?: Date) {
           _id: '$goodId',
           qtySold: { $sum: '$qty' },
           revenue: { $sum: { $multiply: ['$qty', '$sellingPrice'] } },
-          orderCount: { $sum: 1 } // Count the number of orders
+          cost: { $sum: { $multiply: ['$qty', '$costPrice'] } },
+          orderCount: { $sum: 1 }
         }
       },
       {
@@ -478,34 +483,54 @@ async function getMostValuableProduct(before?: Date, after?: Date) {
       },
       {
         $project: {
-          _id: 0,
           name: '$productDetails.name',
           id: '$_id',
           qtySold: 1,
           revenue: 1,
-          qty: "$productDetails.qty",
+          cost: 1,
+          profit: { $subtract: ['$revenue', '$cost'] },
           orderCount: 1
         }
       },
       {
-        $sort: { revenue: -1 }
+        $project: {
+          name: 1,
+          id: 1,
+          qtySold: 1,
+          revenue: 1,
+          cost: 1,
+          profit: 1,
+          profitPercentage: {
+            $divide: ['$profit', '$cost'] 
+          },
+          orderCount: 1
+        }
       },
       {
-        $limit: 1
+        $facet: {
+          mvp: [
+            { $sort: { revenue: -1 } },
+            { $limit: 1 }
+          ],
+          mpp: [
+            { $sort: { profitPercentage: -1 } },
+            { $limit: 1 }
+          ]
+        }
       }
     ]);
 
-    if (products.length > 0) {
-      return products[0];
-    } else {
-      return null;
-    }
+    const result = {
+      mvp: products[0].mvp[0] || null,
+      mpp: products[0].mpp[0] || null
+    };
+
+    return result;
   } catch (error) {
     console.error(error);
-    throw new Error('Failed to get the most valuable product');
+    throw new Error('Failed to get the most valuable and profitable products');
   }
 }
-
 const InsightsDAO = {
   revenueByBuyer,
   revenueByGood,
@@ -513,7 +538,7 @@ const InsightsDAO = {
   buyerRevenueByPeriod,
   getTopTenOverdueOrders,
   getTopTenSellingGoods,
-  getMostValuableProduct
+  getMostValuableAndProfitableProducts
 };
 
 export default InsightsDAO;
