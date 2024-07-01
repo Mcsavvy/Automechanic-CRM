@@ -74,7 +74,7 @@ const Insights: FC<InsightProps> = ({metric, before, after}) => {
                 throw response;
             }
             const data: OrderInsights[] = response.data.results;
-            console.log("Dydyd", data)
+            console.log("Dydyd",  data)
             const summary = response.data.summary
             return { data, summary }
         } catch (err) {
