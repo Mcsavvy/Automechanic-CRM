@@ -97,7 +97,7 @@ const Insights: FC<InsightProps> = ({metric, before, after}) => {
             const totalRevenue = insights.reduce((total, insight) => total + insight.totalRevenue, 0);
             const totalCost = insights.reduce((total, insight) => total + insight.totalCost, 0);
             setP(Math.round((totalRevenue - totalCost) * 100) / 100);
-            const maxRevenue = Math.max(...insights.map(item => item.totalRevenue)) || 1000;
+            const maxRevenue = Math.max(...insights.map(item => item.totalRevenue)) + 20000 || 1000;
             setCharData({
                 labels,
                 datasets: [
