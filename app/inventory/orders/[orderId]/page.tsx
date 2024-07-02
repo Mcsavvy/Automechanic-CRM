@@ -50,7 +50,7 @@ export default async function OrderDetails({
                         <div className="flex items-center justify-start">
                             <Link
                                 href="/inventory/orders"
-                                className="text-black hover:text-pri-5  bg-transparent p-2 border-2 rounded-sm border-neu-4 transition"
+                                className="text-black hover:text-pri-5  bg-white p-2 border-2 rounded-sm border-neu-4 transition"
                             >
                                 <MoveLeft size={20} />
                             </Link>

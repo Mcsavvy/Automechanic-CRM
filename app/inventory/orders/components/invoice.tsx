@@ -70,7 +70,7 @@ const Invoice: FC<Order> = (props) => {
     return (
         <>
         <Button onClick={printInvoice} variant={"outline"} className="w-[40px] p-0 h-[40px] grow-0 shrink-0"><Download size={28} strokeWidth={1.5} /></Button>
-        <div className="p-2 origami-background"ref={invoiceRef}>
+        <div className="p-2 origami-background h-auto "ref={invoiceRef}>
             <div className='border border-[#ccc]  min-h-[490px] p-3 font-nunito text-black'>
                 <header className="flex flex-col items-center justify-start">
                     <Image src="/logo.jpg" width={40} height={40} alt="logo" className="rounded-full" />
@@ -108,11 +108,11 @@ const Invoice: FC<Order> = (props) => {
                 <table className="mt-5 w-full border border-[#ccc]">
                     <thead>
                         <tr>
-                            <th className="font-rambla font-semibold text-[20px] border-t border-b border-[#ccc] px-1 p-2">S/N</th>
-                            <th className="font-rambla font-semibold text-[20px] border-t border-b border-[#ccc] px-1 p-2">Description</th>
-                            <th className="font-rambla font-semibold text-[20px] border-t border-b border-[#ccc] px-1 p-2">Qty</th>
-                            <th className="font-rambla font-semibold text-[20px] border-t border-b border-[#ccc] px-1 p-2">Price</th>
-                            <th className="font-rambla font-semibold text-[20px] border-t border-b border-[#ccc] px-1 p-2">Total</th>
+                            <th className="text-left font-rambla font-semibold text-[20px] border-t border-b border-[#ccc] px-1 p-2">S/N</th>
+                            <th className="text-left font-rambla font-semibold text-[20px] border-t border-b border-[#ccc] px-1 p-2">Description</th>
+                            <th className="text-left font-rambla font-semibold text-[20px] border-t border-b border-[#ccc] px-1 p-2">Qty</th>
+                            <th className="text-left font-rambla font-semibold text-[20px] border-t border-b border-[#ccc] px-1 p-2">Price</th>
+                            <th className="text-left font-rambla font-semibold text-[20px] border-t border-b border-[#ccc] px-1 p-2">Total</th>
                         </tr>
                     </thead>
                     <tbody>

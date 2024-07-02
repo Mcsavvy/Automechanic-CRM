@@ -61,7 +61,7 @@ const sections: Section[] = [
         items: [
             {
                 icon: <Package size={20} strokeWidth={1.5} />,
-                content: "Overview",
+                content: "Store",
                 getIsActive: (pathname) =>
                     pathname.startsWith("/inventory/products"),
                 link: "/inventory/products",
