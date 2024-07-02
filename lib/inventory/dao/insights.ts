@@ -531,6 +531,46 @@ async function getMostValuableAndProfitableProducts(before?: Date, after?: Date)
     throw new Error('Failed to get the most valuable and profitable products');
   }
 }
+
+async function recentActions(before?: Date, after?: Date) {
+  let startDate, endDate;
+
+  if (before && after) {
+    startDate = new Date(after);
+    endDate = new Date(before);
+  } else {
+    endDate = new Date();
+    startDate = new Date(endDate);
+    startDate.setDate(startDate.getDate() - 3);
+  }
+
+  startDate.setHours(0, 0, 0, 0);
+  endDate.setHours(23, 59, 59, 999);
+
+  try {
+    const newBuyers = await BuyerModel.find({
+      createdAt: { $gte: startDate, $lte: endDate }
+    }).lean();
+    const buyersWithType = newBuyers.map(buyer => ({
+      ...buyer,
+      type: 'buyer'
+    }));
+    const newOrders = await OrderModel.find({
+      createdAt: { $gte: startDate, $lte: endDate }
+    }).lean();
+    const ordersWithType = newOrders.map(order => ({
+      ...order,
+      type: 'order'
+    }));
+    const combinedResults = [...buyersWithType, ...ordersWithType]
+      .sort((a: any, b: any) => b.createdAt - a.createdAt);
+
+    return combinedResults;
+  } catch (error) {
+    console.error('Error fetching recent buyers and orders:', error);
+    throw error;
+  }
+}
 const InsightsDAO = {
   revenueByBuyer,
   revenueByGood,
@@ -538,7 +578,9 @@ const InsightsDAO = {
   buyerRevenueByPeriod,
   getTopTenOverdueOrders,
   getTopTenSellingGoods,
-  getMostValuableAndProfitableProducts
+  getMostValuableAndProfitableProducts,
+  recentActions
 };
+
 
 export default InsightsDAO;

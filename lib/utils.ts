@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { formatDistanceToNow } from 'date-fns';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -69,6 +70,43 @@ export function formatDate(val: string) {
   const date = new Date(val);
   const options = { year: 'numeric' as "numeric", month: 'long' as "long", day: 'numeric' as "numeric" };
   return date.toLocaleDateString('en-US', options);
+}
+
+export function formatDateTime(val: string, style?: "humanize" | "time" | "date"): string {
+  const date = new Date(val);
+
+  if (isNaN(date.getTime())) {
+    throw new Error('Invalid date string');
+  }
+
+  switch (style) {
+    case 'date':
+      return new Intl.DateTimeFormat('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      }).format(date);
+
+    case 'time':
+      return new Intl.DateTimeFormat('en-US', {
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true
+      }).format(date);
+
+    case 'humanize':
+      return formatDistanceToNow(date, { addSuffix: true });
+
+    default:
+      return new Intl.DateTimeFormat('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true
+      }).format(date);
+  }
 }
 /**
  * Formats a number as a percentage.

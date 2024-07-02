@@ -2,7 +2,7 @@
 import Insights from './components/insights'
 import Overdue from './components/overdue-order'
 import StoreSummary from './components/store-summary'
-import Recent from './components/recent'
+import RecentActions from './components/recent-actions'
 import BestPerformer from './components/best-performing-goods'
 import RangeBar from './components/range'
 import { Button } from "@/components/ui/button"
@@ -41,20 +41,15 @@ export default function Home() {
                 <RangeBar {...{ setBefore, setAfter, setMetric, before, after }} />
                 {tab == "chart" &&
                     <div className="w-full md:grid my-grid gap-4 md:items-start overflow-y-visible scrollbar-thin flex flex-col items-center">
-                        <div className="md:col-span-2 md:row-start-1">
-                            <RangeBar {...{ setBefore, setAfter, setMetric, before, after }} />
-                        </div>
-                        <div className="md:col-start-1 md:row-start-2 rounded-md w-full items-stretch flex-wrap flex flex-row gap-2 justify-evenly">
-                            <Insights {...{ metric, before, after }} />
-                        </div>
+                        <Insights {...{ metric, before, after }} />
+                        <BestPerformer {...{before, after}}/>
                         <div className="col-start-2 row-start-2 flex flex-col min-w-[250px] gap-3 invoice h-full w-full">
-                            <Overdue {...{ before, after }} />
                             <StoreSummary {...{ before, after }} />
                         </div>
                     </div>
                 }
                 {tab == "recent" &&
-                    <Recent {...{ before, after }}/>
+                    <RecentActions {...{ before, after }}/>
                 }
             </div>
         </div>

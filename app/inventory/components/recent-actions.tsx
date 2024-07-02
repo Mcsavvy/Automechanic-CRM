@@ -1,15 +1,13 @@
 import Overdue from './overdue-order';
+import Recents from './recents'
 import { Button } from '@/components/ui/button'
 import { Boxes, Users, ReceiptText, UsersRound, CircleDollarSign, ShoppingCart, TrendingUp, TrendingDown, LoaderPinwheel } from 'lucide-react'
 import Link from 'next/link'
 import { FC, useState, useEffect } from 'react'
 import axios from 'axios';
 import { formatCurrencyShort, formatPercentage } from '@/lib/utils';
+import { DashboardProps } from '@/lib/@types/dashboard';
 
-interface DashboardProps {
-    before: string;
-    after: string;
-}
 interface ProductVal {
     name: string;
     id: string;
@@ -19,7 +17,7 @@ interface ProductVal {
     profitPercentage: number
 
 }
-const Recent: FC<Partial<DashboardProps>> = ({ before, after }) => {
+const RecentActions: FC<Partial<DashboardProps>> = ({ before, after }) => {
     const [mvp, setMVP] = useState<ProductVal | null>(null)
     const [search, setS] = useState(false)
     const [mpp, setMPP] = useState<ProductVal | null>(null)
@@ -55,15 +53,13 @@ const Recent: FC<Partial<DashboardProps>> = ({ before, after }) => {
             })
     }, [before, after])
     useEffect(() => {
-        console.log("Summary", mvp)
+        console.log("Summary", mvp) 
     })
     return (
         <div className="flex flex-row  w-[100%] flex-wrap items-stretch justify-between gap-6 rounded-md">
             <div className="flex flex-col gap-3 md:w-[60%]">
-                <div className="w-full h-[350px] rounded-md bg-white shadow-md">
-                <h3 className="w-full sticky top-0 bg-white text-lg text-pri-6 font-semibold font-quicksand pt-4 px-4">Recent Actions</h3>
-                </div>
-                <Overdue />
+                <Recents {...{ before, after }}/>
+                <Overdue/>
             </div>
 
             <div className="flex flex-col md: w-[calc(40%-2em)] gap-6 h-full self-stretch">
@@ -71,7 +67,7 @@ const Recent: FC<Partial<DashboardProps>> = ({ before, after }) => {
                     {
                         ctab.map(({ front, icon: Icon }, idx) => {
                             return (
-                                <li key={idx} className="cursor-pointer bg-pri-5 text-white active:scale-95 transition-transform  flex flex-col items-center justify-center text-[12px] w-[150px] font-quicksand font-semibold p-3 shadow-md rounded-md">
+                                <li key={idx} className="cursor-pointer grow bg-pri-5 text-white active:scale-95 transition-transform  flex flex-col items-center justify-center text-[12px] w-[150px] font-quicksand font-semibold p-3 shadow-md rounded-md">
                                     <Button className="flex flex-row items-center justify-center">
                                         <Icon size={28} strokeWidth={2} />
                                     </Button>
@@ -130,4 +126,4 @@ const Recent: FC<Partial<DashboardProps>> = ({ before, after }) => {
         </div>
     )
 }
-export default Recent
+export default RecentActions
