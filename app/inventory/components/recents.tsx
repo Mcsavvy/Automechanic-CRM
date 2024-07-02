@@ -9,7 +9,7 @@ import Link from 'next/link'
 const Recents: FC<Partial<DashboardProps>> = ({ before, after }) => {
     const [recents, setRecents] = useState<any[]>([])
 
-    const fetchData = async (before: string, after: string) => {
+    const fetchData = async (before?: string, after?: string) => {
         try {
             let query = '?'
             if (before) query += `&b=${encodeURIComponent(before)}`;

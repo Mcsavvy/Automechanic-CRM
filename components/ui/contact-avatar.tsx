@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { FC } from 'react';
 
-const getInitials = (name) => {
+const getInitials = (name: string) => {
   return name
     .split(' ')
     .map(word => word[0])
@@ -18,7 +18,7 @@ const getRandomColor = () => {
   return colors[Math.floor(Math.random() * colors.length)];
 };
 
-const getContrastColor = (hexColor) => {
+const getContrastColor = (hexColor: string) => {
   // Convert hex to RGB
   const r = parseInt(hexColor.slice(1, 3), 16);
   const g = parseInt(hexColor.slice(3, 5), 16);
@@ -31,7 +31,11 @@ const getContrastColor = (hexColor) => {
   return brightness > 128 ? '#000000' : '#FFFFFF';
 };
 
-const ContactAvatar = ({ name: string, size = 50 }) => {
+interface AvatarProps {
+	name: string;
+	size: number;
+}
+const ContactAvatar: FC<AvatarProps> = ({ name, size = 50 }) => {
   const initials = getInitials(name);
   const backgroundColor = getRandomColor();
   const textColor = getContrastColor(backgroundColor);
