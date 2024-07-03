@@ -272,6 +272,6 @@
   .my-grid {
     grid-auto-rows: min-content;
     grid-template-rows: auto 1fr;
-    grid-template-columns: 3fr 2fr;
+    grid-template-columns: 7fr 3fr;
   }
 }

@@ -124,13 +124,13 @@ const Insights: FC<InsightProps> = ({metric, before, after}) => {
 
     return (
         <>
-            <div className="md:row-start-1 md:col-start-1 w-full bg-white flex items-start justify-center border border-neu-3 shadow-md overflow-auto md:min-h-[350px] min-h-[200px]">
+            <div className="w-full bg-white flex self-start items-start justify-center border border-neu-3 shadow-md overflow-auto min-h-[200px]">
                 <div className=" w-full bg-white p-4 flex grow flex-col gap-3">
                     <h3 className="text-lg text-pri-5 font-semibold font-quicksand">Revenue Summary</h3>
                     {insights.length > 0 && <Bar data={chartData} options={options} />}
                 </div >
             </div>
-            <div className="md:row-start-1 md:col-start-2 border border-neu-3 shadow-md min-w-[200px] min-h-[250px] w-full p-4 bg-white">
+            <div className=" self-start border border-neu-3 shadow-md  min-h-[250px] w-full p-4 bg-white">
                 <h3 className="flex flex-col items-start text-lg text-pri-6 font-semibold font-quicksand">Order Summary within this period
                     <span className={`font-semibold text-xl font-quicksand ${profit >= 0 ? 'text-green-500' : 'text-red-500'}`}>
                         {
