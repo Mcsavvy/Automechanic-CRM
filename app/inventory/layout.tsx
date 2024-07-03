@@ -36,6 +36,8 @@ import {
     CircleUser,
 } from "lucide-react";
 import InventoryProviders from "./providers";
+import AddGoodModal from "@/components/modals/AddGoodModal";
+import AddNewBuyerModal from "./buyers/components/modals/create-buyer";
 
 interface BaseSectionItem {
     icon: React.ReactNode;
@@ -332,6 +334,9 @@ export default function DashboardLayout({
                         </div>
                     </header>
                     <InventoryProviders>
+                        <AddGoodModal />
+                        <AddNewStaffModal />
+                        <AddNewBuyerModal />
                         {children}
                     </InventoryProviders>
                 </main>

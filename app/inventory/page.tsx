@@ -18,7 +18,7 @@ export default function Home() {
     return (
         <div className="absolute h-[calc(100vh-60px)] top-[60px] w-full  overflow-auto">
             <div className="sticky top-0 w-full z-10 overflow-x-clip">
-                <ul className="  px-[30px] pt-3 pb-0 font-quicksand flex flex-row items-start bg-white overflow-x-clip overflow-y-clip gap-4">
+                <ul className="px-[30px] pt-3 pb-0 font-quicksand flex flex-row items-start bg-white overflow-x-clip overflow-y-clip gap-4">
                     <li
                         onClick={() => setTab("recent")}
                         className={`font-quicksand capitalize cursor-pointer relative py-1 text-center transition-all duration-200 ease-in-out ${tab == "recent" ? "tab" : ""

@@ -22,10 +22,10 @@ const RecentActions: FC<Partial<DashboardProps>> = ({ before, after }) => {
     const [search, setS] = useState(false)
     const [mpp, setMPP] = useState<ProductVal | null>(null)
     const ctab = [
-        { front: "New invoice", icon: ReceiptText },
-        { front: "Add new customer", icon: UsersRound },
-        { front: "New Product", icon: Boxes },
-        { front: "Manage your staff", icon: Users }
+        { front: "Create Invoice", icon: ReceiptText, link: "#"},
+        { front: "Register Customer", icon: UsersRound, link: "#actions/buyer/create" },
+        { front: "New Product", icon: Boxes, link: "#actions/product/add-new"},
+        { front: "Add Staff", icon: Users, link: "#actions/staff/add-new-staff"}
     ]
     const fetchSummary = async (before?: string, after?: string) => {
         try {
@@ -65,9 +65,10 @@ const RecentActions: FC<Partial<DashboardProps>> = ({ before, after }) => {
             <div className="flex flex-col w-full md:w-[calc(40%-2em)] gap-6 h-full self-stretch">
                 <ul className="flex flex-row flex-wrap items-center justify-start gap-3">
                     {
-                        ctab.map(({ front, icon: Icon }, idx) => {
+                        ctab.map(({ front, icon: Icon, link }, idx) => {
                             return (
-                                <li key={idx} className="cursor-pointer grow bg-pri-5 text-white active:scale-95 transition-transform  flex flex-col items-center justify-center text-[12px] w-[150px] font-quicksand font-semibold p-3 shadow-md rounded-md">
+                                <li key={idx} className="cursor-pointer grow bg-pri-5 text-white active:scale-95 transition-transform  flex flex-col items-center justify-center text-[12px] w-[150px] font-quicksand font-semibold p-3 shadow-md rounded-md"
+                                onClick={() => {window.location.hash = link}}>
                                     <Button className="flex flex-row items-center justify-center">
                                         <Icon size={28} strokeWidth={2} />
                                     </Button>
