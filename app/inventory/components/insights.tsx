@@ -12,7 +12,7 @@ interface InsightProps {
     before: string;
     after: string;
 }
-const Insights: FC<InsightProps> = ({metric, before, after}) => {
+const Insights: FC<InsightProps> = ({ metric, before, after }) => {
     const [insights, setInsights] = useState<OrderInsights[]>([])
     const [summary, setSummary] = useState<any>({})
     const [chartData, setCharData] = useState<any>()
@@ -22,10 +22,10 @@ const Insights: FC<InsightProps> = ({metric, before, after}) => {
         const startYear = new Date(after).getFullYear();
         const endYear = new Date(before).getFullYear();
         return Array.from(
-          { length: endYear - startYear + 1 }, 
-          (_, index) => (startYear + index).toString()
+            { length: endYear - startYear + 1 },
+            (_, index) => (startYear + index).toString()
         );
-      };
+    };
     const options = {
         plugins: {
             tooltip: {
@@ -38,7 +38,14 @@ const Insights: FC<InsightProps> = ({metric, before, after}) => {
                 }
             }
         },
-
+        elements: {
+            bar: {
+                borderRadius: {
+                    topLeft: 10,
+                    topRight: 10,
+                },
+            },
+        },
         scales: {
             y: {
                 display: false,
@@ -96,7 +103,8 @@ const Insights: FC<InsightProps> = ({metric, before, after}) => {
             const totalRevenue = insights.reduce((total, insight) => total + insight.totalRevenue, 0);
             const totalCost = insights.reduce((total, insight) => total + insight.totalCost, 0);
             setP(Math.round((totalRevenue - totalCost) * 100) / 100);
-            const maxRevenue = Math.max(...insights.map(item => item.totalRevenue)) + 20000 || 1000;
+            const maxValue = Math.max(...insights.map(item => item.totalRevenue))
+            const maxRevenue = maxValue + (maxValue / 4) || 1000;
             setCharData({
                 labels,
                 datasets: [
@@ -104,16 +112,17 @@ const Insights: FC<InsightProps> = ({metric, before, after}) => {
                         id: 1,
                         label: 'Total Revenue',
                         data: insights.map(item => item.totalRevenue),
-                        // fill: false,
                         borderColor: 'rgb(75, 192, 192)',
+                        borderRadius: 10,
                         tension: 0.5,
-                        backgroundColor: '#003366'
+                        backgroundColor: '#002536'
                     },
                     {
                         id: 2,
                         label: '',
                         data: insights.map(item => maxRevenue - item.totalRevenue),
-                        backgroundColor: '#F2F6FF',
+                        backgroundColor: '#70A0EC',
+                        borderRadius: 10,
                         tension: 0.5,
                     },
                 ],
