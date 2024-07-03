@@ -38,14 +38,6 @@ const Insights: FC<InsightProps> = ({ metric, before, after }) => {
                 }
             }
         },
-        elements: {
-            bar: {
-                borderRadius: {
-                    topLeft: 10,
-                    topRight: 10,
-                },
-            },
-        },
         scales: {
             y: {
                 display: false,
@@ -59,10 +51,10 @@ const Insights: FC<InsightProps> = ({ metric, before, after }) => {
                     display: false,
                 },
                 stacked: true,
-                barPercentage: 0.6,
-                categoryPercentage: 0.8,
             },
         },
+        barPercentage: 1,
+        categoryPercentage: 0.8,
     }
     const metrics: { [key: string]: string[] } = {
         'month': ['Jan', 'Feb', 'Mar', 'April', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -105,6 +97,7 @@ const Insights: FC<InsightProps> = ({ metric, before, after }) => {
             setP(Math.round((totalRevenue - totalCost) * 100) / 100);
             const maxValue = Math.max(...insights.map(item => item.totalRevenue))
             const maxRevenue = maxValue + (maxValue / 4) || 1000;
+            const offset = maxRevenue * 0.05;
             setCharData({
                 labels,
                 datasets: [
@@ -112,18 +105,28 @@ const Insights: FC<InsightProps> = ({ metric, before, after }) => {
                         id: 1,
                         label: 'Total Revenue',
                         data: insights.map(item => item.totalRevenue),
-                        borderColor: 'rgb(75, 192, 192)',
-                        borderRadius: 10,
-                        tension: 0.5,
-                        backgroundColor: '#002536'
+                        backgroundColor: '#002536',
+                        borderSkipped: false,
+                        borderRadius: {
+                            topLeft: 10,
+                            topRight: 10,
+                            bottomLeft: 0,
+                            bottomRight: 0,
+                        }
                     },
                     {
                         id: 2,
                         label: '',
                         data: insights.map(item => maxRevenue - item.totalRevenue),
                         backgroundColor: '#70A0EC',
-                        borderRadius: 10,
-                        tension: 0.5,
+                        borderSkipped: false,
+                        borderRadius: {
+                            topLeft: 10,
+                            topRight: 10,
+                            bottomLeft: 0,
+                            bottomRight: 0,
+                        },
+                        base: 0,
                     },
                 ],
             })
