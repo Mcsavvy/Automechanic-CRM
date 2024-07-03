@@ -38,11 +38,11 @@ const BestPerformer: FC<Partial<BestPerformerProps>> = ({ before, after }) => {
         console.log("Goods", goods)
     })
     return (
-        <div className="grow products md:col-start-1 md:row-start-2 border border-neu-3 md:min-h-[400px] md:h-full w-full p-4 bg-white rounded-md shadow-md">
+        <div className="grow products md:col-start-1 md:row-start-2 border border-neu-3 md:min-h-[400px] md:h-full w-full p-4 bg-white rounded-md shadow-md overflow-auto">
             <h3 className="text-lg text-acc-7 flex items-center justify-between w-full font-semibold font-quicksand">
                 Best performing products<Button variant={"outline"} className="font-semibold">Add a new Product</Button>
             </h3>
-            <table className="relative w-inherit overflow-scroll rounded-md mt-2  overflow-x-auto">
+            <table className="w-full overflow-scroll rounded-md mt-2  overflow-x-auto">
                 <thead className="bg-neu-1 top-0 text-[14px] font-rambla font-bold text-pri-6 border-b  border-neu-3">
                     <tr>
                         <th className="text-left px-4 py-2">Name</th>
