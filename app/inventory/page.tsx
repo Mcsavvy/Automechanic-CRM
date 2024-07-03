@@ -37,7 +37,7 @@ export default function Home() {
                 </ul>
             </div>
 
-            <div className="flex p-[30px] flex-row flex-wrap gap-3 items-center justify-evenly w-full">
+            <div className="flex p-[12px] md:p-[30px] flex-row flex-wrap gap-3 items-center justify-evenly w-full">
                 <RangeBar {...{ setBefore, setAfter, setMetric, before, after }} />
                 {tab == "chart" &&
                     <div className="w-full md:grid my-grid gap-4 md:items-start overflow-y-visible scrollbar-thin flex flex-col items-center">
