@@ -57,12 +57,12 @@ const RecentActions: FC<Partial<DashboardProps>> = ({ before, after }) => {
     })
     return (
         <div className="flex flex-row  w-[100%] flex-wrap items-stretch justify-between gap-6 rounded-md">
-            <div className="flex flex-col gap-3 md:w-[60%]">
+            <div className="flex flex-col gap-3 w-[100%] md:w-[60%]">
                 <Recents {...{ before, after }}/>
                 <Overdue/>
             </div>
 
-            <div className="flex flex-col md: w-[calc(40%-2em)] gap-6 h-full self-stretch">
+            <div className="flex flex-col w-full md:w-[calc(40%-2em)] gap-6 h-full self-stretch">
                 <ul className="flex flex-row flex-wrap items-center justify-start gap-3">
                     {
                         ctab.map(({ front, icon: Icon }, idx) => {
