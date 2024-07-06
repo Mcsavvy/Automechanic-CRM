@@ -7,6 +7,7 @@ import { FC, useState, useEffect } from 'react'
 import axios from 'axios';
 import { formatCurrencyShort, formatPercentage } from '@/lib/utils';
 import { DashboardProps } from '@/lib/@types/dashboard';
+import { useRouter } from 'next/navigation'
 
 interface ProductVal {
     name: string;
@@ -21,8 +22,9 @@ const RecentActions: FC<Partial<DashboardProps>> = ({ before, after }) => {
     const [mvp, setMVP] = useState<ProductVal | null>(null)
     const [search, setS] = useState(false)
     const [mpp, setMPP] = useState<ProductVal | null>(null)
+    const router = useRouter();
     const ctab = [
-        { front: "Create Invoice", icon: ReceiptText, link: "#"},
+        { front: "Create Invoice", icon: ReceiptText, link: "/inventory/orders/create"},
         { front: "Register Customer", icon: UsersRound, link: "#actions/buyer/create" },
         { front: "New Product", icon: Boxes, link: "#actions/product/add-new"},
         { front: "Add Staff", icon: Users, link: "#actions/staff/add-new-staff"}
@@ -68,7 +70,10 @@ const RecentActions: FC<Partial<DashboardProps>> = ({ before, after }) => {
                         ctab.map(({ front, icon: Icon, link }, idx) => {
                             return (
                                 <li key={idx} className="cursor-pointer grow bg-pri-5 text-white active:scale-95 transition-transform  flex flex-col items-center justify-center text-[12px] w-[150px] font-quicksand font-semibold p-3 shadow-md rounded-md"
-                                onClick={() => {window.location.hash = link}}>
+                                onClick={() => {
+                                    if (link.startsWith('#')) window.location.hash = link;
+                                    else router.push(link);
+                                }}>
                                     <Button className="flex flex-row items-center justify-center">
                                         <Icon size={28} strokeWidth={2} />
                                     </Button>
