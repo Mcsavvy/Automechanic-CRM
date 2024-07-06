@@ -75,10 +75,10 @@ export default function InvoiceItems() {
                 <Input type="number" />
               </TableCell>
               <TableCell className="bg-neu-1 w-full">
-                <NumberInput prependSymbol symbol="$" />
+                <NumberInput prependSymbol symbol="₦" />
               </TableCell>
               <TableCell className="bg-neu-1 w-full align-baseline">
-                $0.00
+                ₦0.00
               </TableCell>
               <TableCell className="bg-neu-1 w-full align-top">
                 <Button variant="ghost">

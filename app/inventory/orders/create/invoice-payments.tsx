@@ -30,7 +30,7 @@ export default function InvoicePayments() {
             Amount
           </label>
           <div className="w-[120px]">
-            <NumberInput prependSymbol symbol="$" />
+            <NumberInput prependSymbol symbol="₦" />
           </div>
         </div>
         <div className="flex flex-col w-[150px] h-fit">
@@ -60,21 +60,21 @@ export default function InvoicePayments() {
         </div>
         <div className="flex justify-between gap-2">
           <label className="text-sm text-gray-500">Subtotal</label>
-          <p className="text-sm text-gray-500">$0.00</p>
+          <p className="text-sm text-gray-500">₦0.00</p>
         </div>
         <div className="flex justify-between gap-2">
           <label htmlFor="customer" className="text-sm text-gray-500">
             Discount Amount
           </label>
-          <p className="text-sm text-gray-500">$0.00</p>
+          <p className="text-sm text-gray-500">₦0.00</p>
         </div>
         <div className="flex justify-between gap-2">
           <label className="text-sm text-gray-500">Total</label>
-          <p className="text-sm text-gray-500">$0.00</p>
+          <p className="text-sm text-gray-500">₦0.00</p>
         </div>
         <div className="flex justify-between gap-2">
           <label className="text-sm text-gray-500">Outstanding</label>
-          <p className="text-sm text-gray-500">$0.00</p>
+          <p className="text-sm text-gray-500">₦0.00</p>
         </div>
       </div>
       <div className="flex flex-grow items-start justify-around pl-2 pt-0 h-[70px] min-w-80 w-full gap-2">
