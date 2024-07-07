@@ -25,6 +25,7 @@ export const GET = permissionRequired(Permission.AllowAny())(async function (
         | "out-of-stock"
         | null;
     const category = params.c?.toString().trim() as string | undefined;
+    const qty = params.qty as HasMinMax | undefined;
     const query: FilterQuery<IGoodDocument> = {};
     if (status) {
         if (status === "in-stock") {
@@ -35,6 +36,11 @@ export const GET = permissionRequired(Permission.AllowAny())(async function (
         } else if (status === "out-of-stock") {
             query.qty = { $eq: 0 };
         }
+    }
+    if (qty) {
+        query.qty = {};
+        qty.lte && (query.qty.$lte = parseInt(qty.lte));
+        qty.gte && (query.qty.$gte = parseInt(qty.gte));
     }
     if (search) {
         query.$or = [
