@@ -6,6 +6,7 @@ import { useState } from "react";
 import InvoicePayments from "./invoice-payments";
 import InvoiceItems from "./invoice-items";
 import { InvoiceItem, InvoicePayment, CreateInvoiceState } from "./types";
+import { createOrder } from "@/lib/stores/order-store";
 
 export default function CreateInvoice({invoiceNumber}: {invoiceNumber: number}) {
     const [invoiceNo, setInvoiceNo] = useState(invoiceNumber);
@@ -17,6 +18,54 @@ export default function CreateInvoice({invoiceNumber}: {invoiceNumber: number}) 
     const [dueDate, setDueDate] = useState<Date | undefined>(addDays(new Date(), 7));
     const [discount, setDiscount] = useState(0);
     const [payments, setPayments] = useState<InvoicePayment[]>([]);
+
+    async function saveInvoice() {
+        const createdAt = issueDate?.toISOString();
+        const overdueLimit = dueDate?.toISOString();
+        const buyerId = customer.trim() ? customer : null;
+        const nonEmptyItems = items.filter(item => item.cost && item.quantity);
+        const nonEmptyPayments = payments.filter(payment => payment.amount);
+
+        if (!buyerId) {
+            throw new Error("Please select a customer");
+        }
+        if (!createdAt) {
+            throw new Error("Please select an issue date");
+        }
+        if (!overdueLimit) {
+            throw new Error("Please select a due date");
+        }
+        if (!items.length) {
+            throw new Error("Please add items to the invoice");
+        }
+        for (const item of items) {
+            if (item.cost == item.costPrice) {
+                throw new Error(`Please set a selling price for ${item.name}`)
+            }
+        }
+
+        return await createOrder({
+            orderNo: invoiceNo,
+            buyerId,
+            items: nonEmptyItems.map(item => ({
+                goodId: item.id,
+                qty: item.quantity,
+                sellingPrice: item.cost,
+                costPrice: item.costPrice,
+            })),
+            // TODO: add notes
+            // notes,
+            createdAt,
+            overdueLimit,
+            status: "pending",
+            cancelReason: null,
+            discount,
+            payments: nonEmptyPayments.map(payment => ({
+                amount: payment.amount,
+                paymentMethod: payment.paymentMethod,
+            })),
+        });
+    }
 
     const state: CreateInvoiceState = {
         total,
@@ -36,6 +85,7 @@ export default function CreateInvoice({invoiceNumber}: {invoiceNumber: number}) 
         setCustomer,
         setItems,
         setPayments,
+        handleSave: saveInvoice,
     };
 
     return (
