@@ -11,6 +11,9 @@ import {
   PaginatedOrders,
 } from "@/lib/@types/order";
 import OrderItemDAO from "./orderItem";
+import OrderPaymentDAO from "./orderPayment";
+import { DocumentOrId } from "@/lib/@types";
+import { IUserDocument } from "@/lib/common/models/user";
 
 type PopulatedBuyer = {
   name: string;
@@ -66,7 +69,11 @@ function summarizeOrder(order: Order): OrderSummary {
   return orderSummary;
 }
 
-async function addOrder(order: NewOrder): Promise<Order> {
+async function addOrder(
+  order: NewOrder & {
+    staff: DocumentOrId<IUserDocument>;
+  }
+): Promise<Order> {
   const createdAt = new Date(order.createdAt);
   const overdueLimit = new Date(order.overdueLimit);
   // validate the order data
@@ -78,13 +85,25 @@ async function addOrder(order: NewOrder): Promise<Order> {
     overdueLimit,
     buyerId,
   });
+  await newOrder.save();
   const items = await Promise.all(
     order.items.map((item) => {
       const goodId = new mongoose.Types.ObjectId(item.goodId);
       return OrderItemDAO.addOrderItem(newOrder._id, goodId, item);
     })
   );
-  await newOrder.save();
+  await Promise.all(
+    order.payments?.map((payment) => {
+      return OrderPaymentDAO.createOrderPayment(newOrder, {
+        ...payment,
+        customer: order.buyerId,
+        confirmedBy:
+          typeof order.staff === "string"
+            ? order.staff
+            : order.staff._id.toHexString(),
+      });
+    }) ?? []
+  );
   newOrder.populate({
     path: "buyerId",
     select: "name email _id phone",
