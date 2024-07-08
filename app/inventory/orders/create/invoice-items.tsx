@@ -21,23 +21,27 @@ import { debounce } from "lodash";
 import React, { useEffect } from "react";
 import { formatMoney } from "@/lib/utils";
 
-const debouncedGoodsSearch = debounce(async (query: string) => {
-  const goods = (await getGoods(1, 10, { query })).goods;
-  return goods.map((good) => ({
-    name: good.name,
-    qtyInStock: good.qtyInStock,
-    costPrice: good.unitPrice,
-    id: good.id,
-  }));
-}, 300);
+function goodsSearch(query: string, callback: (...args: [Good[]]) => void) {
+  getGoods(1, 10, { query, qty: {gte: 1} }).then(({ goods }) => {
+    callback(
+      goods.map((good) => ({
+        name: good.name,
+        qtyInStock: good.qtyInStock,
+        costPrice: good.unitPrice,
+        id: good.id,
+      }))
+    );
+  });
+}
+const debouncedGoodsSearch = debounce(goodsSearch, 300);
 
-const debouncedCustomerSearch = debounce(async (query: string) => {
-  const buyers = (await fetchBuyers(1, 10, { search: query })).buyers;
-  return buyers.map((buyer: Buyer) => ({
-    label: buyer.name,
-    value: buyer,
-  }));
-}, 300);
+function customersSearch(query: string, callback: (...args: [Buyer[]]) => void) {
+  fetchBuyers(1, 10, { search: query }).then(({ buyers }) => {
+    callback(buyers)
+  });
+}
+
+const debouncedCustomerSearch = debounce(customersSearch, 300);
 
 type Good = {
   name: string;
@@ -67,8 +71,8 @@ const Item: React.FC<
   const total = quantity * cost;
 
   return (
-    <TableRow>
-      <TableCell className="bg-neu-1 w-full align-top">
+    <TableRow className="border-b-0">
+      <TableCell className="bg-neu-1 w-full align-top p-2">
         <AsyncSelect
           isSearchable
           options={[]}
@@ -91,21 +95,24 @@ const Item: React.FC<
           value={quantity}
           min={1}
           max={qtyInStock}
+          disabled={!name}
+          onChange={(value) => handleChange(good, value, cost)}
         />
       </TableCell>
-      <TableCell className="bg-neu-1 w-full">
+      <TableCell className="bg-neu-1 w-full p-2">
         <NumberInput
           prependSymbol
           symbol="₦"
           value={cost}
           min={0}
+          disabled={!name}
           onChange={(value) => handleChange(good, quantity, value)}
         />
       </TableCell>
-      <TableCell className="bg-neu-1 w-full align-middle">
+      <TableCell className="bg-neu-1 w-full align-middle p-2">
         {formatMoney(total)}
       </TableCell>
-      <TableCell className="bg-neu-1 w-full align-top">
+      <TableCell className="bg-neu-1 w-full align-top p-2">
         <Button variant="ghost" onClick={() => handleDelete()} disabled={!name}>
           <Trash size={16} strokeWidth={1.5} />
         </Button>
@@ -187,7 +194,8 @@ export default function InvoiceItems({
             noOptionsMessage={() => "No customer found"}
             className="w-[200px]"
             classNames={{ menuList: () => "scrollbar-thin" }}
-            getOptionValue={(option) => option.value.id}
+            getOptionValue={(option) => option.id}
+            getOptionLabel={(option) => option.name}
             loadOptions={debouncedCustomerSearch}
             onChange={(customer) => setCustomer(customer?.id || "")}
             loadingMessage={() => "Searching..."}
