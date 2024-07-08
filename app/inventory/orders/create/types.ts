@@ -24,6 +24,12 @@ export interface CreateInvoiceState {
     customer: string;
     invoiceNo: number;
     items: InvoiceItem[];
+    topGoods: {
+        id: string;
+        name: string;
+        costPrice: number;
+        qtyInStock: number;
+    }[];
     payments: InvoicePayment[];
     setTotal: (total: number) => void;
     setNotes: (notes: string) => void;

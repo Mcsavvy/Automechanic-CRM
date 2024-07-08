@@ -55,6 +55,7 @@ const Item: React.FC<
     handleChange: (good: Good | null, qty: number, cost: number) => void;
     handleDelete: () => void;
     bodyRef: React.MutableRefObject<HTMLElement | null>;
+    topGoods: CreateInvoiceState["topGoods"];
   }
 > = ({
   id,
@@ -64,6 +65,7 @@ const Item: React.FC<
   qtyInStock,
   costPrice,
   bodyRef,
+  topGoods,
   handleChange,
   handleDelete,
 }) => {
@@ -80,6 +82,7 @@ const Item: React.FC<
           onChange={(good) => handleChange(good, quantity, cost)}
           placeholder="search for item"
           loadOptions={debouncedGoodsSearch}
+          defaultOptions={topGoods}
           loadingMessage={() => "Searching..."}
           menuPortalTarget={bodyRef.current}
           getOptionValue={(option) => option.id}
@@ -126,6 +129,7 @@ export default function InvoiceItems({
   items,
   setItems,
   notes,
+  topGoods,
   setCustomer,
   setNotes,
 }: CreateInvoiceState) {
@@ -227,6 +231,7 @@ export default function InvoiceItems({
                 key={index}
                 {...item}
                 bodyRef={bodyRef}
+                topGoods={topGoods}
                 handleChange={(good, qty, cost) =>
                   handleChange(index, good, qty, cost)
                 }
@@ -241,6 +246,7 @@ export default function InvoiceItems({
               qtyInStock={0}
               costPrice={0}
               bodyRef={bodyRef}
+              topGoods={topGoods}
               handleChange={(good, qty, cost) => addNewItem(good!)}
               handleDelete={() => {}}
             />

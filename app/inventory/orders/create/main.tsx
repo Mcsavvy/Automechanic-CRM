@@ -8,7 +8,7 @@ import InvoiceItems from "./invoice-items";
 import { InvoiceItem, InvoicePayment, CreateInvoiceState } from "./types";
 import { createOrder } from "@/lib/stores/order-store";
 
-export default function CreateInvoice({invoiceNumber}: {invoiceNumber: number}) {
+export default function CreateInvoice({invoiceNumber, topGoods}: {invoiceNumber: number, topGoods: CreateInvoiceState["topGoods"]}) {
     const [invoiceNo, setInvoiceNo] = useState(invoiceNumber);
     const [customer, setCustomer] = useState("");
     const [items, setItems] = useState<InvoiceItem[]>([]);
@@ -77,6 +77,7 @@ export default function CreateInvoice({invoiceNumber}: {invoiceNumber: number}) 
         invoiceNo,
         items,
         payments,
+        topGoods,
         setTotal,
         setNotes,
         setDueDate,
