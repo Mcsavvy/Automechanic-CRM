@@ -367,9 +367,20 @@ async function getTopTenOverdueOrders(before? : Date, after?: Date) {
   }
 }
 
-async function getTopTenSellingGoods(before?: Date, after?: Date) {
+type TopSellingGood = {
+  id: string;
+  productId: string;
+  name: string;
+  category: string[];
+  stock: number;
+  costPrice: number;
+  qtySold: number;
+  revenue: number;
+};
+
+async function getTopTenSellingGoods(before?: Date, after?: Date): Promise<TopSellingGood[]> {
   try {
-    const matchStage: any = {'order.status': { $in: ['paid', 'pending'] }};
+    const matchStage: any = {'order.status': { $in: ['paid', 'pending', "ongoing"] }};
 
     if (before && after) {
       matchStage.createdAt = { $gte: after, $lte: before };
@@ -417,6 +428,7 @@ async function getTopTenSellingGoods(before?: Date, after?: Date) {
           name: '$goodDetails.name',
           category: '$goodDetails.categories',
           stock: '$goodDetails.qty',
+          costPrice: '$goodDetails.costPrice',
           qtySold: 1,
           revenue: 1
         }
