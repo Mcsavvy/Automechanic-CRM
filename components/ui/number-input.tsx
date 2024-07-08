@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { cn } from "@/lib/utils";
 
 interface NumberInputProps
@@ -14,6 +14,7 @@ interface NumberInputProps
 
 const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
   ({ prependSymbol = false, symbol, className, ...props }, ref) => {
+    const isFocused = useRef(false);
     props.onChange = props.onChange || (() => {});
     props.classNames = props.classNames || {};
     const displaySymbol = symbol ? true : false;
@@ -72,6 +73,9 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
         ref={ref}
         {...props}
         onChange={handleChange}
+        autoFocus={isFocused.current}
+        onFocus={() => isFocused.current = true}
+        onBlur={() => isFocused.current = false}
       />
     );
     return (
