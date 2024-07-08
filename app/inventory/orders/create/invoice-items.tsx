@@ -118,6 +118,9 @@ export default function InvoiceItems({
   invoiceNo,
   items,
   setItems,
+  notes,
+  setCustomer,
+  setNotes,
 }: CreateInvoiceState) {
   const bodyRef = React.useRef<HTMLElement | null>(null);
 
@@ -186,6 +189,7 @@ export default function InvoiceItems({
             classNames={{ menuList: () => "scrollbar-thin" }}
             getOptionValue={(option) => option.value.id}
             loadOptions={debouncedCustomerSearch}
+            onChange={(customer) => setCustomer(customer?.id || "")}
             loadingMessage={() => "Searching..."}
           />
         </div>
@@ -240,6 +244,8 @@ export default function InvoiceItems({
         <textarea
           className="mt-2 p-2 border border-neu-4 rounded-sm max-w-full w-full"
           placeholder="Add a note for the customer..."
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
           tabIndex={0}
           rows={5}
         />
