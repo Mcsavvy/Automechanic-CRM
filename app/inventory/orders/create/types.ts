@@ -1,5 +1,5 @@
 "use client";
-import { PaymentMethod } from "@/lib/@types/order";
+import { Order, PaymentMethod } from "@/lib/@types/order";
 
 export interface InvoiceItem {
     id: string;
@@ -33,4 +33,5 @@ export interface CreateInvoiceState {
     setCustomer: (customer: string) => void;
     setItems: (items: InvoiceItem[]) => void;
     setPayments: (payments: InvoicePayment[]) => void;
+    handleSave: () => Promise<Order> | Order;
 }
