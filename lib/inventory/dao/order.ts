@@ -67,11 +67,15 @@ function summarizeOrder(order: Order): OrderSummary {
 }
 
 async function addOrder(order: NewOrder): Promise<Order> {
+  const createdAt = new Date(order.createdAt);
+  const overdueLimit = new Date(order.overdueLimit);
   // validate the order data
 
   const buyerId = new mongoose.Types.ObjectId(order.buyerId);
   const newOrder = new OrderModel({
     ...order,
+    createdAt,
+    overdueLimit,
     buyerId,
   });
   const items = await Promise.all(
