@@ -84,3 +84,12 @@ export const GET = permissionRequired(Permission.AllowAny())(async function (
   });
   return NextResponse.json(response);
 });
+
+
+export const POST = permissionRequired(Permission.AllowAny())(async function (
+  req: NextRequest
+) {
+  const order = await req.json() as Order;
+  const response = await OrderDAO.addOrder(order);
+  return NextResponse.json(response);
+});
