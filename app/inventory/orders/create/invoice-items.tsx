@@ -56,6 +56,7 @@ const Item: React.FC<
     handleDelete: () => void;
     bodyRef: React.MutableRefObject<HTMLElement | null>;
     topGoods: CreateInvoiceState["topGoods"];
+    items: CreateInvoiceState["items"];
   }
 > = ({
   id,
@@ -66,6 +67,7 @@ const Item: React.FC<
   costPrice,
   bodyRef,
   topGoods,
+  items,
   handleChange,
   handleDelete,
 }) => {
@@ -88,6 +90,7 @@ const Item: React.FC<
           getOptionValue={(option) => option.id}
           getOptionLabel={(option) => option.name}
           classNames={{ menuList: () => "scrollbar-thin text-sm" }}
+          isOptionDisabled={(option) => items.some((item) => item.id === option.id)}
           maxMenuHeight={150}
           styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
           noOptionsMessage={() => "No item found"}
@@ -232,6 +235,7 @@ export default function InvoiceItems({
                 {...item}
                 bodyRef={bodyRef}
                 topGoods={topGoods}
+                items={items}
                 handleChange={(good, qty, cost) =>
                   handleChange(index, good, qty, cost)
                 }
@@ -247,6 +251,7 @@ export default function InvoiceItems({
               costPrice={0}
               bodyRef={bodyRef}
               topGoods={topGoods}
+              items={items}
               handleChange={(good, qty, cost) => addNewItem(good!)}
               handleDelete={() => {}}
             />
