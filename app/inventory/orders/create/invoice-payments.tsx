@@ -264,10 +264,12 @@ export default function InvoicePayments({
       const order = await saveInvoice();
       setSaveStatus("idle");
       toast.success("Invoice saved successfully.", { toastId: "invoice-save" });
-      toast.info("Redirecting to invoice page...", { toastId: "invoice-redirect" });
+      setTimeout(() => {
+        toast.info("Redirecting to invoice page...", { toastId: "invoice-save" });
+      }, 1000);
       setTimeout(() => {
         router.push(`/inventory/orders/${order.id}`);
-      }, 2000);
+      }, 3000);
     } catch (error) {
       if (error instanceof Error)
         toast.error(error.message, { toastId: "invoice-save" });
