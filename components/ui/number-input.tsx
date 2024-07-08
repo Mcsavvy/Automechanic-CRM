@@ -19,6 +19,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
     const displaySymbol = symbol ? true : false;
     const symbolClass = cn(
       "bg-gray-200 text-black text-sm p-2 rounded-l-md border border-input",
+      props.disabled && "opacity-50 cursor-not-allowed",
       props.classNames.symbol
     );
     const containerClass = cn(
@@ -43,7 +44,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
         value = props.min as number;
       }
       props.onChange!(value);
-      e.target.value = value.toString();
+      // e.target.value = value.toString();
     }
   
     const Symbol = () => (
