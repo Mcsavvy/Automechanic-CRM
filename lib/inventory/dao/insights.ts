@@ -424,7 +424,7 @@ async function getTopTenSellingGoods(before?: Date, after?: Date): Promise<TopSe
         $project: {
           id: '$_id',
           _id: 0,
-          productId: '$goodDetails.productId',
+          productId: '$goodDetails._id',
           name: '$goodDetails.name',
           category: '$goodDetails.categories',
           stock: '$goodDetails.qty',
