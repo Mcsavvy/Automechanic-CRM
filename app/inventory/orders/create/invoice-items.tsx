@@ -86,23 +86,10 @@ const Item: React.FC<
           noOptionsMessage={() => "No item found"}
         />
       </TableCell>
-      <TableCell className="bg-neu-1 w-full align-top">
-        <Input
-          type="number"
+      <TableCell className="bg-neu-1 w-full align-top p-2">
+        <NumberInput
           value={quantity}
-          onChange={(e) => {
-            if (e.target.value === "") {
-              return handleChange(good, 0, cost);
-            }
-            if (parseInt(e.target.value) < 0) {
-              return handleChange(good, 0, cost);
-            }
-            if (parseInt(e.target.value) > qtyInStock) {
-              return handleChange(good, qtyInStock, cost);
-            }
-            handleChange(good, parseInt(e.target.value), cost);
-          }}
-          min={0}
+          min={1}
           max={qtyInStock}
         />
       </TableCell>
@@ -112,7 +99,7 @@ const Item: React.FC<
           symbol="₦"
           value={cost}
           min={0}
-          onValueChange={(value) => handleChange(good, quantity, value)}
+          onChange={(value) => handleChange(good, quantity, value)}
         />
       </TableCell>
       <TableCell className="bg-neu-1 w-full align-middle">

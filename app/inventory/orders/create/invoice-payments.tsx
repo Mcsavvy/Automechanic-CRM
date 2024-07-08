@@ -26,8 +26,8 @@ const Payment: React.FC<
             min={0}
             symbol="₦"
             value={amount}
-            onChange={(e) => {
-              handleChange(parseFloat(e.target.value), paymentMethod);
+            onChange={(value) => {
+              handleChange(value, paymentMethod);
             }}
           />
         </div>
@@ -155,7 +155,7 @@ export default function InvoicePayments({
             min={0}
             max={100}
             value={discount}
-            onValueChange={(value) => setDiscount(value)}
+            onChange={(value) => setDiscount(value)}
           />
         </div>
         <div className="flex justify-between gap-2">

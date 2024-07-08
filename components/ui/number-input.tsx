@@ -2,15 +2,34 @@ import React from "react";
 import { cn } from "@/lib/utils";
 
 interface NumberInputProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type"> {
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type" | "onChange"> {
   prependSymbol?: boolean;
-  symbol: string;
-  onValueChange?: (value: number) => void;
+  symbol?: string;
+  onChange?: (value: number) => void;
+  classNames?: {
+    symbol?: string;
+    container?: string;
+  }
 }
 
 const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
   ({ prependSymbol = false, symbol, className, ...props }, ref) => {
-    props.onValueChange = props.onValueChange || (() => {});
+    props.onChange = props.onChange || (() => {});
+    props.classNames = props.classNames || {};
+    const displaySymbol = symbol ? true : false;
+    const symbolClass = cn(
+      "bg-gray-200 text-black text-sm p-2 rounded-l-md border border-input",
+      props.classNames.symbol
+    );
+    const containerClass = cn(
+      "flex items-center",
+      props.classNames.container
+    );
+    const inputClass = cn(
+      "w-full border border-input rounded-md p-2 disabled:cursor-not-allowed disabled:opacity-50 text-sm focus:outline-none focus:border-input",
+      displaySymbol && (prependSymbol ? "rounded-l-none" : "rounded-r-none"),
+      className
+    );
   
     function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
       let value = parseFloat(e.target.value);
@@ -23,30 +42,43 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
       if (props.min && value < (props.min as number)) {
         value = props.min as number;
       }
-      props.onValueChange!(value);
+      props.onChange!(value);
       e.target.value = value.toString();
     }
+  
     const Symbol = () => (
-      <div className="bg-gray-200 text-black text-sm p-2 rounded-l-md border border-input">
-        {symbol}
-      </div>
+      displaySymbol? (
+        <div className={symbolClass}>
+          {symbol}
+        </div>
+      ) : (
+        <></>
+      )
+    );
+    const Container = ({ children }: { children: React.ReactNode }) => (
+      displaySymbol ? (
+        <div className={containerClass}>
+          {children}
+        </div>
+      ) : (
+        <>{children}</>
+      )
+    );
+    const Input = () => (
+      <input
+        type="number"
+        className={inputClass}
+        ref={ref}
+        {...props}
+        onChange={handleChange}
+      />
     );
     return (
-      <div className="flex items-center">
+      <Container>
         {prependSymbol && <Symbol />}
-        <input
-          type="number"
-          className={cn(
-            "w-full border border-input rounded-r-md p-2 disabled:cursor-not-allowed disabled:opacity-50 text-sm focus:outline-none focus:border-input",
-            className
-          )
-          }
-          ref={ref}
-          {...props}
-          onChange={props.onChange || handleChange}
-        />
+        <Input />
         {!prependSymbol && <Symbol />}
-      </div>
+      </Container>
     );
   }
 );
