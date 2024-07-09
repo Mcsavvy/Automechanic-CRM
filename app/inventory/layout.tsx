@@ -8,34 +8,25 @@ import { useRouter, usePathname } from "next/navigation";
 import {
     ChevronDown,
     ChevronRight,
-    LineChart,
-    Receipt,
-    TriangleAlert,
-    PieChart,
-    Store,
-    Bell,
-    NotebookTabs,
-    UsersRound,
-    User,
-    LogOut,
     SquareChevronLeft,
     SquareChevronRight,
-    EllipsisVertical,
     Package,
     FileLineChart,
-    ShoppingCart,
     ReceiptText,
     CircleDollarSign,
     TrendingUp,
     CandlestickChart,
     AreaChart,
     Users,
-    UserRoundCog,
+    User,
     Scroll,
     Fingerprint,
     CircleUser,
+    LayoutDashboard
 } from "lucide-react";
 import InventoryProviders from "./providers";
+import AddGoodModal from "@/components/modals/AddGoodModal";
+import AddNewBuyerModal from "./buyers/components/modals/create-buyer";
 
 interface BaseSectionItem {
     icon: React.ReactNode;
@@ -60,6 +51,13 @@ const sections: Section[] = [
         show: true,
         items: [
             {
+                icon: <LayoutDashboard size={20} strokeWidth={1.5} />,
+                content: "Dashboard",
+                getIsActive: (pathname) =>
+                    pathname === "/inventory" || pathname === "/inventory/",
+                link: "/inventory",
+            },
+            {
                 icon: <Package size={20} strokeWidth={1.5} />,
                 content: "Store",
                 getIsActive: (pathname) =>
@@ -74,18 +72,11 @@ const sections: Section[] = [
                 link: "/inventory/reports",
             },
             {
-                icon: <ShoppingCart size={20} strokeWidth={1.5} />,
-                content: "Orders",
-                getIsActive: (pathname) =>
-                    pathname.startsWith("/inventory/orders"),
-                link: "/inventory/orders",
-            },
-            {
                 icon: <ReceiptText size={20} strokeWidth={1.5} />,
                 content: "Invoices",
                 getIsActive: (pathname) =>
                     pathname.startsWith("/inventory/invoices"),
-                link: "/inventory/invoices",
+                link: "/inventory/orders",
             },
             {
                 icon: <CircleDollarSign size={20} strokeWidth={1.5} />,
@@ -332,6 +323,9 @@ export default function DashboardLayout({
                         </div>
                     </header>
                     <InventoryProviders>
+                        <AddGoodModal />
+                        <AddNewStaffModal />
+                        <AddNewBuyerModal />
                         {children}
                     </InventoryProviders>
                 </main>
