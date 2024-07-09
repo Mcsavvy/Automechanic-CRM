@@ -131,7 +131,7 @@ const sections: Section[] = [
                 content: "Manage Roles",
                 getIsActive: (pathname) =>
                     pathname.startsWith("/roles"),
-                link: "/roles",
+                link: "/inventory/roles",
             },
             {
                 icon: <Scroll size={20} strokeWidth={1.5} />,
