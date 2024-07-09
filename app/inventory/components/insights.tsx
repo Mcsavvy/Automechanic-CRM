@@ -12,7 +12,7 @@ interface InsightProps {
     before: string;
     after: string;
 }
-const Insights: FC<InsightProps> = ({metric, before, after}) => {
+const Insights: FC<InsightProps> = ({ metric, before, after }) => {
     const [insights, setInsights] = useState<OrderInsights[]>([])
     const [summary, setSummary] = useState<any>({})
     const [chartData, setCharData] = useState<any>()
@@ -22,10 +22,10 @@ const Insights: FC<InsightProps> = ({metric, before, after}) => {
         const startYear = new Date(after).getFullYear();
         const endYear = new Date(before).getFullYear();
         return Array.from(
-          { length: endYear - startYear + 1 }, 
-          (_, index) => (startYear + index).toString()
+            { length: endYear - startYear + 1 },
+            (_, index) => (startYear + index).toString()
         );
-      };
+    };
     const options = {
         plugins: {
             tooltip: {
@@ -38,10 +38,9 @@ const Insights: FC<InsightProps> = ({metric, before, after}) => {
                 }
             }
         },
-
         scales: {
             y: {
-                display: true,
+                display: false,
                 grid: {
                     display: true,
                 },
@@ -52,10 +51,10 @@ const Insights: FC<InsightProps> = ({metric, before, after}) => {
                     display: false,
                 },
                 stacked: true,
-                barPercentage: 0.6,
-                categoryPercentage: 0.8,
             },
         },
+        barPercentage: 1,
+        categoryPercentage: 0.8,
     }
     const metrics: { [key: string]: string[] } = {
         'month': ['Jan', 'Feb', 'Mar', 'April', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -96,7 +95,9 @@ const Insights: FC<InsightProps> = ({metric, before, after}) => {
             const totalRevenue = insights.reduce((total, insight) => total + insight.totalRevenue, 0);
             const totalCost = insights.reduce((total, insight) => total + insight.totalCost, 0);
             setP(Math.round((totalRevenue - totalCost) * 100) / 100);
-            const maxRevenue = Math.max(...insights.map(item => item.totalRevenue)) + 20000 || 1000;
+            const maxValue = Math.max(...insights.map(item => item.totalRevenue))
+            const maxRevenue = maxValue + (maxValue / 4) || 1000;
+            const offset = maxRevenue * 0.05;
             setCharData({
                 labels,
                 datasets: [
@@ -104,17 +105,28 @@ const Insights: FC<InsightProps> = ({metric, before, after}) => {
                         id: 1,
                         label: 'Total Revenue',
                         data: insights.map(item => item.totalRevenue),
-                        // fill: false,
-                        borderColor: 'rgb(75, 192, 192)',
-                        tension: 0.5,
-                        backgroundColor: '#003366'
+                        backgroundColor: '#002536',
+                        borderSkipped: false,
+                        borderRadius: {
+                            topLeft: 10,
+                            topRight: 10,
+                            bottomLeft: 0,
+                            bottomRight: 0,
+                        }
                     },
                     {
                         id: 2,
                         label: '',
                         data: insights.map(item => maxRevenue - item.totalRevenue),
-                        backgroundColor: '#F2F6FF',
-                        tension: 0.5,
+                        backgroundColor: '#70A0EC',
+                        borderSkipped: false,
+                        borderRadius: {
+                            topLeft: 10,
+                            topRight: 10,
+                            bottomLeft: 0,
+                            bottomRight: 0,
+                        },
+                        base: 0,
                     },
                 ],
             })
@@ -124,13 +136,13 @@ const Insights: FC<InsightProps> = ({metric, before, after}) => {
 
     return (
         <>
-            <div className="md:row-start-1 md:col-start-1 w-full bg-white flex items-start justify-center border border-neu-3 shadow-md overflow-auto min-h-[350px]">
+            <div className="w-full bg-white flex self-start items-start justify-center border border-neu-3 shadow-md overflow-auto min-h-[200px]">
                 <div className=" w-full bg-white p-4 flex grow flex-col gap-3">
                     <h3 className="text-lg text-pri-5 font-semibold font-quicksand">Revenue Summary</h3>
                     {insights.length > 0 && <Bar data={chartData} options={options} />}
                 </div >
             </div>
-            <div className="md:row-start-1 md:col-start-2 border border-neu-3 shadow-md min-w-[200px] min-h-[250px] w-full p-4 bg-white">
+            <div className=" self-start border border-neu-3 shadow-md  min-h-[250px] w-full p-4 bg-white">
                 <h3 className="flex flex-col items-start text-lg text-pri-6 font-semibold font-quicksand">Order Summary within this period
                     <span className={`font-semibold text-xl font-quicksand ${profit >= 0 ? 'text-green-500' : 'text-red-500'}`}>
                         {

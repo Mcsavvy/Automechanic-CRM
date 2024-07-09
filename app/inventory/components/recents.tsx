@@ -20,7 +20,7 @@ const Recents: FC<Partial<DashboardProps>> = ({ before, after }) => {
                 throw response;
             }
             console.log("Values", response.data)
-            return response.data
+            return response.data || []
         } catch (err) {
             console.error(err)
         }
@@ -38,7 +38,7 @@ const Recents: FC<Partial<DashboardProps>> = ({ before, after }) => {
                 Recent Actions
             </h3>
             <ul className='px-4 flex flex-col gap-2 mb-4'>
-                {recents.length > 0 ? recents.map((val: any, idx) => {
+                {recents && recents.length > 0 ? recents.map((val: any, idx) => {
                     if (val.type === "order") {
                         return (
                             <li key={idx} className="flex flex-col gap-2">

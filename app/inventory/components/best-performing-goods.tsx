@@ -38,18 +38,18 @@ const BestPerformer: FC<Partial<BestPerformerProps>> = ({ before, after }) => {
         console.log("Goods", goods)
     })
     return (
-        <div className="grow products md:col-start-1 md:row-start-2 border border-neu-3 md:min-h-[400px] md:h-full w-full p-4 bg-white rounded-md shadow-md overflow-auto">
-            <h3 className="text-lg text-acc-7 flex items-center justify-between w-full font-semibold font-quicksand">
+        <div className="self-stretch border border-neu-3 h-[400px] md:h-[450px] w-full bg-white rounded-md shadow-md overflow-auto">
+            <h3 className="sticky left-0 text-lg text-acc-7 p-4 flex flex-row flex-wrap gap-3 items-center justify-between w-full font-semibold font-quicksand">
                 Best performing products<Button variant={"outline"} className="font-semibold">Add a new Product</Button>
             </h3>
-            <table className="w-full overflow-scroll rounded-md mt-2  overflow-x-auto">
-                <thead className="bg-neu-1 top-0 text-[14px] font-rambla font-bold text-pri-6 border-b  border-neu-3">
+            <table className="relative w-full rounded-md mb-4">
+                <thead className="sticky top-0 bg-neu-1 top-0 text-[14px] font-rambla font-bold text-pri-6 border-b z-10 border-neu-3">
                     <tr>
-                        <th className="text-left px-4 py-2">Name</th>
-                        <th className="text-left px-4 py-2">Category</th>
-                        <th className="text-left px-4 p y-2">Qty in Stock</th>
-                        <th className="text-left px-4 py-2">Units Sold</th>
-                        <th className="text-left px-4 py-2">Revenue Generated</th>
+                        <th className="text-left px-4 py-2 sticky left-0 bg-neu-1">Name</th>
+                        <th className="text-left px-4 py-2 bg-neu-1">Category</th>
+                        <th className="text-left px-4 p y-2 bg-neu-1">Qty in Stock</th>
+                        <th className="text-left px-4 py-2 bg-neu-1">Units Sold</th>
+                        <th className="text-left px-4 py-2 bg-neu-1">Revenue Generated</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -57,7 +57,7 @@ const BestPerformer: FC<Partial<BestPerformerProps>> = ({ before, after }) => {
                         goods && goods.map((good: any, idx: number) => {
                             return (
                                 <tr key={idx} className="text-[13px] border-b border-neu-3 p-1">
-                                    <td className="font-rambla font-semibold sticky left-0 z-1 bg-neu-1 px-4 py-2 hover:underline hover:cursor-pointer"><Link href={`/inventory/products?product=${good.id}`} className="h-full w-full">{good.name}</Link></td>
+                                    <td className="font-rambla font-semibold sticky left-0 bg-neu-1 px-4 py-2 hover:underline hover:cursor-pointer"><Link href={`/inventory/products?product=${good.id}`} className="h-full w-full">{good.name}</Link></td>
                                     <td className="px-4 py-2">{good.category[0]}</td>
                                     <td className="px-4 py-2">{good.stock}</td>
                                     <td className="px-4 py-2">{good.qtySold}</td>

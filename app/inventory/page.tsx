@@ -1,13 +1,10 @@
 "use client"
 import Insights from './components/insights'
-import Overdue from './components/overdue-order'
 import StoreSummary from './components/store-summary'
 import RecentActions from './components/recent-actions'
 import BestPerformer from './components/best-performing-goods'
 import RangeBar from './components/range'
-import { Button } from "@/components/ui/button"
-import { useState, useEffect } from 'react'
-import { Boxes, Users, ReceiptText, UsersRound } from 'lucide-react'
+import { useState } from 'react'
 export default function Home() {
     const today = new Date()
     const [before, setBefore] = useState((new Date(today.setDate(today.getDate() - today.getDay() + 6)).toISOString()))
@@ -37,13 +34,13 @@ export default function Home() {
                 </ul>
             </div>
 
-            <div className="flex p-[30px] flex-row flex-wrap gap-3 items-center justify-evenly w-full">
+            <div className="flex p-[12px] md:p-[30px] flex-row flex-wrap gap-3 items-center justify-evenly w-full">
                 <RangeBar {...{ setBefore, setAfter, setMetric, before, after }} />
                 {tab == "chart" &&
-                    <div className="w-full md:grid my-grid gap-4 md:items-start overflow-y-visible scrollbar-thin flex flex-col items-center">
+                    <div className="w-full md:grid md:grid-cols-[7fr_3fr] md:auto-rows-min gap-4 overflow-y-visible scrollbar-thin flex flex-col items-center">
                         <Insights {...{ metric, before, after }} />
                         <BestPerformer {...{before, after}}/>
-                        <div className="col-start-2 row-start-2 flex flex-col min-w-[250px] gap-3 invoice h-full w-full">
+                        <div className="col-start-2 row-start-2 flex flex-col gap-3 invoice h-full w-full">
                             <StoreSummary {...{ before, after }} />
                         </div>
                     </div>
