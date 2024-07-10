@@ -1,7 +1,9 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { MoveLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import axios from 'axios'
+import Group from '@/lib/@types/group'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -19,6 +21,7 @@ interface ScopeItem {
     description: string;
     checked: boolean;
 }
+
 
 interface Scopes {
     [category: string]: {
@@ -51,11 +54,24 @@ const initialScopes: Scopes = {
             { action: "write", label: "Process orders", description: "Ability to update order status", checked: false },
             { action: "delete", label: "Cancel orders", description: "Permission to cancel existing orders", checked: false },
         ]
-    },
+    }
 }
-
+const fetchGroups = async () => {
+    try {
+        const response = await axios.get('/api/groups/all')
+        if (response.status !== 200) {
+            throw response;
+        }
+        let data = response.data;
+        return data
+    } catch (err) {
+        console.error(err)
+    }
+}
 const Roles: React.FC = () => {
-    const [group, setGroup] = useState<string>('')
+    const [name, setName] = useState('');
+    const [description, setDescription] = useState('');
+    const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
     const [scopes, setScopes] = useState<Scopes>(initialScopes)
     const handleScopeChange = (category: string, index: number | null = null) => {
         setScopes((prev) => {
@@ -84,6 +100,36 @@ const Roles: React.FC = () => {
             return newScopes;
         });
     };
+
+    const populateScopes = (permissions: Record<string, boolean | string[]>) => {
+        const newScopes = { ...initialScopes };
+        Object.entries(permissions).forEach(([category, value]) => {
+            if (typeof value === 'boolean' && value) {
+                newScopes[category] = {
+                    allChecked: true,
+                    items: newScopes[category].items.map(item => ({ ...item, checked: true }))
+                };
+            } else if (Array.isArray(value)) {
+                newScopes[category] = {
+                    allChecked: false,
+                    items: newScopes[category].items.map(item => ({
+                        ...item,
+                        checked: value.includes(item.action)
+                    }))
+                };
+            }
+        });
+        return newScopes;
+    };
+    const [groups, setG] = useState<Group[]>([])
+
+    useEffect(() => {
+        fetchGroups()
+            .then(data => {
+                console.log("All Groupds", data)
+                setG(data)
+            })
+    }, [selectedGroup])
 
 
     const renderCheckboxes = () => {
@@ -128,7 +174,9 @@ const Roles: React.FC = () => {
     }
 
     const handleSave = () => {
-        const dbScopes = Object.entries(scopes).reduce((acc, [category, { allChecked, items }]) => {
+        if (!selectedGroup) return;
+
+        const permissions = Object.entries(scopes).reduce((acc, [category, { allChecked, items }]) => {
             if (allChecked) {
                 acc[category] = true;
             } else {
@@ -140,78 +188,50 @@ const Roles: React.FC = () => {
             return acc;
         }, {} as Record<string, boolean | string[]>);
 
-        console.log("Database Scopes:", dbScopes);
+        const updatedGroup = {
+            ...selectedGroup,
+            name, // Use the state variable
+            description, // Use the state variable
+            permissions
+        };
+
+        console.log("Updated Group:", updatedGroup);
+        // TODO: Implement function to send data to backend
     };
 
     return (
         <div className="absolute h-[calc(100vh-60px)] top-[60px] w-full overflow-auto scrollbar-thin">
-            {!group ? (
+            {!selectedGroup ? (
                 <div className="md:p-[30px] p-3">
                     <ul className='flex flex-col items-start justify-start gap-5'>
-                        <li className='max-w-[700px] flex flex-col gap-3 border-b border-b-pri-6 p-4 items-start justify-start'>
-                            <h3 className="text-lg text-pri-6 font-semibold font-quicksand">Owner</h3>
-                            <p className='font-lato'>
-                                The Admin is an administrator in the organization. He is capable and responsible for managing
-                                and ensuring the smmooth sailing of both staff and client alike. As such he has authorization to all necessary
-                                aspects of the application and data that he may need to make the system work better
-                            </p>
-                            <ul className='flex flex-row flex-wrap gap-2'>
-                                <li className='bg-acc-6 text-black w-auto p-1 px-2 text-sm rounded-md'>customer</li>
-                                <li className='bg-acc-6 text-black w-auto p-1 px-2 text-sm rounded-md'>mechanic</li>
-                                <li className='bg-acc-6 text-black w-auto p-1 px-2 text-sm rounded-md'>teller</li>
-                                <li className='bg-acc-6 text-black w-auto p-1 px-2 text-sm rounded-md'>orders</li>
-                                <li className='bg-acc-6 text-black w-auto p-1 px-2 text-sm rounded-md'>goods</li>
-                            </ul>
-                            <Button variant="outline" className='self-end' onClick={() => setGroup('admin')}>Manage</Button>
-                        </li>
-                        <li className='max-w-[700px] flex flex-col gap-3 border-b border-b-pri-6 p-4 items-start justify-start'>
-                            <h3 className="text-lg text-pri-6 font-semibold font-quicksand">Admin</h3>
-                            <p className='font-lato'>
-                                The Admin is an administrator in the organization. He is capable and responsible for managing
-                                and ensuring the smmooth sailing of both staff and client alike. As such he has authorization to all necessary
-                                aspects of the application and data that he may need to make the system work better
-                            </p>
-                            <ul className='flex flex-row gap-2'>
-                                <li className='bg-acc-6 text-black w-auto p-1 px-2 text-sm rounded-md'>customer</li>
-                                <li className='bg-acc-6 text-black w-auto p-1 px-2 text-sm rounded-md'>mechanic</li>
-                                <li className='bg-acc-6 text-black w-auto p-1 px-2 text-sm rounded-md'>teller</li>
-                                <li className='bg-acc-6 text-black w-auto p-1 px-2 text-sm rounded-md'>orders</li>
-                                <li className='bg-acc-6 text-black w-auto p-1 px-2 text-sm rounded-md'>goods</li>
-                            </ul>
-                            <Button variant="outline" className='self-end' onClick={() => setGroup('admin')}>Manage</Button>
-                        </li>
-                        <li className='max-w-[700px] flex flex-col gap-3 border-b border-b-pri-6 p-4 items-start justify-start'>
-                            <h3 className="text-lg text-pri-6 font-semibold font-quicksand">Mechanic</h3>
-                            <p className='font-lato'>
-                                The Admin is an administrator in the organization. He is capable and responsible for managing
-                                and ensuring the smmooth sailing of both staff and client alike. As such he has authorization to all necessary
-                                aspects of the application and data that he may need to make the system work better
-                            </p>
-                            <ul className='flex flex-row gap-2'>
-                                <li className='bg-acc-6 text-black w-auto p-1 px-2 text-sm rounded-md'>customer</li>
-                                <li className='bg-acc-6 text-black w-auto p-1 px-2 text-sm rounded-md'>mechanic</li>
-                                <li className='bg-acc-6 text-black w-auto p-1 px-2 text-sm rounded-md'>teller</li>
-                                <li className='bg-acc-6 text-black w-auto p-1 px-2 text-sm rounded-md'>orders</li>
-                                <li className='bg-acc-6 text-black w-auto p-1 px-2 text-sm rounded-md'>goods</li>
-                            </ul>
-                            <Button variant="outline" className='self-end' onClick={() => setGroup('admin')}>Manage</Button>
-                        </li>
-                        <li className='max-w-[700px] flex flex-col gap-3 border-b border-b-pri-6 p-4 items-start justify-start'>
-                            <h3 className="text-lg text-pri-6 font-semibold font-quicksand">Teller</h3>
-                            <p className='font-lato'>
-                                The Admin is an administrator in the organization. He is capable and responsible for managing
-                                and ensuring the smmooth sailing of both staff and client alike. As such he has authorization to all necessary
-                                aspects of the application and data that he may need to make the system work better
-                            </p>
-                            <ul className='flex flex-row gap-2'>
-                                <li className='bg-acc-6 text-black w-auto p-1 px-2 text-sm rounded-md'>customer</li>
-                                <li className='bg-acc-6 text-black w-auto p-1 px-2 text-sm rounded-md'>mechanic</li>
-                                <li className='bg-acc-6 text-black w-auto p-1 px-2 text-sm rounded-md'>teller</li>
-                                <li className='bg-acc-6 text-black w-auto p-1 px-2 text-sm rounded-md'>orders</li>
-                                <li className='bg-acc-6 text-black w-auto p-1 px-2 text-sm rounded-md'>goods</li>
-                            </ul>
-                            <Button variant="outline" className='self-end' onClick={() => setGroup('admin')}>Manage</Button>
-                        </li>
+                        {
+                            groups && groups.map((g, i) => {
+                                return (
+                                    <li key={i} className='max-w-[700px] flex flex-col gap-3 border-b border-b-pri-6 p-4 items-start justify-start'>
+                                        <h3 className="text-lg text-pri-6 font-semibold font-quicksand capitalize">{g.name}</h3>
+                                        <p className='font-lato'>{g.description}</p>
+                                        <ul className='flex flex-row flex-wrap gap-2'>
+                                            {
+                                                Object.keys(g.permissions).map((val, idx) => {
+                                                    return (
+                                                        <li key={idx} className='bg-acc-6 text-black w-auto p-1 px-2 text-sm rounded-md'>customer</li>
+                                                    )
+                                                })
+                                            }
+                                        </ul>
+                                        <Button
+                                            variant="outline"
+                                            className='self-end'
+                                            onClick={() => {
+                                                setSelectedGroup(g);
+                                                setScopes(populateScopes(g.permissions));
+                                                setName(g.name);
+                                                setDescription(g.description);
+                                            }}>Manage</Button>
+                                    </li>
+                                )
+                            })
+                        }
                     </ul>
                 </div>
             ) : (
@@ -219,16 +239,28 @@ const Roles: React.FC = () => {
                     <MoveLeft
                         className='cursor-pointer transition-transform active:scale-90 text-pri-6'
                         size={24} strokeWidth={2}
-                        onClick={() => setGroup('')} />
+                        onClick={() => {
+                            setSelectedGroup(null);
+                            setName('');
+                            setDescription('');
+                        }}
+                    />
 
                     <div className='w-full flex flex-col items-start justify-start gap-4'>
                         <div className='w-full'>
                             <h3 className="text-lg text-pri-6 font-semibold font-rambla">Name</h3>
-                            <input placeholder='Admin' className='w-full border border-neu-3 rounded-md p-2' />
+                            <input
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                placeholder='Admin'
+                                className='w-full border border-neu-3 rounded-md p-2'
+                            />
                         </div>
                         <div className='w-full'>
                             <h3 className="text-lg text-pri-6 font-semibold font-rambla">Description</h3>
                             <textarea
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
                                 placeholder='Admin description'
                                 className='w-full border border-neu-3 rounded-md resize-none p-3 max-h-[150px] focus:outline-none focus:border-pri-6'
                             ></textarea>
@@ -238,8 +270,8 @@ const Roles: React.FC = () => {
                         <div>
                             <h3 className="text-lg text-pri-6 font-semibold font-rambla">Delete Role</h3>
                             <div className="flex flex-row justify-between items-center gap-3">
-                                <span>This will delete this role/group from the system. Any one with this group will lose all permissions
-                                    associated with it. This action is <span text-red-500>permanent</span></span>
+                                <span>This will delete <span className="text-red-500 font-semibold capitalize text-[18px]">{selectedGroup.name}</span> from the system. Any one with this group will lose all permissions
+                                    associated with it. This action is <span className="text-red-500 font-semibold">permanent</span></span>
 
                                 <AlertDialog>
                                     <AlertDialogTrigger asChild>
@@ -249,8 +281,8 @@ const Roles: React.FC = () => {
                                         <AlertDialogHeader>
                                             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                                             <AlertDialogDescription>
-                                                This action cannot be undone. This will permanently delete 
-                                                ths role and deactivate all permissions associated with it
+                                                This action cannot be undone. This will permanently delete
+                                                this role and deactivate all permissions associated with it
                                             </AlertDialogDescription>
                                         </AlertDialogHeader>
                                         <div className="flex flex-row flex-wrap justify-evenly items-center gap-4">
