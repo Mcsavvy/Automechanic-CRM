@@ -14,12 +14,17 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { toast } from "react-toastify";
 
 interface ScopeItem {
     action: string;
     label: string;
     description: string;
     checked: boolean;
+}
+
+interface UpdateResponse {
+    message: string
 }
 
 
@@ -73,6 +78,7 @@ const Roles: React.FC = () => {
     const [description, setDescription] = useState('');
     const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
     const [scopes, setScopes] = useState<Scopes>(initialScopes)
+    const [loading, setL] = useState(false)
     const handleScopeChange = (category: string, index: number | null = null) => {
         setScopes((prev) => {
             const newScopes = { ...prev };
@@ -173,9 +179,21 @@ const Roles: React.FC = () => {
         )
     }
 
+    const updateGroup = async (groupId: string, groupData: Partial<Group>) => {
+        try {
+            const response = await axios.post(`/api/groups/${groupId}/update`, groupData)
+            if (response.status !== 200) {
+                throw response;
+            }
+            let data = response.data;
+            return data
+        } catch (err) {
+            return err
+        }    
+    }
     const handleSave = () => {
         if (!selectedGroup) return;
-
+        setL(true)
         const permissions = Object.entries(scopes).reduce((acc, [category, { allChecked, items }]) => {
             if (allChecked) {
                 acc[category] = true;
@@ -188,15 +206,31 @@ const Roles: React.FC = () => {
             return acc;
         }, {} as Record<string, boolean | string[]>);
 
-        const updatedGroup = {
-            ...selectedGroup,
-            name, // Use the state variable
-            description, // Use the state variable
+        const updateData = {
+            name,
+            description,
             permissions
         };
+        const promise = new Promise<UpdateResponse>((resolve, reject) => {
+            updateGroup(selectedGroup.id, updateData)
+            .then((data) => {
+                resolve(data)
+            })
+            .catch((err) => {
+                reject(err.response.data)
+            })
+            .finally(() => setL(false))
+        })
 
-        console.log("Updated Group:", updatedGroup);
-        // TODO: Implement function to send data to backend
+        toast.promise<UpdateResponse,UpdateResponse>(promise, {
+            pending: "Updating...",
+            success: {
+                render: ({data}) => data.message,
+            },
+            error: {
+                render: ({data}) => data.message || "An error occurred",
+            },
+        });
     };
 
     return (
@@ -214,7 +248,7 @@ const Roles: React.FC = () => {
                                             {
                                                 Object.keys(g.permissions).map((val, idx) => {
                                                     return (
-                                                        <li key={idx} className='bg-acc-6 text-black w-auto p-1 px-2 text-sm rounded-md'>customer</li>
+                                                        <li key={idx} className='bg-acc-6 text-black w-auto p-1 px-2 text-sm rounded-md'>{val}</li>
                                                     )
                                                 })
                                             }
@@ -253,7 +287,7 @@ const Roles: React.FC = () => {
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                                 placeholder='Admin'
-                                className='w-full border border-neu-3 rounded-md p-2'
+                                className='w-full border border-neu-3 rounded-md p-2 focus:outline-none focus:border-pri-6'
                             />
                         </div>
                         <div className='w-full'>
@@ -262,11 +296,11 @@ const Roles: React.FC = () => {
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
                                 placeholder='Admin description'
-                                className='w-full border border-neu-3 rounded-md resize-none p-3 max-h-[150px] focus:outline-none focus:border-pri-6'
+                                className='w-full border border-neu-3 rounded-md resize-none p-3 max-h-[300px] focus:outline-none focus:border-pri-6'
                             ></textarea>
                         </div>
                         {renderCheckboxes()}
-                        <Button onClick={handleSave} className="mt-4">Save</Button>
+                        <Button disabled={loading} onClick={handleSave} className="mt-4">Save</Button>
                         <div>
                             <h3 className="text-lg text-pri-6 font-semibold font-rambla">Delete Role</h3>
                             <div className="flex flex-row justify-between items-center gap-3">
