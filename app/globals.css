@@ -76,6 +76,10 @@
     --neu-900: #222526;
     --body: "Lato", sans-serif;
     --heading: "Quicksand", sans-serif;
+    --progress: #ddd;
+    --red-light: rgb(236, 183, 183);
+    
+    
   }
 
   @media (prefers-color-scheme: dark) {
@@ -185,8 +189,20 @@
   }
 
   .tab {
-    font-weight: 600;
-    color: var(--pri-300);
+    letter-spacing: 0.0015em;
+    font-size: 1.15em;
+    color: var(--pri-800);
+    text-shadow: 
+        0 0.23px var(--pri-300), -0.23px 0 var(--pri-100), 
+        -0.23px 0.46px var(--pri-300), -0.46px 0.23px var(--pri-100),
+        -0.46px 0.69px var(--pri-300), -0.69px 0.46px var(--pri-100),
+        -0.69px 0.92px var(--pri-300), -0.92px 0.69px var(--pri-100),
+        -0.92px 1.15px var(--pri-300), -1.15px 0.92px var(--pri-100), 
+        -1.15px 1.38px var(--pri-300), -1.38px 1.15px var(--pri-100),
+        -1.38px 1.61px var(--pri-300), -1.61px 1.38px var(--pri-100), 
+        -1.61px 1.84px var(--pri-300), -1.84px 1.61px var(--pri-100);
+    text-align: center;
+
   }
 
   .tab::before {
@@ -230,6 +246,27 @@
       transparent 1px,
       transparent 80px
     );
-    background-color: var(--neu-100);
+  }
+  .progress-bar{
+    background: repeating-linear-gradient(
+      to right,
+      var(--progress),
+      var(--progress) 3px,
+      white 3px,
+      white 6px
+    );
+    background-size: 100% 100%;
+  }
+  .perspective {
+    perspective: 1000px;
+  }
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+  .rotate-y-180 {
+    transform: rotateY(180deg);
+  }
+  .card-inner:hover {
+    transform: rotateY(180deg);
   }
 }

@@ -1,4 +1,5 @@
 import { PaginatedDocs } from "./pagination";
+import { NewPayment, Payment } from "./payments";
 
 export type OrderStatus =
   | "pending"
@@ -54,14 +55,6 @@ export interface OrderBuyer {
   phone: string;
 }
 
-export interface OrderPayment {
-  id: string;
-  amount: number;
-  paymentMethod: PaymentMethod;
-  orderId: string;
-  confirmedBy: string;
-}
-
 export interface Order {
   id: string;
   orderNo: number;
@@ -74,7 +67,6 @@ export interface Order {
   status: OrderStatus;
   createdAt: string;
   cancelReason: string | null;
-  payments: OrderPayment[];
 }
 
 export interface OrderSummary extends Omit<Order, "items" | "payments"> {
@@ -95,12 +87,19 @@ export interface PaginatedOrders extends PaginatedDocs {
 }
 
 export type NewOrderItem = Omit<OrderItem, "orderId" | "id" | "good">;
-export type NewOrderPayment = Omit<OrderPayment, "id">;
-export type NewOrder = Omit<Order, "id" | "buyer" | "amountPaid"> & {
+export type NewOrderPayment = Omit<NewPayment, "order" | "customer" | "confirmedBy">;
+export type ExistingOrderPayment = Omit<Payment, "order" | "customer" | "confirmedBy" | "createdAt">;
+export type NewOrder = Omit<
+  Order,
+  "id" | "buyer" | "amountPaid" | "payments" | "items"
+> & {
   items: NewOrderItem[];
   payments?: NewOrderPayment[];
 };
-export type OrderModification = Omit<Order, "buyer" | "amountPaid"> & {
+export type OrderModification = Omit<
+  Order,
+  "buyer" | "amountPaid" | "payments" | "items"
+> & {
   items: (OrderItem | NewOrderItem)[];
-  payments?: (OrderPayment | NewOrderPayment)[];
+  payments?: (ExistingOrderPayment | NewOrderPayment)[];
 };

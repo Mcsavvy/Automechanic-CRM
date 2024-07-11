@@ -4,21 +4,28 @@ import permissionRequired from "@/lib/decorators/permission";
 import { NextRequest, NextResponse } from "next/server";
 import { FilterQuery } from "mongoose";
 import GoodDAO from "@/lib/inventory/dao/good";
+import qs from "qs";
+
+
+type HasMinMax = Partial<{
+  gte: string;
+  lte: string;
+}>;
 
 export const GET = permissionRequired(Permission.AllowAny())(async function (
     req
 ) {
-    const rawLimit = req.nextUrl.searchParams.get("l");
-    const limit = rawLimit ? parseInt(rawLimit) : 10;
-    const rawPage = req.nextUrl.searchParams.get("p");
-    const page = rawPage ? parseInt(rawPage) : 1;
-    const search = (req.nextUrl.searchParams.get("q") as string | null) || "";
-    const status = req.nextUrl.searchParams.get("s") as
+    const params = qs.parse(req.nextUrl.searchParams.toString());
+    const limit = params.l ? parseInt(params.l as string) : 10;
+    const page = params.p ? parseInt(params.p as string) : 1;
+    const search = params.q?.toString().trim() as string | undefined;
+    const status = params.s?.toString().trim() as
         | "in-stock"
         | "low-stock"
         | "out-of-stock"
         | null;
-    const category = (req.nextUrl.searchParams.get("c") as string | null) || "";
+    const category = params.c?.toString().trim() as string | undefined;
+    const qty = params.qty as HasMinMax | undefined;
     const query: FilterQuery<IGoodDocument> = {};
     if (status) {
         if (status === "in-stock") {
@@ -30,13 +37,18 @@ export const GET = permissionRequired(Permission.AllowAny())(async function (
             query.qty = { $eq: 0 };
         }
     }
-    if (search.length > 0) {
+    if (qty) {
+        query.qty = {};
+        qty.lte && (query.qty.$lte = parseInt(qty.lte));
+        qty.gte && (query.qty.$gte = parseInt(qty.gte));
+    }
+    if (search) {
         query.$or = [
             { name: { $regex: search, $options: "i" } },
             { code: { $regex: search, $options: "i" } },
         ];
     }
-    if (category.length > 0) {
+    if (category) {
         query.categories = { $in: [category] };
     }
     

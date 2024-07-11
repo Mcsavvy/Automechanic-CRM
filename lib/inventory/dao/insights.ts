@@ -121,45 +121,40 @@ async function revenueByPeriod(
   metric: "hour" | "day" | "month" | "year",
   before?: Date,
   after?: Date,
-  visualize: boolean = false
 ) {
-  if (before && after && before < after) {
-    throw new Error("Invalid date range: before must be after after");
+  const matchStage: any = { 'order.status': { $in: ['paid', 'pending'] } };
+  if (before || after) {
+    matchStage['order.createdAt'] = {};
+    if (before) matchStage['order.createdAt'].$lte = before;
+    if (after) matchStage['order.createdAt'].$gte = after;
   }
-  const query: any = {};
-  if (before) {
-    query["createdAt"] = { $lte: before };
-  }
-  if (after) {
-    if (!query["createdAt"])
-      query["createdAt"] = { $gte: after };
-    else
-    query["createdAt"]["$gte"] = after;
 
-  }
   try {
     let dateOperator;
-    let groupOperator;
+    let range;
     switch (metric) {
       case "hour":
         dateOperator = { $hour: "$order.createdAt" };
-        groupOperator = { $dayOfYear: "$order.createdAt" };
+        range = Array.from({ length: 24 }, (_, i) => i);
         break;
       case "day":
-        dateOperator = { $dayOfWeek: "$order.createdAt" };
-        groupOperator = { $week: "$order.createdAt" };
+        dateOperator = { $subtract: [{ $dayOfWeek: "$order.createdAt" }, 1] };
+        range = Array.from({ length: 7 }, (_, i) => i);
         break;
       case "month":
-        dateOperator = { $month: "$order.createdAt" };
-        groupOperator = { $year: "$order.createdAt" };
+        dateOperator = { $subtract: [{ $month: "$order.createdAt" }, 1] };
+        range = Array.from({ length: 12 }, (_, i) => i);
         break;
       case "year":
         dateOperator = { $year: "$order.createdAt" };
-        groupOperator = dateOperator;
+        const startYear = after ? after.getFullYear() : new Date().getFullYear() - 5;
+        const endYear = before ? before.getFullYear() : new Date().getFullYear();
+        range = Array.from({ length: endYear - startYear + 1 }, (_, i) => startYear + i);
         break;
       default:
         throw new Error(`Invalid metric: ${metric}`);
     }
+
     const pipeline = [
       {
         $lookup: {
@@ -170,16 +165,10 @@ async function revenueByPeriod(
         },
       },
       { $unwind: "$order" },
-      {
-        $match: {
-          "order.status": { $in: ["pending", "paid"] },
-          ...query,
-        },
-      },
+      { $match: matchStage },
       {
         $group: {
           _id: dateOperator,
-          period: { $first: dateOperator},
           totalRevenue: { $sum: { $multiply: ["$qty", "$sellingPrice"] } },
           totalCost: { $sum: { $multiply: ["$qty", "$costPrice"] } },
           totalQuantitySold: { $sum: "$qty" },
@@ -188,32 +177,49 @@ async function revenueByPeriod(
       {
         $project: {
           _id: 0,
-          period: 1,
+          period: "$_id",
           totalRevenue: 1,
           totalCost: 1,
           totalQuantitySold: 1,
           profit: { $subtract: ["$totalRevenue", "$totalCost"] },
-
         },
       },
-      // { $sort: { totalRevenue: 1 } },
-
+      // { $sort: { profit: 1} }
     ];
 
     const results = await OrderItemModel.aggregate(pipeline);
-    const pending = await OrderModel.countDocuments({ status: 'pending', ...query});
-    const errors = await OrderModel.countDocuments({ status: 'error', ...query});
-    const paid = await OrderModel.countDocuments({ status: 'paid', ...query });
-    const rest = await OrderModel.countDocuments({ status: 'rest', ...query});
-    const cancelled = await OrderModel.countDocuments({ status: "cancelled", ...query});
-    const total = pending + errors + paid + rest + cancelled
-    const summary = { pending, errors, paid, rest, total, cancelled }
-    if (visualize) {
-      console.table(results);
-      createRevenueByPeriodChart(results);
-    } else {
-      return { results, summary };
+
+    // Pad the results with empty values for missing periods
+    const paddedResults = range.map(period => {
+      const existingResult = results.find(r => r.period === period);
+      return existingResult || {
+        period,
+        totalRevenue: 0,
+        totalCost: 0,
+        totalQuantitySold: 0,
+        profit: 0
+      };
+    });
+
+    // Query for order statistics
+    const orderQuery: any = {};
+    if (before || after) {
+      orderQuery['createdAt'] = {};
+      if (before) orderQuery['createdAt'].$lte = before;
+      if (after) orderQuery['createdAt'].$gte = after;
     }
+
+    const [pending, errors, paid, rest, cancelled] = await Promise.all([
+      OrderModel.countDocuments({ status: 'pending', ...orderQuery }),
+      OrderModel.countDocuments({ status: 'error', ...orderQuery }),
+      OrderModel.countDocuments({ status: 'paid', ...orderQuery }),
+      OrderModel.countDocuments({ status: 'rest', ...orderQuery }),
+      OrderModel.countDocuments({ status: 'cancelled', ...orderQuery }),
+    ]);
+
+    const total = pending + errors + paid + rest + cancelled;
+    const summary = { pending, errors, paid, rest, cancelled, total };
+    return { results: paddedResults, summary };
   } catch (error) {
     console.error("Error calculating revenue by period:", error);
     throw error;
@@ -288,11 +294,305 @@ async function buyerRevenueByPeriod(
     throw error;
   }
 }
+
+async function getTopTenOverdueOrders(before? : Date, after?: Date) {
+  try {
+    const matchStage: any = {
+      overdueLimit: { $exists: true, $lt: new Date() },
+      status: { $nin: ['paid', 'cancelled'] },
+    };
+
+    if (before && after) {
+      matchStage.createdAt = { $gte: new Date(after), $lte: new Date(before) };
+    } else if (before) {
+      matchStage.createdAt = { $lte: new Date(before) };
+    } else if (after) {
+      matchStage.createdAt = { $gte: new Date(after) };
+    }
+
+    const orders = await OrderModel.aggregate([
+      {
+        $match: matchStage
+      },
+      {
+        $lookup: {
+          from: OrderItemModel.collection.name,
+          localField: '_id',
+          foreignField: 'orderId',
+          as: 'orderItems'
+        }
+      },
+      {
+        $lookup: {
+          from: BuyerModel.collection.name,
+          localField: 'buyerId',
+          foreignField: '_id',
+          as: 'buyer'
+        }
+      },
+      {
+        $unwind: '$buyer'
+      },
+      {
+        $project: {
+          _id: 0,
+          orderNo: '$orderNo',
+          orderId: '$_id',
+          orderAmount: {
+            $sum: {
+              $map: {
+                input: "$orderItems",
+                as: "item",
+                in: { $multiply: ["$$item.sellingPrice", "$$item.qty"] }
+              }
+            }
+          },
+          buyers_name: '$buyer.name',
+          dueDate: '$overdueLimit',
+          amountPaid: '$amountPaid'
+        }
+      },
+      {
+        $sort: { dueDate: 1 }
+      },
+      {
+        $limit: 10
+      }
+    ]);
+
+    return orders;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Failed to get top ten overdue orders');
+  }
+}
+
+type TopSellingGood = {
+  id: string;
+  productId: string;
+  name: string;
+  category: string[];
+  stock: number;
+  costPrice: number;
+  qtySold: number;
+  revenue: number;
+};
+
+async function getTopTenSellingGoods(before?: Date, after?: Date): Promise<TopSellingGood[]> {
+  try {
+    const matchStage: any = {'order.status': { $in: ['paid', 'pending', "ongoing"] }};
+
+    if (before && after) {
+      matchStage.createdAt = { $gte: after, $lte: before };
+    } else if (before) {
+      matchStage.createdAt = { $lte: before };
+    } else if (after) {
+      matchStage.createdAt = { $gte: after };
+    }
+
+    const goods = await OrderItemModel.aggregate([
+      {
+        $lookup: {
+          from: OrderModel.collection.name,
+          localField: 'orderId',
+          foreignField: '_id',
+          as: 'order'
+        }
+      },
+      {
+        $match: matchStage
+      },
+      {
+        $group: {
+          _id: '$goodId',
+          qtySold: { $sum: '$qty' },
+          revenue: { $sum: { $multiply: ['$qty', '$sellingPrice'] } }
+        }
+      },
+      {
+        $lookup: {
+          from: 'goods',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'goodDetails'
+        }
+      },
+      {
+        $unwind: '$goodDetails'
+      },
+      {
+        $project: {
+          id: '$_id',
+          _id: 0,
+          productId: '$goodDetails._id',
+          name: '$goodDetails.name',
+          category: '$goodDetails.categories',
+          stock: '$goodDetails.qty',
+          costPrice: '$goodDetails.costPrice',
+          qtySold: 1,
+          revenue: 1
+        }
+      },
+      {
+        $sort: { qtySold: -1 } // Sorting by quantity sold in descending order
+      },
+      {
+        $limit: 10
+      }
+    ]);
+
+    return goods;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Failed to get top ten selling goods');
+  }
+}
+async function getMostValuableAndProfitableProducts(before?: Date, after?: Date) {
+  try {
+    const matchStage: any = {'order.status': { $in: ['paid', 'pending'] }};
+    if (before && after) {
+      matchStage['order.createdAt'] = { $gte: after, $lte: before };
+    } else if (before) {
+      matchStage['order.createdAt'] = { $lte: before };
+    } else if (after) {
+      matchStage['order.createdAt'] = { $gte: after };
+    }
+
+    const products = await OrderItemModel.aggregate([
+      {
+        $lookup: {
+          from: OrderModel.collection.name,
+          localField: 'orderId',
+          foreignField: '_id',
+          as: 'order'
+        }
+      },
+      {
+        $unwind: '$order'
+      },
+      {
+        $match: matchStage
+      },
+      {
+        $group: {
+          _id: '$goodId',
+          qtySold: { $sum: '$qty' },
+          revenue: { $sum: { $multiply: ['$qty', '$sellingPrice'] } },
+          cost: { $sum: { $multiply: ['$qty', '$costPrice'] } },
+          orderCount: { $sum: 1 }
+        }
+      },
+      {
+        $lookup: {
+          from: GoodModel.collection.name,
+          localField: '_id',
+          foreignField: '_id',
+          as: 'productDetails'
+        }
+      },
+      {
+        $unwind: '$productDetails'
+      },
+      {
+        $project: {
+          name: '$productDetails.name',
+          id: '$_id',
+          qtySold: 1,
+          revenue: 1,
+          cost: 1,
+          profit: { $subtract: ['$revenue', '$cost'] },
+          orderCount: 1
+        }
+      },
+      {
+        $project: {
+          name: 1,
+          id: 1,
+          qtySold: 1,
+          revenue: 1,
+          cost: 1,
+          profit: 1,
+          profitPercentage: {
+            $divide: ['$profit', '$cost'] 
+          },
+          orderCount: 1
+        }
+      },
+      {
+        $facet: {
+          mvp: [
+            { $sort: { revenue: -1 } },
+            { $limit: 1 }
+          ],
+          mpp: [
+            { $sort: { profitPercentage: -1 } },
+            { $limit: 1 }
+          ]
+        }
+      }
+    ]);
+
+    const result = {
+      mvp: products[0].mvp[0] || null,
+      mpp: products[0].mpp[0] || null
+    };
+
+    return result;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Failed to get the most valuable and profitable products');
+  }
+}
+
+async function recentActions(before?: Date, after?: Date) {
+  let startDate, endDate;
+
+  if (before && after) {
+    startDate = new Date(after);
+    endDate = new Date(before);
+  } else {
+    endDate = new Date();
+    startDate = new Date(endDate);
+    startDate.setDate(startDate.getDate() - 3);
+  }
+
+  startDate.setHours(0, 0, 0, 0);
+  endDate.setHours(23, 59, 59, 999);
+
+  try {
+    const newBuyers = await BuyerModel.find({
+      createdAt: { $gte: startDate, $lte: endDate }
+    }).lean();
+    const buyersWithType = newBuyers.map(buyer => ({
+      ...buyer,
+      type: 'buyer'
+    }));
+    const newOrders = await OrderModel.find({
+      createdAt: { $gte: startDate, $lte: endDate }
+    }).lean();
+    const ordersWithType = newOrders.map(order => ({
+      ...order,
+      type: 'order'
+    }));
+    const combinedResults = [...buyersWithType, ...ordersWithType]
+      .sort((a: any, b: any) => b.createdAt - a.createdAt);
+
+    return combinedResults;
+  } catch (error) {
+    console.error('Error fetching recent buyers and orders:', error);
+    throw error;
+  }
+}
 const InsightsDAO = {
   revenueByBuyer,
   revenueByGood,
   revenueByPeriod,
   buyerRevenueByPeriod,
+  getTopTenOverdueOrders,
+  getTopTenSellingGoods,
+  getMostValuableAndProfitableProducts,
+  recentActions
 };
+
 
 export default InsightsDAO;

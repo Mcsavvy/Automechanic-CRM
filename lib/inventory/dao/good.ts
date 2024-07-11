@@ -64,7 +64,7 @@ async function getGoods({
     const query = filters ? filters : {};
     const totalDocs = await GoodModel.countDocuments(query).exec();
     const totalPages = Math.ceil(totalDocs / limit);
-    if (page > totalPages) {
+    if (page > 1 && page > totalPages) {
         throw new Error("Page not found");
     }
     const skip = (page - 1) * limit;

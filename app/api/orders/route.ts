@@ -3,7 +3,7 @@ import permissionRequired from "@/lib/decorators/permission";
 import { Permission } from "@/lib/permissions/base";
 import { IOrderDocument } from "@/lib/inventory/models/order";
 import qs from "qs";
-import { Order, OrderStatus, PaymentMethod, OrderSort } from "@/lib/@types/order";
+import { Order, OrderStatus, PaymentMethod, OrderSort, NewOrder } from "@/lib/@types/order";
 import { FilterQuery } from "mongoose";
 import OrderDAO from "@/lib/inventory/dao/order";
 
@@ -83,4 +83,13 @@ export const GET = permissionRequired(Permission.AllowAny())(async function (
     limit: limit,
   });
   return NextResponse.json(response);
+});
+
+
+export const POST = permissionRequired(Permission.AllowAny())(async function (
+  req: NextRequest
+) {
+  const order = await req.json() as NewOrder;
+  const response = await OrderDAO.addOrder({...order, staff: this.user});
+  return NextResponse.json(response, { status: 201 });
 });

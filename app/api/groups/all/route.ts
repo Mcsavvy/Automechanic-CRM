@@ -20,6 +20,7 @@ export const GET = permissionRequired(Permission.AllowAny())(async function (
     id: group.id,
     name: group.name,
     permissions: group.permissions,
+    description: group.description,
     isMember: group.hasMember(user.id),
   }));
   return NextResponse.json(response);

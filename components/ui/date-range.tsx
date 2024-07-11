@@ -36,6 +36,8 @@ interface DateRangeProps
   defaultValue?: [Date, Date];
   minState: [Date | null, (value: Date | null) => void];
   maxState: [Date | null, (value: Date | null) => void];
+  /**a label to use when max is null */
+  absentMaxLabel?: string;
   presetsLabel?: string;
   presets?: DateRangePreset[];
   handleApply: () => void;
@@ -48,6 +50,7 @@ export default function DateRangeFilter({
   min,
   minState,
   maxState,
+  absentMaxLabel = "Present",
   presets,
   presetsLabel,
   handleApply,
@@ -150,14 +153,10 @@ export default function DateRangeFilter({
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
               {date?.from ? (
-                date.to ? (
-                  <>
-                    {format(date.from, "LLL dd, y")} -{" "}
-                    {format(date.to, "LLL dd, y")}
-                  </>
-                ) : (
-                  format(date.from, "LLL dd, y")
-                )
+                <>
+                {format(date.from, "LLL dd, y")} -{" "}
+                {(date.to && format(date.to, "LLL dd, y")) || absentMaxLabel}
+                </>
               ) : (
                 <span>{label}</span>
               )}

@@ -26,6 +26,10 @@ export type GoodFilter = {
     category?: string;
     status?: "in-stock" | "low-stock" | "out-of-stock";
     query?: string;
+    qty?: {
+        gte?: number;
+        lte?: number;
+    };
 };
 
 export type GoodState = {
@@ -200,6 +204,8 @@ export const getGoods = async (
         filter.category && queryParams.append("c", filter.category);
         filter.status && queryParams.append("s", filter.status);
         filter.query && queryParams.append("q", filter.query);
+        filter.qty?.gte && queryParams.append("qty[gte]", filter.qty.gte.toString());
+        filter.qty?.lte && queryParams.append("qty[lte]", filter.qty.lte.toString());
     }
     try {
         const response = await axios.get(

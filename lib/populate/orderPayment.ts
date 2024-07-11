@@ -3,6 +3,7 @@ import OrderPaymentModel from "../inventory/models/orderPayment";
 import { paymentMethodChoices } from "../@types/order";
 import { choice, randint } from "../utils";
 import User from "../common/models/user";
+import OrderPaymentDAO from "../inventory/dao/orderPayment";
 
 export default async function populateOrderPayments(
   numOrders: number,
@@ -41,7 +42,7 @@ export default async function populateOrderPayments(
         },
       },
     },
-    { $project: { amountDue: 1, discount: 1, amountPaid: 1 } },
+    { $project: { amountDue: 1, discount: 1, amountPaid: 1, buyerId: 1 } },
   ])
     .limit(numOrders)
     .exec();
@@ -60,13 +61,12 @@ export default async function populateOrderPayments(
       }
       let amount = randint(due * 0.1, due * 1.9);
       amount = Math.min(amount, due);
-      const payment = new OrderPaymentModel({
+      const payment = await OrderPaymentDAO.createOrderPayment(order, {
         amount,
         paymentMethod: choice(paymentMethodChoices),
-        orderId: order._id,
-        confirmedBy: choice(userIds),
+        confirmedBy: choice(userIds).toHexString(),
+        customer: order.buyerId.toHexString(),
       });
-      await payment.save();
       amountPaid += amount;
       orderPayments.push(payment);
     }
