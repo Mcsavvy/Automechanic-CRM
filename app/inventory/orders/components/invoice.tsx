@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import {
   formatInvoiceNumber,
-  formatCurrencyShort,
   formatMoney,
   formatDate,
   cycle
@@ -218,65 +217,3 @@ const Invoice: FC<Order> = (props) => {
   );
 };
 export default Invoice;
-
-
-`
-<ul>
-              <li>
-                <h3 className="font-semibold font-rambla">Cash</h3>
-                <ul className="list-disc px-3">
-                  <li className="text-sm">
-                    Ensure you obtain a receipt for each cash transaction you
-                    make at our office
-                  </li>
-                  <li className="text-sm">
-                    Ensure the recepit is also signed by the concerned staff
-                  </li>
-                </ul>
-              </li>
-              <li>
-                <h3 className="font-semibold font-rambla">Cheque</h3>
-                <ul className="list-disc px-3">
-                  <li className="text-sm">
-                    All cheques must have a validity window of at most two weeks
-                    and at least two weeks
-                  </li>
-                  <li className="text-sm">
-                    Expired, forged or dishonored cheques will not be accepted
-                  </li>
-                </ul>
-              </li>
-              <li>
-                <h3 className="font-semibold font-rambla">Bank</h3>
-                <p>
-                  <span className="font-semibold font-nunito text-[13px]">
-                    Acc No:{" "}
-                  </span>
-                  2034562012
-                </p>
-                <p>
-                  <span className="font-semibold font-nunito text-[13px]">
-                    Bank:{" "}
-                  </span>
-                  First Bank Nigeria
-                </p>
-                <ul className="list-disc px-3">
-                  <li className="text-sm">
-                    Ensure all transactions are successful and follow up by
-                    contacting the concerned staff for immediate processing
-                  </li>
-                  <li className="text-sm">
-                    We will not take liability for any failed
-                    transactions/transfers
-                  </li>
-                </ul>
-              </li>
-              <li>
-                <h3 className="font-semibold font-rambla">Voucher</h3>
-                <ul className="list-disc px-3">
-                  <li className="text-sm">
-                    Expired, fake or forged vouchers will not be honored
-                  </li>
-                </ul>
-              </li>
-            </ul>`;
