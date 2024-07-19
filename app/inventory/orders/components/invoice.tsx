@@ -10,7 +10,7 @@ import {
   formatInvoiceNumber,
   formatMoney,
   formatDate,
-  cycle
+  cycle,
 } from "@/lib/utils";
 
 const Invoice: FC<Order> = (props) => {
@@ -42,7 +42,11 @@ const Invoice: FC<Order> = (props) => {
           heightLeft -= pageHeight;
         }
 
-        pdf.save(`invoice-${props.orderNo}-for-${props.buyer.name}.pdf`);
+        pdf.save(
+          `Invoice ${formatInvoiceNumber(props.orderNo)} For ${
+            props.buyer.name
+          }.pdf`
+        );
       });
     }
   };
