@@ -1,7 +1,7 @@
 import OrderDAO from "@/lib/inventory/dao/order";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { MoveLeft } from "lucide-react";
+import { MoveLeft, ReceiptIcon, ReceiptText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Order } from "@/lib/@types/order";
 import { Pen, Trash, Mail, Phone } from "lucide-react";
@@ -12,11 +12,50 @@ import OrderItemsTable from "./components/data-table";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import Invoice from "../components/invoice";
+import Receipt from "../components/receipt";
 
 export const metadata = {
   title: "Order Details",
   description: "Viewing order details",
 };
+
+function OrderInvoice({ order }: { order: Order }) {
+  return ["pending", "ongoing"].includes(order.status) ? (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button
+          variant={"outline"}
+          className="flex items-center gap-1 text-[15px]"
+        >
+          <ReceiptText size={15} strokeWidth={1.5} />
+          <p className="hidden sm:block">Invoice</p>
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-[100vw] w-fit h-fit scrollbar-thin overflow-auto max-h-[100vh] p-2">
+        <Invoice {...order} />
+      </DialogContent>
+    </Dialog>
+  ) : null;
+}
+
+function OrderReceipt({ order }: { order: Order }) {
+  return ["paid"].includes(order.status) ? (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button
+          variant={"outline"}
+          className="flex items-center gap-1 text-[15px]"
+        >
+          <ReceiptIcon size={15} strokeWidth={1.5} />
+          <p className="hidden sm:block">Receipt</p>
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-[100vw] w-fit h-fit scrollbar-thin overflow-auto max-h-[100vh] p-2">
+        <Receipt {...order} />
+      </DialogContent>
+    </Dialog>
+  ) : null;
+}
 
 export default async function OrderDetails({
   params,
@@ -68,14 +107,8 @@ export default async function OrderDetails({
               {["pending"].includes(order.status) && (
                 <Button variant={"outline"}>Edit Order</Button>
               )}
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant={"outline"}>View Invoice</Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-[100vw] w-fit h-fit scrollbar-thin overflow-auto max-h-[100vh] p-2">
-                  <Invoice {...order} />
-                </DialogContent>
-              </Dialog>
+              <OrderInvoice order={order} />
+              <OrderReceipt order={order} />
             </div>
           </div>
         </div>
