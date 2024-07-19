@@ -193,7 +193,7 @@ const Invoice: FC<Order> = (props) => {
               our office
             </li>
             <li className="list-disc text-[8px]">
-              Ensure the recepit is also signed by the concerned staff
+              Ensure the receipt is also signed by the concerned staff
             </li>
             <li className="list-disc text-[8px]">
               All cheques must have a validity window of at most two weeks and
