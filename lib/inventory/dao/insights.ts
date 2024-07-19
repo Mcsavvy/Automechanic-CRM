@@ -441,7 +441,10 @@ async function getTopTenSellingGoods(before?: Date, after?: Date): Promise<TopSe
       }
     ]);
 
-    return goods;
+    return goods.map((good: any) => ({
+      ...good,
+      productId: good.productId.toString(),
+    })) as unknown as TopSellingGood[];
   } catch (error) {
     console.error(error);
     throw new Error('Failed to get top ten selling goods');

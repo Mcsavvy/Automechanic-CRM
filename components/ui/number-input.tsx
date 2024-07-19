@@ -13,19 +13,19 @@ interface NumberInputProps
 }
 
 const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
-  ({ prependSymbol = false, symbol, className, ...props }, ref) => {
+  ({ prependSymbol = false, symbol, className, classNames, ...props }, ref) => {
     const isFocused = useRef(false);
     props.onChange = props.onChange || (() => {});
-    props.classNames = props.classNames || {};
+    classNames = classNames || {};
     const displaySymbol = symbol ? true : false;
     const symbolClass = cn(
       "bg-gray-200 text-black text-sm p-2 rounded-l-md border border-input",
       props.disabled && "opacity-50 cursor-not-allowed",
-      props.classNames.symbol
+      classNames.symbol
     );
     const containerClass = cn(
       "flex items-center",
-      props.classNames.container
+      classNames.container
     );
     const inputClass = cn(
       "w-full border border-input rounded-md p-2 disabled:cursor-not-allowed disabled:opacity-50 text-sm focus:outline-none focus:border-input",
