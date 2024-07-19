@@ -22,7 +22,7 @@ import React, { useEffect } from "react";
 import { formatMoney } from "@/lib/utils";
 
 function goodsSearch(query: string, callback: (...args: [Good[]]) => void) {
-  getGoods(1, 10, { query, qty: {gte: 1} }).then(({ goods }) => {
+  getGoods(1, 10, { query, qty: { gte: 1 } }).then(({ goods }) => {
     callback(
       goods.map((good) => ({
         name: good.name,
@@ -35,9 +35,12 @@ function goodsSearch(query: string, callback: (...args: [Good[]]) => void) {
 }
 const debouncedGoodsSearch = debounce(goodsSearch, 300);
 
-function customersSearch(query: string, callback: (...args: [Buyer[]]) => void) {
+function customersSearch(
+  query: string,
+  callback: (...args: [Buyer[]]) => void
+) {
   fetchBuyers(1, 10, { search: query }).then(({ buyers }) => {
-    callback(buyers)
+    callback(buyers);
   });
 }
 
@@ -90,11 +93,16 @@ const Item: React.FC<
           getOptionValue={(option) => option.id}
           getOptionLabel={(option) => option.name}
           classNames={{ menuList: () => "scrollbar-thin text-sm" }}
-          isOptionDisabled={(option) => items.some((item) => item.id === option.id)}
+          isOptionDisabled={(option) =>
+            items.some((item) => item.id === option.id)
+          }
           maxMenuHeight={150}
           styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
           noOptionsMessage={() => "No item found"}
         />
+      </TableCell>
+      <TableCell className="bg-neu-1 w-full align-middle p-2">
+        {formatMoney(costPrice)}
       </TableCell>
       <TableCell className="bg-neu-1 w-full align-top p-2">
         <NumberInput
@@ -154,7 +162,8 @@ export default function InvoiceItems({
         id: good.id,
         name: good.name,
         quantity,
-        cost: good.costPrice,
+        // add 10% to the cost price
+        cost: good.costPrice + good.costPrice * 0.1,
         qtyInStock: good.qtyInStock,
         costPrice: good.costPrice,
       };
@@ -171,7 +180,14 @@ export default function InvoiceItems({
   }
 
   function addNewItem(good: Good) {
-    setItems([...items, { ...good, quantity: 1, cost: good.costPrice }]);
+    setItems([
+      ...items,
+      {
+        ...good,
+        quantity: 1,
+        cost: good.costPrice + good.costPrice * 0.1,
+      },
+    ]);
   }
 
   return (
@@ -215,6 +231,9 @@ export default function InvoiceItems({
             <TableRow>
               <TableHead className="sticky top-0 bg-neu-1 min-w-60 font-bold">
                 Item
+              </TableHead>
+              <TableHead className="sticky top-0 bg-neu-1 min-w-[100px] font-bold text-center">
+                Cost
               </TableHead>
               <TableHead className="sticky top-0 bg-neu-1 min-w-[100px] font-bold text-center">
                 QTY
