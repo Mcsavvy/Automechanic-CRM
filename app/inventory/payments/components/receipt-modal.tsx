@@ -76,7 +76,7 @@ export default function PaymentReceiptModal() {
         parent: "flex flex-col items-baseline overflow-auto justify-center",
         title: "text-lg text-black",
         modal:
-          "flex w-[100vw] scrollbar-thin overflow-auto h-[100vh] p-2",
+          "w-[100vw] scrollbar-thin overflow-auto h-[100vh] p-2",
         container: "mx-auto"
       }}
     >
