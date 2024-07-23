@@ -52,6 +52,11 @@ const sortParamNames: Record<keyof PaymentSort, string> = {
   createdAt: "sort[createdAt]",
 };
 
+export async function fetchPayment(id: string): Promise<Payment> {
+  const { data } = await axios.get<Payment>(`${endpoint}/${id}`);
+  return data;
+}
+
 export async function fetchPayments(
   filter: PaymentFilter,
   sort: PaymentSort,
@@ -63,7 +68,7 @@ export async function fetchPayments(
     if (value) {
       params.append(
         filterParamNames[key as keyof PaymentFilter],
-        (value instanceof Date ? value.toISOString() : value.toString())
+        value instanceof Date ? value.toISOString() : value.toString()
       );
     }
   });
@@ -109,7 +114,7 @@ export const createPaymentStore = (state: PaymentState = initialPaymentState) =>
         }
         fetchPayments(state.filter, state.sort, page, state.limit).then(
           (data) => {
-            set({ ...data, page, status: "loaded"});
+            set({ ...data, page, status: "loaded" });
           }
         );
         return { status: "loading" };
@@ -134,7 +139,7 @@ export const createPaymentStore = (state: PaymentState = initialPaymentState) =>
     clearFilter: () =>
       set((state) => {
         fetchPayments({}, state.sort, 1, state.limit).then((data) => {
-          set({ ...data, filter: {}, status: "loaded"});
+          set({ ...data, filter: {}, status: "loaded" });
         });
         return { status: "loading" };
       }),
