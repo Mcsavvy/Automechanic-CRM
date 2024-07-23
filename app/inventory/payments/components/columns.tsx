@@ -15,6 +15,7 @@ import PaymentMethod from "../../orders/components/payment-method";
 import BaseSortableHeader from "@/components/ui/sortable-header";
 import { Button } from "@/components/ui/button";
 import { usePaymentFilter } from "@/lib/hooks/payments";
+import PaymentActions from "./actions";
 
 function SortableHeader({
   name,
@@ -100,7 +101,7 @@ function CustomerCell({ customer }: { customer: Payment["customer"] }) {
 export const columns: ColumnDef<Payment>[] = [
   {
     id: "invoice",
-    header: () => <span className="font-bold">Invoice No.</span>,
+    header: () => <span className="font-bold">Invoice</span>,
     cell: ({ row }) => (
       <Link href={`/inventory/orders/${row.original.order.id}`}>
         #{`${row.original.order.orderNo}`.padStart(5, "0")}
@@ -162,9 +163,16 @@ export const columns: ColumnDef<Payment>[] = [
   },
   {
     id: "paymentMethod",
-    header: () => <span className="font-bold">Payment Method</span>,
+    header: () => <span className="font-bold">Mode</span>,
     cell: ({ row }) => (
       <PaymentMethod paymentMethod={row.original.paymentMethod} />
     ),
+  },
+  {
+    id: "actions",
+    enableHiding: false,
+    cell: ({ row }) => {
+      return <PaymentActions {...row.original} />;
+    },
   },
 ];
