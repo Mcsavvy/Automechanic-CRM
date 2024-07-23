@@ -43,7 +43,7 @@ const Modal: FC<ModalProps> = ({
     >
       <div
         className={cn(
-          "relative p-4 w-full max-w-md h-full max-h-md",
+          "relative p-4 w-full h-full",
           classNames?.parent
         )}
       >

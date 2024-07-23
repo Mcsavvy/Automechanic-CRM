@@ -68,10 +68,16 @@ export default function PaymentReceiptModal() {
     <Modal
       id={modalId}
       title={title}
-      onClose={() => setPaymentId("")}
+      onClose={() => {
+        setPaymentId("");
+        setPayment(null);
+      }}
       classNames={{
-        parent: "flex flex-col items-center justify-center",
+        parent: "flex flex-col items-baseline overflow-auto justify-center",
         title: "text-lg text-black",
+        modal:
+          "flex w-[100vw] scrollbar-thin overflow-auto h-[100vh] p-2",
+        container: "mx-auto"
       }}
     >
       <div
