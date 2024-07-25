@@ -1,6 +1,6 @@
 import axios from "axios";
 import { createStore } from "zustand/vanilla";
-import { PaginatedPayments, Payment, PaymentSort } from "../@types/payments";
+import { NewPayment, PaginatedPayments, Payment, PaymentSort } from "../@types/payments";
 import { PaymentMethod } from "../@types/order";
 
 const endpoint = "/api/payments";
@@ -54,6 +54,11 @@ const sortParamNames: Record<keyof PaymentSort, string> = {
 
 export async function fetchPayment(id: string): Promise<Payment> {
   const { data } = await axios.get<Payment>(`${endpoint}/${id}`);
+  return data;
+}
+
+export async function createPayment(payment: Omit<NewPayment, "confirmedBy">): Promise<Payment> {
+  const { data } = await axios.post<Payment>(endpoint, payment);
   return data;
 }
 
