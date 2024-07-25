@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
 import Log from '../models/log';
 
-interface logParams {
-    description: string;
+export interface logParams {
+		display: string[];
     target: string;
     details?: { [key: string]: any};
     targetId: mongoose.Types.ObjectId;

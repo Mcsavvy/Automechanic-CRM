@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 import { FilterQuery } from "mongoose";
 import BuyerDAO from "@/lib/inventory/dao/buyer";
 import { Buyer } from "@/lib/@types/buyer";
+import LogDAO, { logParams } from "@/lib/common/dao/log";
 
 export const GET = permissionRequired(Permission.AllowAny())(async function (
   req
@@ -38,6 +39,14 @@ export const POST = permissionRequired(Permission.AllowAny())(async function (
   req
 ) {
   const body = (await req.json()) as Buyer;
-  const buyer = await BuyerDAO.addBuyer(body);
+
+  const buyer =  (await BuyerDAO.addBuyer(body)) as Buyer;
+  const logDetails: logParams = {
+    display: [this.user.fullName, buyer.name], 
+    targetId: buyer.id,
+    loggerId: this.user.id,
+    target: "Buyer",
+  }
+  await LogDAO.logCreation(logDetails);
   return NextResponse.json(buyer, { status: 201 });
 });

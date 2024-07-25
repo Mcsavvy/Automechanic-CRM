@@ -46,7 +46,7 @@ export default function Home() {
                     </div>
                 }
                 {tab == "recent" &&
-                    <RecentActions {...{ before, after }}/>
+                    <RecentActions />
                 }
             </div>
         </div>

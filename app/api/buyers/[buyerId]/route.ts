@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 import BuyerDAO from "@/lib/inventory/dao/buyer";
 import mongoose from "mongoose";
 import BuyerModel from "@/lib/inventory/models/buyer";
+import LogDAO, { logParams } from "@/lib/common/dao/log";
 
 type UpdateBuyerBody = Partial<Buyer>;
 
@@ -35,14 +36,24 @@ export const PUT = permissionRequired(Permission.AllowAny())(async function (
       { status: 400 }
     );
   }
-
-  const buyer = await BuyerModel.findOneAndUpdate(
-    { _id: mongoose.Types.ObjectId.createFromHexString(params.buyerId) },
-    body
-  );
+  const buyer = await BuyerModel.findById(mongoose.Types.ObjectId.createFromHexString(params.buyerId));
   if (!buyer) {
     return NextResponse.json({ message: "Buyer not found" }, { status: 404 });
   }
+  const details = {}
+  for (const key of Object.keys(body)) {
+    details[key] = buyer[key];
+    buyer[key] = body[key];
+  }
+  buyer.save();
+  const logDetails: logParams = {
+    display: [this.user.fullName, buyer.name], 
+    targetId: buyer.id,
+    loggerId: this.user.id,
+    target: "Buyer",
+    details
+  }
+  await LogDAO.logModification(logDetails)
   return NextResponse.json(buyer);
 });
 
