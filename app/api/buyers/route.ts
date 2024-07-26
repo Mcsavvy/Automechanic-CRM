@@ -2,7 +2,7 @@ import { Permission } from "@/lib/permissions/base";
 import { IGoodDocument } from "@/lib/inventory/models/good";
 import permissionRequired from "@/lib/decorators/permission";
 import { NextResponse } from "next/server";
-import { FilterQuery } from "mongoose";
+import { FilterQuery, Types } from "mongoose";
 import BuyerDAO from "@/lib/inventory/dao/buyer";
 import { Buyer } from "@/lib/@types/buyer";
 import LogDAO, { logParams } from "@/lib/common/dao/log";
@@ -42,9 +42,9 @@ export const POST = permissionRequired(Permission.AllowAny())(async function (
 
   const buyer =  (await BuyerDAO.addBuyer(body)) as Buyer;
   const logDetails: logParams = {
-    display: [this.user.fullName, buyer.name], 
-    targetId: buyer.id,
-    loggerId: this.user.id,
+    display: [this.user.fullName(), buyer.name], 
+    targetId: Types.ObjectId.createFromHexString(buyer.id),
+    loggerId: Types.ObjectId.createFromHexString(this.user.id),
     target: "Buyer",
   }
   await LogDAO.logCreation(logDetails);
