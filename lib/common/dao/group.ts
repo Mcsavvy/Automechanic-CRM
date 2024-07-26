@@ -47,6 +47,7 @@ async function addMember(groupId: ObjectOrId<IGroupDocument>, userId: ObjectOrId
     }
     group.members_ids.push(user._id);
     await group.save();
+    return { group, user };
 }
 
 async function removeMember(groupId: ObjectOrId<IGroupDocument>, userId: ObjectOrId<IUserDocument>) {
@@ -63,6 +64,7 @@ async function removeMember(groupId: ObjectOrId<IGroupDocument>, userId: ObjectO
     }
     group.members_ids = group.members_ids.filter(id => !id.equals(user._id));
     await group.save();
+    return { group, user }
 }
 
 async function setPermission(groupId: ObjectOrId<IGroupDocument>, ...permissions: {scope: string, actions: string[] | boolean, merge: boolean}[]) {

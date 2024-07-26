@@ -2,24 +2,38 @@ import { NextResponse, NextRequest } from "next/server";
 import permissionRequired from "@/lib/decorators/permission";
 import { Permission } from "@/lib/permissions/base";
 import GroupDAO from "@/lib/common/dao/group";
-import mongoose from 'mongoose';
+import LogDAO, { logParams } from "@/lib/common/dao/log";
+import mongoose, { Types } from "mongoose";
+import { getDocument } from "@/lib/common/dao/base";
 
 interface GroupChange {
-    staffId: string;
+  staffId: string;
 }
 export const POST = permissionRequired(Permission.AllowAny())(async function (
-    req: NextRequest,
-    { params }: { params: { groupId: string } }
+  req: NextRequest,
+  { params }: { params: { groupId: string } }
 ) {
-    const groupId = params.groupId
-    const { staffId } = (await req.json()) as GroupChange;
-    if (!staffId) {
-        return NextResponse.json({ message: "Staff ID is required" }, { status: 400 });
-    }
-    await GroupDAO.removeMember(
-            mongoose.Types.ObjectId.createFromHexString(groupId),
-            mongoose.Types.ObjectId.createFromHexString(staffId)
+  const groupId = params.groupId;
+  const { staffId } = (await req.json()) as GroupChange;
+  if (!staffId) {
+    return NextResponse.json(
+      { message: "Staff ID is required" },
+      { status: 400 }
     );
-    return NextResponse.json({"message": "Member removed successfully"});
-
+  }
+  const { group, user } = await GroupDAO.removeMember(
+    mongoose.Types.ObjectId.createFromHexString(groupId),
+    mongoose.Types.ObjectId.createFromHexString(staffId)
+  );
+  const logDetails: logParams = {
+    display: [this.user.fullName(), user.fullName(), group.name],
+    targetId: Types.ObjectId.createFromHexString(groupId),
+    loggerId: Types.ObjectId.createFromHexString(this.user.id),
+    target: "Group",
+    details: {
+      removed: user.id,
+    },
+  };
+  await LogDAO.logModification(logDetails);
+  return NextResponse.json({ message: "Member removed successfully" });
 });
