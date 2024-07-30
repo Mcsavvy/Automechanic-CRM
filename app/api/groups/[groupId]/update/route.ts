@@ -21,13 +21,15 @@ export const POST = permissionRequired(Permission.AllowAny())(async function (
         { new: false }
       );
     if (!group) {
+      return NextResponse.json({ message: "Group not found" }, { status: 404 });
+    }
     const logDetails: logParams = {
       display: [this.user.fullName(), group.name],
       targetId: Types.ObjectId.createFromHexString(params.groupId),
       loggerId: Types.ObjectId.createFromHexString(this.user.id),
       target: "Group",
       details: {
-        updated: group.id,
+        action_type: "updated",
         name: group.name,
         permissions: group.permissions,
         description: group.description,

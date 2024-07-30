@@ -31,7 +31,7 @@ export const POST = permissionRequired(Permission.AllowAny())(async function (
     loggerId: Types.ObjectId.createFromHexString(this.user.id),
     target: "Group",
     details: {
-      removed: user.id,
+      action_type: "removed"
     },
   };
   await LogDAO.logModification(logDetails);

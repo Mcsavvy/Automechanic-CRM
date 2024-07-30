@@ -9,7 +9,6 @@ import {
     validatePassword,
     validatePhoneNumber,
 } from "../validation";
-import LogDAO from "./log";
 
 interface createUserParams {
     firstName: string;
@@ -64,12 +63,6 @@ async function addUser({
         password: hashedPassword,
     });
     await user.save();
-    LogDAO.logCreation({
-        description: `User ${user.fullName()} created`,
-        target: "User",
-        targetId: user._id,
-        loggerId: user._id,
-    });
     return user;
 }
 
@@ -169,13 +162,6 @@ async function updateUser(
 
     Object.assign(user, payload);
     await user.save();
-    LogDAO.logModification({
-        description: `User ${user.fullName()} updated`,
-        target: "User",
-        targetId: user._id,
-        loggerId: user._id,
-        details,
-    });
     return user;
 }
 
@@ -188,12 +174,6 @@ async function deleteUser(id: mongoose.Types.ObjectId) {
     if (!user) {
         throw new Error("User not found");
     }
-    LogDAO.logDeletion({
-        description: `User ${user.fullName()} deleted`,
-        target: "User",
-        targetId: user._id,
-        loggerId: user._id,
-    });
     return user;
 }
 
