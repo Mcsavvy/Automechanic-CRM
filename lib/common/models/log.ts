@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import { getBaseSchema, IBaseDocument, defineModel } from './base';
 import UserModel from './user';
 
-interface ILogDocument extends IBaseDocument {
+export interface ILogDocument extends IBaseDocument {
   display: string[];
   action: 'create' | 'update' | 'delete'; // The action carried out
   target: string; // The model affected

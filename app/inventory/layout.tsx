@@ -92,27 +92,27 @@ const sections: Section[] = [
                     pathname.startsWith("/inventory/buyers"),
                 link: "/inventory/buyers",
             },
-            {
-                icon: <TrendingUp size={20} strokeWidth={1.5} />,
-                content: "Sales Trends",
-                getIsActive: (pathname) =>
-                    pathname.startsWith("/inventory/sales-trends"),
-                link: "/inventory/sales-trends",
-            },
-            {
-                icon: <CandlestickChart size={20} strokeWidth={1.5} />,
-                content: "Profit & Loss",
-                getIsActive: (pathname) =>
-                    pathname.startsWith("/inventory/profit-loss"),
-                link: "/inventory/profit-loss",
-            },
-            {
-                icon: <AreaChart size={20} strokeWidth={1.5} />,
-                content: "Revenue Analysis",
-                getIsActive: (pathname) =>
-                    pathname.startsWith("/inventory/revenue-analysis"),
-                link: "/inventory/revenue-analysis",
-            }
+            // {
+            //     icon: <TrendingUp size={20} strokeWidth={1.5} />,
+            //     content: "Sales Trends",
+            //     getIsActive: (pathname) =>
+            //         pathname.startsWith("/inventory/sales-trends"),
+            //     link: "/inventory/sales-trends",
+            // },
+            // {
+            //     icon: <CandlestickChart size={20} strokeWidth={1.5} />,
+            //     content: "Profit & Loss",
+            //     getIsActive: (pathname) =>
+            //         pathname.startsWith("/inventory/profit-loss"),
+            //     link: "/inventory/profit-loss",
+            // },
+            // {
+            //     icon: <AreaChart size={20} strokeWidth={1.5} />,
+            //     content: "Revenue Analysis",
+            //     getIsActive: (pathname) =>
+            //         pathname.startsWith("/inventory/revenue-analysis"),
+            //     link: "/inventory/revenue-analysis",
+            // }
         ],
     },
     {
@@ -137,8 +137,8 @@ const sections: Section[] = [
                 icon: <Scroll size={20} strokeWidth={1.5} />,
                 content: "Activity Logs",
                 getIsActive: (pathname) =>
-                    pathname.startsWith("/activity-logs"),
-                link: "/activity-logs",
+                    pathname.startsWith("/inventory/logs"),
+                link: "/inventory/logs",
             }
 
 

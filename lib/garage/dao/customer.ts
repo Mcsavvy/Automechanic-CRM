@@ -31,12 +31,6 @@ async function addCustomer (userId: mongoose.Types.ObjectId, customerData: creat
         phone: validatePhoneNumber(phone),
     });
     await customer.save();
-    LogDAO.logCreation({
-        description: `Customer ${customer.email} created`,
-        target: "Customer",
-        targetId: customer._id,
-        loggerId: userId,
-    });
     return customer;
 
 }
@@ -88,13 +82,6 @@ async function updateCustomer (userId: mongoose.Types.ObjectId, customerId: mong
 
     Object.assign(customer, payload);
     await customer.save();
-    LogDAO.logModification({
-        description: `User ${customer.email} updated`,
-        target: "User",
-        targetId: customer._id,
-        loggerId: userId,
-        details,
-    });
     return customer;
 }
 
@@ -108,12 +95,6 @@ async function deleteCustomer (userId: mongoose.Types.ObjectId, id: mongoose.Typ
     if (!customer) {
         throw new Error("Customer not found");
     }
-    LogDAO.logDeletion({
-        description: `Customer ${customer.email} deleted`,
-        target: "Customer",
-        targetId: customer._id,
-        loggerId: userId,
-    });
     return customer;
 }
 

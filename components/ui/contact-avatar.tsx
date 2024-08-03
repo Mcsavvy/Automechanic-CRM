@@ -32,11 +32,12 @@ const getContrastColor = (hexColor: string) => {
 };
 
 interface AvatarProps {
-	name: string;
-	size: number;
+  name?: string;
+  size: number;
+  icon?: React.ElementType;
 }
-const ContactAvatar: FC<AvatarProps> = ({ name, size = 50 }) => {
-  const initials = getInitials(name);
+const ContactAvatar: FC<AvatarProps> = ({ name, size = 50, icon: Icon }) => {
+  const initials = name ? getInitials(name): '';
   const backgroundColor = getRandomColor();
   const textColor = getContrastColor(backgroundColor);
 
@@ -55,7 +56,7 @@ const ContactAvatar: FC<AvatarProps> = ({ name, size = 50 }) => {
         fontFamily: "Rambla",
       }}
     >
-      {initials}
+      {Icon ? <Icon size={24} strokeWidth={1.5} /> : initials}
     </div>
   );
 };
