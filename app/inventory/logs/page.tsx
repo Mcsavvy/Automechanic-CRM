@@ -40,8 +40,8 @@ const Logs: React.FC = () => {
                     <ul>
                         {
                             Object.keys(logs).map((date, index) => (
-                                <li key={index}>
-                                    <h1 className="text-lg font-bold">{date}</h1>
+                                <li key={index} className="flex flex-col gap-2 items-start justify-start">
+                                    <h1 className="text-lg font-bold text-acc-7">{date}</h1>
                                     <ul className='flex flex-col items-start justify-start gap-2'>
                                         {
                                             logs[date].map((log: Log, index: number) => (
