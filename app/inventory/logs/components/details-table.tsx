@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC } from 'react';
 
 const DetailsTable: FC<{ details: any }> = ({ details }) => {
   return (
@@ -9,7 +9,7 @@ const DetailsTable: FC<{ details: any }> = ({ details }) => {
           {typeof value === 'object' && value !== null ? (
             <DetailsTable details={value} />
           ) : (
-            <div className="ml-4">{value}</div>
+            <div className="ml-4">{value as string}</div>
           )}
         </div>
       ))}

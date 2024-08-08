@@ -80,7 +80,6 @@ const Roles = () => {
     const [scopes, setScopes] = useState<Scopes>(initialScopes)
     const [originalName, setOriginalName] = useState('');
     const [originalDescription, setOriginalDescription] = useState('');
-    const [originalScopes, setOriginalScopes] = useState<Scopes>(initialScopes);
     const [loading, setL] = useState(false)
     const handleScopeChange = (category: string, index: number | null = null) => {
         setScopes((prev) => {
@@ -145,7 +144,6 @@ const Roles = () => {
             setOriginalName(selectedGroup.name);
             setOriginalDescription(selectedGroup.description);
             const populatedScopes = populateScopes(selectedGroup.permissions);
-            setOriginalScopes(populatedScopes);
             setScopes(populatedScopes);
             setName(selectedGroup.name);
             setDescription(selectedGroup.description);
@@ -205,6 +203,11 @@ const Roles = () => {
             return err
         }
     }
+
+    const reset = () => {
+        setOriginalName(name);
+        setOriginalDescription(description);
+    }
     const handleSave = () => {
         if (!selectedGroup) return;
         const changes: Partial<Group> = {};
@@ -233,6 +236,10 @@ const Roles = () => {
 
         if (JSON.stringify(newPermissions) !== JSON.stringify(selectedGroup.permissions)) {
             changes.permissions = newPermissions;
+            setSelectedGroup(prevGroup => ({
+                ...prevGroup,
+                permissions: newPermissions
+            } as Group));
             hasChanges = true;
         }
 
@@ -245,15 +252,15 @@ const Roles = () => {
             updateGroup(selectedGroup.id, changes)
                 .then((data) => {
                     resolve(data);
-                    // Update original values after successful save
-                    setOriginalName(name);
-                    setOriginalDescription(description);
-                    setOriginalScopes(scopes);
+                    reset()
                 })
                 .catch((err) => {
                     reject(err.response.data);
                 })
-                .finally(() => setL(false));
+                .finally(() => {
+            reset()
+            setL(false)
+            });
         });
 
         toast.promise<UpdateResponse, UpdateResponse>(promise, {
@@ -330,7 +337,8 @@ const Roles = () => {
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
                                 placeholder='Admin description'
-                                className='w-full border border-neu-3 rounded-md resize-none p-3 max-h-[300px] focus:outline-none focus:border-pri-6'
+                                rows={7}
+                                className='w-full border border-neu-3 rounded-md resize-none p-3 h-[150px] focus:outline-none focus:border-pri-6'
                             ></textarea>
                         </div>
                         {renderCheckboxes()}

@@ -2,7 +2,7 @@ import { Permission } from "@/lib/permissions/base";
 import { ILogDocument } from "@/lib/common/models/log";
 import permissionRequired from "@/lib/decorators/permission";
 import { NextResponse } from "next/server";
-import { FilterQuery, Types } from "mongoose";
+import { FilterQuery, SortOrder, Types } from "mongoose";
 import LogDAO from "@/lib/common/dao/log";
 import qs from "qs";
 
@@ -19,6 +19,7 @@ interface LogQueryParams {
     t: string;
     t_id: string;
     l_id: string;
+    o: string;
 }
 export const GET = permissionRequired(Permission.AllowAny())(async function (
     req
@@ -28,6 +29,7 @@ export const GET = permissionRequired(Permission.AllowAny())(async function (
     const page = params.p ? parseInt(params.p as string) : 1;
     const before = params.b ? new Date(params.b) : undefined;
     const after = params.a ? new Date(params.a) : undefined;
+    const order = (params.o ? parseInt(params.o) : -1) as SortOrder;
     const target = params.t ? params.t : undefined;
     const targetId = params.t_id ? Types.ObjectId.createFromHexString(params.t_id) : undefined;
     const loggerId = params.l_id ? Types.ObjectId.createFromHexString(params.l_id) : undefined;
@@ -49,6 +51,6 @@ export const GET = permissionRequired(Permission.AllowAny())(async function (
         query.loggerId = loggerId;
     }
     
-    const results = await LogDAO.getLogs({ filters: query, page, limit });
+    const results = await LogDAO.getLogs({ filters: query, page, limit, order });
     return NextResponse.json(results);
 });

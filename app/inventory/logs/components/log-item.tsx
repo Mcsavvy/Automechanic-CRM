@@ -5,7 +5,7 @@ import { formatDateTime } from '@/lib/utils';
 import Log from '@/lib/@types/log'
 import ContactAvatar from '@/components/ui/contact-avatar'
 import DetailsTable from './details-table'
-const customMessages = {
+const customMessages: any = {
     Buyer: {
         create: [
             " landed a new buyer: ",
@@ -117,7 +117,7 @@ const customMessages = {
 const getRandomMessage = (messages: string[]) => {
     return messages[Math.floor(Math.random() * messages.length)];
 }
-const parseLog = (log: Log) => {
+const parseLog = (log: LogProps) => {
     const data: any = {}
     if (["Group", 'Staff'].includes(log.target) && log.action == "update") {
         data.message = getRandomMessage(customMessages[log.target][log.action][log.details['action_type']])
@@ -127,6 +127,7 @@ const parseLog = (log: Log) => {
     data.createdAt = log.createdAt
     data.target = log.target
     data.action = log.action
+    data.preview = log.preview
     if (log.details) {
         const { action_type, ...details } = log.details
         data.details = details
@@ -135,29 +136,38 @@ const parseLog = (log: Log) => {
     switch (log.target) {
         case 'Buyer': {
             data.avatar = { name: log.display[1] }
-            // data.link = 
+            data.link = `/inventory/buyers/${log.targetId}`
             break
         }
         case 'Staff': {
             data.avatar = { icon: UsersRound }
+            data.link = `/inventory/staffs/${log.targetId}`
             break
         }
         case 'Good': {
             data.avatar = { icon: Package }
+            data.link = `/inventory/products/${log.targetId}`
             break
         }
         case 'Group': {
             data.avatar = { icon: Fingerprint }
+            data.link = `/inventory/roles/${log.targetId}`
             break
         }
         case 'Order': {
             data.avatar = { icon: ReceiptText }
+            data.link = `/inventory/orders/${log.targetId}`
             break
         }
     }
     return data
 }
-const LogItem: FC<Log> = (log) => {
+interface LogProps extends Log {
+    preview: boolean;
+}
+
+
+const LogItem: FC<LogProps> = (log) => {
     const [item, setItem] = useState(parseLog(log))
     const [showMore, setSM] = useState(false)
     return (
@@ -168,17 +178,24 @@ const LogItem: FC<Log> = (log) => {
             </div>
             <div className="border-neu-3 p-3 py-2">
                 <h3 className="text-neu-7 text-sm">{formatDateTime(item.createdAt, "time")}</h3>
-                <Link href={`/inventory/customers/${log.id}`}>
-                    <h3 className=' cursor-pointer text-[20px] font-semibold text-primary capitalize'>{item.display[1]}</h3>
-                </Link>
                 <div className="flex flex-row gap-2">
-                    <span className="px-1 text-[12px] text-pri-3 border border-pri-3 lowercase">{item.action}</span>
-                    <span className="px-1 text-[12px] text-pri-3 border border-pri-3 lowercase">{item.target}</span>
-                    {item.action_type && <span className="px-1 text-[12px] text-pri-3 border border-pri-3 lowercase">{item.action_type}</span>}
+                    {
+                        item.preview && <>
+                            <span className="px-1 text-[12px] text-pri-3 border border-pri-3 lowercase">{item.action}</span>
+                            <span className="px-1 text-[12px] text-pri-3 border border-pri-3 lowercase">{item.target}</span>
+                            {item.action_type && <span className="px-1 text-[12px] text-pri-3 border border-pri-3 lowercase">{item.action_type}</span>}
+                        </>
+                    }
                 </div>
-                <p><span className="text-pri-6 font-normal">{item.display[0]}</span>{item.message}<span className="text-pri-6 font-semibold">{item.display[1]}</span></p>
+                <p><span className="text-pri-6 font-normal">{item.display[0]}</span>{item.message}
+                    {item.action == "delete" ?
+                        <span className="text-pri-6 font-semibold">{item.display[1]}</span>
+                        : <Link href={item.link}>
+                            <span className="text-pri-6 font-semibold">{item.display[1]}</span>
+                        </Link>}
+                </p>
                 {
-                    item.details &&
+                    item.details && item.preview &&
                     <>
                         <p className="text-[14px] cursor-pointer transition-scale mt-3 active:scale-99 text-neu-7 flex flex-row items-center justify-start gap-2" onClick={() => setSM(!showMore)}>
                             Details

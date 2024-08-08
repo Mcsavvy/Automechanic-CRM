@@ -17,15 +17,19 @@ interface ProductVal {
     revenue: number;
     orderCount: number;
     profitPercentage: number
-
 }
+
 const RecentActions: FC<Partial<DashboardProps>> = ({ before, after }) => {
     const [mvp, setMVP] = useState<ProductVal | null>(null)
     const [search, setS] = useState(false)
     const [mpp, setMPP] = useState<ProductVal | null>(null)
     const [clicked, setClicked] = useState(false)
     const windowWidth = useWindowWidth()
-
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
+    const endOfWeek = new Date(new Date(startOfWeek).setDate(startOfWeek.getDate() + 6));
+  
     const isLargeScreen = windowWidth > 768
     const router = useRouter();
     const ctab = [
@@ -140,7 +144,7 @@ const RecentActions: FC<Partial<DashboardProps>> = ({ before, after }) => {
                 }
             </div>
             <div className="flex flex-col gap-3 md:w-[60%] w-full">
-                <Recents {...{ before, after }} />
+                <Recents before={endOfWeek.toISOString()} after={startOfWeek.toISOString()} />
                 <Overdue />
             </div>
         </div>
