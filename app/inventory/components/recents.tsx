@@ -32,7 +32,7 @@ const Recents: FC<Partial<DashboardProps>> = ({ before, after }) => {
     }, [before, after]);
 
     return (
-        <div className="w-full h-[350px] rounded-md bg-white shadow-md overflow-y-auto flex flex-col gap-3 scrollbar-thin">
+        <div className="w-full h-[350px] grow rounded-md bg-white shadow-md overflow-y-auto flex flex-col gap-3 scrollbar-thin">
             <h3 className="w-full sticky top-0 bg-white text-lg text-pri-6 font-semibold font-quicksand pt-4 px-4">
                 Recent Actions
             </h3>

@@ -143,7 +143,7 @@ const RecentActions: FC<Partial<DashboardProps>> = ({ before, after }) => {
                 </>
                 }
             </div>
-            <div className="flex flex-col gap-3 md:w-[60%] w-full">
+            <div className="flex flex-col gap-3 md:w-[60%] w-full items-stretch">
                 <Recents before={endOfWeek.toISOString()} after={startOfWeek.toISOString()} />
                 <Overdue />
             </div>

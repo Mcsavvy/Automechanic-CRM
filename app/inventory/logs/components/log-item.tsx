@@ -174,7 +174,7 @@ const LogItem: FC<LogProps> = (log) => {
         <div className="flex flex-row gap-2 font-lato">
             <div className='flex flex-col items-center justify-start gap-2'>
                 <ContactAvatar {...item.avatar} size={40} />
-                <span className="w-[3px] grow bg-neu-3 rounded-md "></span>
+                <span className="w-[3px] grow bg-acc-6 rounded-md "></span>
             </div>
             <div className="border-neu-3 p-3 py-2">
                 <h3 className="text-neu-7 text-sm">{formatDateTime(item.createdAt, "time")}</h3>
