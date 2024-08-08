@@ -171,7 +171,7 @@ const LogItem: FC<LogProps> = (log) => {
     const [item, setItem] = useState(parseLog(log))
     const [showMore, setSM] = useState(false)
     return (
-        <div className="flex flex-row gap-2">
+        <div className="flex flex-row gap-2 font-lato">
             <div className='flex flex-col items-center justify-start gap-2'>
                 <ContactAvatar {...item.avatar} size={40} />
                 <span className="w-[3px] grow bg-neu-3 rounded-md "></span>
@@ -181,9 +181,9 @@ const LogItem: FC<LogProps> = (log) => {
                 <div className="flex flex-row gap-2">
                     {
                         item.preview && <>
-                            <span className="px-1 text-[12px] text-pri-3 border border-pri-3 lowercase">{item.action}</span>
-                            <span className="px-1 text-[12px] text-pri-3 border border-pri-3 lowercase">{item.target}</span>
-                            {item.action_type && <span className="px-1 text-[12px] text-pri-3 border border-pri-3 lowercase">{item.action_type}</span>}
+                            <span className="px-1 font-rambla text-[12px] text-pri-3 border border-pri-3 lowercase">{item.action}</span>
+                            <span className="px-1 font-rambla text-[12px] text-pri-3 border border-pri-3 lowercase">{item.target}</span>
+                            {item.action_type && <span className="px-1 font-rambla text-[12px] text-pri-3 border border-pri-3 lowercase">{item.action_type}</span>}
                         </>
                     }
                 </div>
