@@ -174,33 +174,11 @@ export default function DashboardLayout({
     }
 
 
-    useEffect(() => {
-        // if (!loggedIn) {
-        //     router.push("/auth/login");
-        // }
-    });
-    useEffect(() => {
-        setShowMenu(window.innerWidth > 768);
-        function handleResize() {
-            setShowMenu(window.innerWidth > 768);
-        }
-        window.addEventListener("resize", handleResize);
-        return () => window.removeEventListener("resize", handleResize);
-    }, []);
-    return (
-        <React.Fragment>
-            <AddNewStaffModal />
-            <div className="fixed flex flex-row items-center justify-start top-0 left-0">
-                <nav
-                    className={`fixed top-0 md:relative h-screen bg-white w-[220px] flex flex-col flex-shrink-0 transition-all duration-300 ease-in-out ${
-                        showMenu ? "left-0" : "-left-[219px]"
-                    } border-r border-neu-3 border-1 shadow-lg text-neu-9 font-quicksand z-50 `}
-                >
-                    <div className="header">
-                        <h1 className="p-[30px]  text-lg font-lg pb-1">
-                            W I L L I E
-                        </h1>
-                    </div>
+  useEffect(() => {
+    if (!loggedIn) {
+      router.push("/auth/login" + ("?redirect=" + pathname));
+    }
+  }, [loggedIn, router, pathname]);
 
                     {showMenu ? (
                         <SquareChevronLeft

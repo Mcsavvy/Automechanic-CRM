@@ -25,11 +25,16 @@ const LoginPage: React.FC = () => {
     const {loggedIn, setAuth} = useAuthStore((state) => state);
     const router = useRouter();
 
-    React.useEffect(() => {
-        if (loggedIn) {
-            router.push("/inventory");
-        }
-    }, [loggedIn, router]);
+  React.useEffect(() => {
+    const redirect = query.get("redirect");
+    if (loggedIn) {
+      if (redirect) {
+        router.push(redirect);
+      } else {
+        router.push("/");
+      }
+    }
+  }, [loggedIn, router, query]);
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
