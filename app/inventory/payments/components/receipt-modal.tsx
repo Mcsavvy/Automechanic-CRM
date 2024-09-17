@@ -89,7 +89,7 @@ export default function PaymentReceiptModal() {
           <div className="grid grid-cols-[2fr_6fr_3fr] w-full px-6 pt-2">
             <div className="">
               <Image
-                src="/logo.jpg"
+                src="/logo.png"
                 width={50}
                 height={50}
                 alt="logo"

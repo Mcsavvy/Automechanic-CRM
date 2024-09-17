@@ -80,7 +80,7 @@ const Invoice: FC<Order> = (props) => {
           <div className="flex justify-between items-start w-full px-6 mt-4">
             <div className="flex flex-col items-start justify-start gap-2">
               <Image
-                src="/logo.jpg"
+                src="/logo.png"
                 width={50}
                 height={50}
                 alt="logo"
