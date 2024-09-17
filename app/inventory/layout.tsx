@@ -18,7 +18,6 @@ import {
     CandlestickChart,
     AreaChart,
     Users,
-    User,
     Scroll,
     Fingerprint,
     CircleUser,
@@ -278,21 +277,27 @@ export default function DashboardLayout({
                     >
                         <div className="relative">
                             <div className="absolute right-[30px] top-[15px] overflow-visible flex flex-col items-end justify-start">
-                                <button
-                                    className="inline-flex items-center p-2 gap-3 capitalize font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-50"
-                                    type="button"
-                                    id="dropdownToggle"
-                                    onClick={() =>
-                                        setShowDropdown((show) => !show)
-                                    }
-                                >
-                                    <User
-                                        size={24}
-                                        strokeWidth={1.5}
-                                        className="border border-pri-6 rounded-full"
-                                    />
-                                    {firstName}
-                                </button>
+                <Button
+                  variant={"ghost"}
+                  className="inline-flex items-center p-2 gap-3 capitalize font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-50"
+                  type="button"
+                  id="dropdownToggle"
+                  onClick={() => setShowDropdown((show) => !show)}
+                >
+                  <Image
+                    src={gravatar.url(
+                      email || "",
+                      {
+                        s: "30",
+                      },
+                      true
+                    )}
+                    width={30}
+                    height={30}
+                    alt="avatar"
+                    className="rounded-full"
+                  />
+                </Button>
                                 <MainDropdown
                                     show={showDropdown}
                                     setShow={setShowDropdown}
