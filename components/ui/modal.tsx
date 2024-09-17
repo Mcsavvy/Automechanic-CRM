@@ -9,7 +9,12 @@ interface ModalProps {
   title: React.ReactNode;
   children: React.ReactNode;
   classNames?: {
-    [key in "modal" | "parent" | "container" | "title" | "body"]?: string;
+    [key in
+      | "modal"
+      | "parent"
+      | "container"
+      | "title"
+      | "body"]?: string;
   };
   onClose: () => void;
 }
@@ -41,12 +46,7 @@ const Modal: FC<ModalProps> = ({
         }
       }}
     >
-      <div
-        className={cn(
-          "relative p-4 w-full h-full",
-          classNames?.parent
-        )}
-      >
+      <div className={cn("relative p-4 w-full h-full", classNames?.parent)}>
         <div
           className={cn(
             "relative bg-white rounded-lg border border-neu-6",
