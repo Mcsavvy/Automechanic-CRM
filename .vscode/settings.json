@@ -1,0 +1,9 @@
+{
+    "[css]": {
+        "editor.defaultFormatter": "vscode.css-language-features",
+        "tailwindCSS.suggestions": true,
+    },
+    "files.associations": {
+        "*.css": "tailwindcss"
+    }
+}
