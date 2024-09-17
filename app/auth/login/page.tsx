@@ -69,7 +69,7 @@ const LoginPage: React.FC = () => {
         <div
             className="min-h-screen flex items-center justify-center bg-gray-100"
             style={{
-                backgroundImage: `url(${backgroundImage.src})`,
+                backgroundImage: 'url(/background.png)',
                 backgroundPosition: "center",
                 backgroundSize: "cover",
                 backgroundRepeat: "no-repeat",
