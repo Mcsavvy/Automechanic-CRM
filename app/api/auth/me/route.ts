@@ -1,15 +1,6 @@
 import { NextResponse } from "next/server";
 import permissionRequired from "@/lib/decorators/permission";
-import { Permission } from "@/lib/permissions/base";
-
-
-interface AuthResponse {
-    id: string;
-    email: string;
-    lastName: string;
-    firstName: string;
-    phone: string;
-}
+import { Permission } from "@/lib/permissions/server";
 
 export const POST = permissionRequired(Permission.AllowAny())(async function (req) {
     const user = this.user;

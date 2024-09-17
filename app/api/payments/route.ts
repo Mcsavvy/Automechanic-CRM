@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import permissionRequired from "@/lib/decorators/permission";
-import { Permission } from "@/lib/permissions/base";
+import { Permission } from "@/lib/permissions/server";
 import OrderPaymentDAO from "@/lib/inventory/dao/orderPayment";
 import { NewPayment, PaymentSort } from "@/lib/@types/payments";
 import qs from "qs";

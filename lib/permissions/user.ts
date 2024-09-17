@@ -1,4 +1,4 @@
-import { Permission } from "./base";
+import { Permission } from "./server";
 import { IUserDocument } from "../common/models/user";
 import Group from "../common/models/group";
 

@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
 import permissionRequired from "@/lib/decorators/permission";
-import { Permission } from "@/lib/permissions/base";
+import { Permission } from "@/lib/permissions/server";
 import GroupDAO from "@/lib/common/dao/group";
 import mongoose from 'mongoose';
 

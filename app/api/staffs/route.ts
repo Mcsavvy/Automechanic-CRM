@@ -2,7 +2,7 @@ import User, { IUserDocument } from "@/lib/common/models/user";
 import { FilterQuery } from "mongoose";
 import { NextResponse } from "next/server";
 import permissionRequired from "@/lib/decorators/permission";
-import { Permission } from "@/lib/permissions/base";
+import { Permission } from "@/lib/permissions/server";
 import UserDAO from "@/lib/common/dao/user";
 import GroupDAO from "@/lib/common/dao/group";
 import Group, { IGroupDocument } from "@/lib/common/models/group";

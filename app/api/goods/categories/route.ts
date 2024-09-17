@@ -1,4 +1,4 @@
-import { Permission } from "@/lib/permissions/base";
+import { Permission } from "@/lib/permissions/server";
 import Good, { IGoodDocument } from "@/lib/inventory/models/good";
 import permissionRequired from "@/lib/decorators/permission";
 import { NextRequest, NextResponse } from "next/server";

@@ -1,4 +1,4 @@
-import { Permission } from "../permissions/base";
+import { Permission } from "../permissions/server";
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import User, { IUserDocument } from "../common/models/user";
