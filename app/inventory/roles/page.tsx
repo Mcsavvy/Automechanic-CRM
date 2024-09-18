@@ -16,6 +16,10 @@ import {
 } from "@/components/ui/alert-dialog"
 import { toast } from "react-toastify";
 
+export const metadata = {
+  title: "Staff Roles",
+};
+
 interface ScopeItem {
     action: string;
     label: string;

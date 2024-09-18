@@ -2,6 +2,10 @@
 import { Button } from '@/components/ui/button'
 import { Download } from 'lucide-react';
 
+export const metadata = {
+  title: "Invoices",
+};
+
 export default function Invoices() {
     return (
         <div className="flex flex-col absolute h-[calc(100vh-60px)] top-[60px] w-full">

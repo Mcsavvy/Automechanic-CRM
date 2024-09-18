@@ -12,6 +12,10 @@ import { DataTable } from "@/components/goods/data-table";
 import { GoodStoreProvider, useGoodStore } from "@/lib/providers/good-store-provider";
 import { useQueryState } from "nuqs";
 
+export const metadata = {
+  title: "Products",
+};
+
 export default function Home() {
     const {goods, page, setPage, pageCount, hasNextPage, hasPrevPage} = useGoodStore((state) => state);
     return (

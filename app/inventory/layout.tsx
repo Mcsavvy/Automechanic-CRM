@@ -32,6 +32,10 @@ import * as gravatar from "gravatar";
 import { Button } from "@/components/ui/button";
 import LogoutModal from "@/components/modals/LogoutModal";
 
+export const metadata = {
+  title: "Dashboard",
+};
+
 interface BaseSectionItem {
   icon: React.ReactNode;
   content: React.ReactNode | string;

@@ -23,7 +23,6 @@ import NewPayment from "./components/new-payment";
 
 export const metadata = {
   title: "Invoice Details",
-  description: "Viewing invoice details",
 };
 
 function OrderInvoice({ order }: { order: Order }) {
