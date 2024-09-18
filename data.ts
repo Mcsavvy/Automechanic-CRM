@@ -1,7 +1,10 @@
 export const companyName = "Falore Autos";
 export const appTitle = "Falore Autos";
 export const appDescription = "Falore Autos inventory management system";
-export const companyAddress = "Adjacent azkol Oil, langbasa road, Ajah, Lagos";
+export const companyRegion = "Lagos";
+export const companyCountry = "Nigeria";
+export const companyStreetAddress = "Adjacent azkol Oil, langbasa road, Ajah";
+export const companyAddress = `${companyStreetAddress}, ${companyRegion}, ${companyCountry}`;
 export const companyPhoneNumber = "+2349090060060";
 export const companyEmail = "faloreautocare@gmail.com";
 
