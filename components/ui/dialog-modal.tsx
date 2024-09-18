@@ -10,6 +10,7 @@ import Modal, {
 import { Button } from "./button";
 
 type ClassNames = BaseClassNames | "confirm" | "cancel";
+export type DialogStatus = "idle" | "loading" | "working";
 
 export interface DialogModalProps extends ModalProps {
   icon?: ReactNode;
@@ -20,7 +21,9 @@ export interface DialogModalProps extends ModalProps {
   classNames?: {
     [key in ClassNames]?: string;
   };
+  status?: DialogStatus;
 }
+
 
 const DialogModal: FC<DialogModalProps> = ({
   id,
@@ -30,6 +33,7 @@ const DialogModal: FC<DialogModalProps> = ({
   icon,
   confirm = "Confirm",
   cancel = "Cancel",
+  status,
   onClose,
   onConfirm,
   onCancel = () => {},
@@ -64,6 +68,7 @@ const DialogModal: FC<DialogModalProps> = ({
         <Button
           variant={"destructive"}
           onClick={handleConfirm}
+          disabled={status !== "idle"}
           className={cn("modal-cancel-btn", classNames?.cancel)}
         >
           {confirm}
@@ -71,6 +76,7 @@ const DialogModal: FC<DialogModalProps> = ({
         <Button
           variant={"outline"}
           onClick={handleCancel}
+          disabled={status !== "idle"}
           className={cn("modal-confirm-btn", classNames?.confirm)}
         >
           {cancel}
