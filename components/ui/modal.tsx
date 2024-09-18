@@ -3,18 +3,20 @@ import React, { useRef, FC } from "react";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface ModalProps {
+export type ClassNames =
+  | "modal"
+  | "content"
+  | "header"
+  | "title"
+  | "close"
+  | "body";
+
+export interface ModalProps {
   id: string;
   title: React.ReactNode;
   children: React.ReactNode;
   classNames?: {
-    [key in
-      | "modal"
-      | "content"
-      | "header"
-      | "title"
-      | "close"
-      | "body"]?: string;
+    [key in ClassNames]?: string;
   };
   onClose: () => void;
 }
