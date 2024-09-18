@@ -30,7 +30,7 @@ const classList: ModalProps["classNames"] = {
     -translate-y-full target:translate-y-0
     `,
   content: `
-    relative w-full max-w-lg
+    relative w-fit max-w-lg
     bg-white shadow-lg rounded-lg
     p-4 md:p-6
     transform scale-95
