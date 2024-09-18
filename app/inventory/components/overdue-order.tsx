@@ -58,7 +58,7 @@ const Overdue: FC<Partial<OverdueProps>> = ({ before, after }) => {
                 }
             </ul>
             <Button variant="ghost" className="w-full flex gap-2 items-center justify-center" asChild>
-                <Link href={`/inventory/orders?order:overdue[lte]=${new Date()}`}>
+                <Link href={`/inventory/orders?order:status=overdue`}>
                     <MoveRight />View More
                 </Link>
             </Button>
