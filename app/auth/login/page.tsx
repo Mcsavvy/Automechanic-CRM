@@ -12,10 +12,6 @@ interface ErrorResponse {
   message: string;
 }
 
-export const metadata = {
-  title: "Login",
-};
-
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

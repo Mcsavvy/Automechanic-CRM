@@ -3,10 +3,6 @@ import { usePaymentStore } from "@/lib/providers/payment-store-provider";
 import DataTable from "./components/data-table";
 
 
-export const metadata = {
-  title: "Payments",
-};
-
 export default function Payments() {
     const { payments, page, setPage, pageCount, hasNextPage, hasPrevPage, status } =
         usePaymentStore((state) => state);

@@ -10,7 +10,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 
 export const metadata: Metadata = {
-  title: { default: "", template: `%s | ${appTitle}` },
+  title: { default: "Dashboard", template: `%s | ${appTitle}` },
   description: appDescription,
   applicationName: appTitle,
   authors: [{ name: "Dave Mcsavvy", url: "https://mcsavvy.is-a.dev" }],

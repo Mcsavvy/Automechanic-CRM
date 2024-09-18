@@ -16,10 +16,6 @@ async function getGroups() {
     return groups;
 }
 
-export const metadata = {
-  title: "Settings",
-};
-
 function validateEmail(email: string) {
     const re = /\S+@\S+\.\S+/;
     return re.test(email);
