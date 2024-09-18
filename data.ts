@@ -1,5 +1,5 @@
 export const companyName = "Falore Autos";
-export const appTitle = "Falore Autos";
+export const appTitle = "Falore CRM";
 export const appDescription = "Falore Autos inventory management system";
 export const companyRegion = "Lagos";
 export const companyCountry = "Nigeria";
