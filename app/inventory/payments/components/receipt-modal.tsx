@@ -75,7 +75,8 @@ export default function PaymentReceiptModal() {
       classNames={{
         title: "text-lg text-black",
         modal:
-          "scrollbar-thin overflow-auto h-[100vh] p-2",
+          "scrollbar-thin",
+        content: "max-w-screen overflow-y-auto",
       }}
     >
       <div
