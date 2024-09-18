@@ -68,7 +68,7 @@ const DialogModal: FC<DialogModalProps> = ({
         <Button
           variant={"destructive"}
           onClick={handleConfirm}
-          disabled={status !== "idle"}
+          disabled={status && status !== "idle"}
           className={cn("modal-cancel-btn", classNames?.cancel)}
         >
           {confirm}
@@ -76,7 +76,7 @@ const DialogModal: FC<DialogModalProps> = ({
         <Button
           variant={"outline"}
           onClick={handleCancel}
-          disabled={status !== "idle"}
+          disabled={status && status !== "idle"}
           className={cn("modal-confirm-btn", classNames?.confirm)}
         >
           {cancel}
