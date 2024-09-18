@@ -19,7 +19,9 @@ export async function getAuthState(): Promise<AuthState> {
             firstName: response.data.firstName,
             lastName: response.data.lastName,
             id: response.data.id,
-            phone: response.data.phone
+            phone: response.data.phone,
+            groups: response.data.groups,
+            permissions: response.data.permissions
         }
     } catch (error) {
         return {
@@ -28,7 +30,9 @@ export async function getAuthState(): Promise<AuthState> {
             firstName: null,
             lastName: null,
             loggedIn: false,
-            phone: null
+            phone: null,
+            groups: [],
+            permissions: {}
         };
     }
 }
