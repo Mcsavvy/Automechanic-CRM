@@ -11,6 +11,7 @@ import { Download, Phone } from "lucide-react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import Image from "next/image";
+import { companyAddress, companyName, companyPhoneNumber } from "@/data";
 
 async function downloadReceipt(element: HTMLDivElement, name: string) {
   console.log("element", element);
@@ -74,8 +75,7 @@ export default function PaymentReceiptModal() {
       }}
       classNames={{
         title: "text-lg text-black",
-        modal:
-          "scrollbar-thin",
+        modal: "scrollbar-thin",
         content: "max-w-screen overflow-y-auto",
       }}
     >
@@ -113,17 +113,15 @@ export default function PaymentReceiptModal() {
             </div>
 
             <div className="flex flex-col items-start justify-start pt-1">
-              <h2 className="font-rambla font-semibold">{"Willie's Garage"}</h2>
-              <p className="text-[10px]">
-                2 Archebong Street, Ikeja Main Line, Ikeja, Lagos, Nigeria
-              </p>
+              <h2 className="font-rambla font-semibold">{companyName}</h2>
+              <p className="text-[10px]">{companyAddress}</p>
               <p className="text-xs">
                 <Phone
                   size={12}
                   strokeWidth={1.5}
                   className="mr-1 pb-[2px] inline-block"
                 />
-                0812 345 6789
+                {companyPhoneNumber}
               </p>
             </div>
           </div>
@@ -162,7 +160,16 @@ export default function PaymentReceiptModal() {
         <div className="bg-pri-5 w-full h-2 mt-auto mb-0"></div>
       </div>
       <div className="flex items-center justify-end mt-4">
-        <Button onClick={() => downloadReceipt(receiptRef.current!, "receipt")}>
+        <Button
+          onClick={() =>
+            downloadReceipt(
+              receiptRef.current!,
+              `#${formatInvoiceNumber(payment?.order.id || 0)} payment-${
+                payment?.id
+              }`
+            )
+          }
+        >
           <Download size={16} className="mr-2" />
           Download Receipt
         </Button>

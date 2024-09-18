@@ -12,6 +12,7 @@ import {
   formatDate,
   cycle,
 } from "@/lib/utils";
+import { companyCountry, companyName, companyPhoneNumber, companyRegion, companyStreetAddress } from "@/data";
 
 const OrderReceipt: FC<Order> = (props) => {
   const [subTotal, setSub] = useState(0);
@@ -85,13 +86,13 @@ const OrderReceipt: FC<Order> = (props) => {
               <h1 className="text-3xl font-rambla">Receipt</h1>
             </div>
             <div className="flex flex-col items-end justify-start">
-              <h2 className="font-rambla font-semibold">{"Willie's Garage"}</h2>
+              <h2 className="font-rambla font-semibold">{companyName}</h2>
               <p className="text-xs">
-                2 Archebong Street, Ikeja Main Line, Ikeja
+                {companyStreetAddress}
               </p>
-              <p className="text-xs">Lagos</p>
-              <p className="text-xs">Nigeria</p>
-              <p className="text-xs">0812 345 6789</p>
+              <p className="text-xs">{companyRegion}</p>
+              <p className="text-xs">{companyCountry}</p>
+              <p className="text-xs">{companyPhoneNumber}</p>
             </div>
           </div>
           <hr className="border-gray-500 mt-4 h-[1px] w-[calc(100%_-_3rem)] mx-6" />
