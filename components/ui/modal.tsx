@@ -50,7 +50,7 @@ const classList: ModalProps["classNames"] = {
     `,
   header: `
     flex items-center justify-between
-    p-4 md:p-6
+    px-4 md:px-6
     `,
   close: `
     absolute end-4 top-4
