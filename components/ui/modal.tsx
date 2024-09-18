@@ -21,6 +21,17 @@ export interface ModalProps {
   onClose?: () => void | Promise<void>;
 }
 
+/**
+ * close the modal with the given id
+ */
+export function closeModal(id: string) {
+  if (window.location.hash === `#${id}`) {
+    window.location.hash = "";
+    return true;
+  }
+  return false;
+}
+
 const classList: ModalProps["classNames"] = {
   modal: `
     fixed inset-0 z-50 overflow-y-auto overflow-x-hidden
@@ -66,8 +77,8 @@ const Modal: FC<ModalProps> = ({
   onClose,
 }) => {
   const contentArea = useRef<HTMLDivElement>(null);
-  const closeModal = () => {
-    window.location.hash = "";
+  const closeModalInternal = async () => {
+    closeModal(id);
     await onClose?.();
   };
 
@@ -76,7 +87,7 @@ const Modal: FC<ModalProps> = ({
       contentArea.current &&
       !contentArea.current.contains(e.target as Node)
     ) {
-      closeModal();
+      closeModalInternal();
     }
   };
 
@@ -99,7 +110,7 @@ const Modal: FC<ModalProps> = ({
           </h2>
           <button
             className={cn("modal-close", classList.close, classNames?.close)}
-            onClick={closeModal}
+            onClick={closeModalInternal}
           >
             <X size={24} />
           </button>
