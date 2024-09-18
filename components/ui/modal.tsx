@@ -18,7 +18,7 @@ export interface ModalProps {
   classNames?: {
     [key in ClassNames]?: string;
   };
-  onClose: () => void;
+  onClose?: () => void | Promise<void>;
 }
 
 const classList: ModalProps["classNames"] = {
@@ -68,7 +68,7 @@ const Modal: FC<ModalProps> = ({
   const contentArea = useRef<HTMLDivElement>(null);
   const closeModal = () => {
     window.location.hash = "";
-    onClose?.();
+    await onClose?.();
   };
 
   const handleClickedOutside = (e: React.MouseEvent<HTMLDivElement>) => {
