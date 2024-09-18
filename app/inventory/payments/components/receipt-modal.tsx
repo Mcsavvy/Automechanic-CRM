@@ -73,11 +73,9 @@ export default function PaymentReceiptModal() {
         setPayment(null);
       }}
       classNames={{
-        parent: "flex flex-col items-baseline overflow-auto justify-center",
         title: "text-lg text-black",
         modal:
-          "w-[100vw] scrollbar-thin overflow-auto h-[100vh] p-2",
-        container: "mx-auto"
+          "scrollbar-thin overflow-auto h-[100vh] p-2",
       }}
     >
       <div
