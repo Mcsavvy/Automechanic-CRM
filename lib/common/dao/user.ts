@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import { SignJWT, jwtVerify, type JWTPayload } from "jose";
 import UserModel, { IUserDocument } from "../models/user";
 import mongoose, { FilterQuery } from 'mongoose';
 import {
@@ -198,18 +198,23 @@ async function deleteUser(id: mongoose.Types.ObjectId) {
 }
 
 async function authenticateUser(email: string, password: string) {
-    const user = await UserModel.findOne({ email, isDeleted: false});
-    if (!user) {
-        throw new Error("User not found");
-    }
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-        throw new Error("Invalid password");
-    }
-    const token = jwt.sign({ sub: user._id.toHexString() }, process.env.JWT_SECRET as string, {
-        expiresIn: process.env.JWT_EXPIRY, algorithm: "HS256"
-    });
-    return { token, user };
+  const user = await UserModel.findOne({ email, isDeleted: false });
+  if (!user) {
+    throw new Error("User not found");
+  }
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+  if (!isPasswordValid) {
+    throw new Error("Invalid password");
+  }
+  const payload: JWTPayload = { sub: user._id.toHexString() };
+  const token = await new SignJWT(payload)
+    .setProtectedHeader({
+      alg: "HS256",
+    })
+    .setIssuedAt()
+    .setExpirationTime(JWT_EXPIRY)
+    .sign(new TextEncoder().encode(JWT_SECRET));
+  return { token, user };
 }
 
 async function getUser(id: mongoose.Types.ObjectId) {

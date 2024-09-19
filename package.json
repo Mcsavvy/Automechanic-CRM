@@ -32,7 +32,7 @@
     "faker": "^5.5.3",
     "gravatar": "^1.8.2",
     "html2canvas": "^1.4.1",
-    "jsonwebtoken": "^9.0.2",
+    "jose": "^5.9.2",
     "jspdf": "^2.5.1",
     "lucide-react": "^0.378.0",
     "mongoose": "^8.3.3",
