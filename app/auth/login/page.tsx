@@ -26,6 +26,7 @@ const LoginPage: React.FC = () => {
         .post("/api/auth/login", { email, password })
         .then((response) => {
           const data = response.data as LoginResponse;
+          const redirect = query.get("redirect");
           setAuth({
             id: data.id,
             email: data.email,
@@ -36,6 +37,11 @@ const LoginPage: React.FC = () => {
             permissions: data.permissions,
             loggedIn: true,
           });
+          if (redirect) {
+            router.push(redirect);
+          } else {
+            router.push("/");
+          }
           resolve(data);
         })
         .catch((error) => {
