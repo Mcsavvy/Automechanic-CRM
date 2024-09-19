@@ -45,11 +45,12 @@ async function middleware(req: NextRequest) {
   const isPublicRoute = UNPROTECTED_ROUTES.some((route) =>
     new RegExp(route).test(path)
   );
+  const isLoginPage = path.startsWith("/auth/login");
   const isAPIRoute = path.startsWith("/api");
   const token = cookieJar.get(AUTH_COOKIE_NAME)?.value;
   console.debug("path", path);
 
-  if (isPublicRoute) {
+  if (isPublicRoute && !isLoginPage) {
     console.debug("Unprotected route");
     return NextResponse.next();
   }
@@ -108,6 +109,9 @@ async function middleware(req: NextRequest) {
       sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
     });
+  }
+  if (isLoginPage) {
+    return NextResponse.redirect(new URL("/", req.url));
   }
   return NextResponse.next();
 }

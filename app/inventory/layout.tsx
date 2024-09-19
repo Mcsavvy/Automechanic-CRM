@@ -147,7 +147,7 @@ export default function DashboardLayout({
 }) {
   const [showMenu, setShowMenu] = useState(true);
   const [showDropdown, setShowDropdown] = useState(false);
-  const { loggedIn, firstName, email } = useAuthStore((state) => state);
+  const { email } = useAuthStore((state) => state);
   const [showSections, setShowSections] = useState<{
     [key: string]: boolean;
   }>({});
@@ -167,11 +167,6 @@ export default function DashboardLayout({
       : showSections[section];
   }
 
-  useEffect(() => {
-    if (!loggedIn) {
-      router.push("/auth/login" + ("?redirect=" + pathname));
-    }
-  }, [loggedIn, router, pathname]);
   useEffect(() => {
     setShowMenu(window.innerWidth > 768);
     function handleResize() {

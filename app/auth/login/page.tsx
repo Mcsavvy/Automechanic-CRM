@@ -15,20 +15,9 @@ interface ErrorResponse {
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { loggedIn, setAuth } = useAuthStore((state) => state);
+  const { setAuth } = useAuthStore((state) => state);
   const router = useRouter();
   const query = useSearchParams();
-
-  React.useEffect(() => {
-    const redirect = query.get("redirect");
-    if (loggedIn) {
-      if (redirect) {
-        router.push(redirect);
-      } else {
-        router.push("/");
-      }
-    }
-  }, [loggedIn, router, query]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
