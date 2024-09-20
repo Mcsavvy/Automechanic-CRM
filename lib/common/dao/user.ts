@@ -9,7 +9,7 @@ import {
   validatePassword,
   validatePhoneNumber,
 } from "../validation";
-import { JWT_EXPIRY, JWT_SECRET } from "@/config";
+import { JWT_EXPIRY, JWT_SECRET } from "../../../config";
 
 interface createUserParams {
   firstName: string;

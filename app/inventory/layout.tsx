@@ -133,8 +133,8 @@ const sections: Section[] = [
       {
         icon: <Scroll size={20} strokeWidth={1.5} />,
         content: "Activity Logs",
-        getIsActive: (pathname) => pathname.startsWith("/activity-logs"),
-        link: "/activity-logs",
+        getIsActive: (pathname) => pathname.startsWith("/inventory/logs"),
+        link: "/inventory/logs",
       },
     ],
   },
