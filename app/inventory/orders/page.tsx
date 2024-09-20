@@ -5,7 +5,6 @@ import { DataTable } from "./components/data-table";
 import { useOrderStore } from "@/lib/providers/order-store-provider";
 import Link from "next/link";
 
-
 export default function Orders() {
   const { orders, page, setPage, pageCount, hasNextPage, hasPrevPage, status } =
     useOrderStore((state) => state);

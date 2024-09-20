@@ -37,6 +37,7 @@ import Job from "../garage/models/job";
 import Mechanic from "../garage/models/mechanic";
 import CustomerDAO from "../garage/dao/customer";
 // Import all populator functions into the repl
+import populateGroups from "../populate/group";
 import populateUsers from "../populate/user";
 import populateBuyers from "../populate/buyer";
 import populateGoods from "../populate/good";
@@ -68,6 +69,7 @@ const shellContext = {
     ...CustomerDAO,
     ...OrderPaymentDAO,
     ...InsightsDAO,
+    populateGroups,
     populateUsers,
     populateBuyers,
     populateGoods,

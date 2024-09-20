@@ -30,8 +30,9 @@
     "cmdk": "^1.0.0",
     "date-fns": "^3.6.0",
     "faker": "^5.5.3",
+    "gravatar": "^1.8.2",
     "html2canvas": "^1.4.1",
-    "jsonwebtoken": "^9.0.2",
+    "jose": "^5.9.2",
     "jspdf": "^2.5.1",
     "lucide-react": "^0.378.0",
     "mongoose": "^8.3.3",
@@ -56,6 +57,7 @@
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
     "@types/bcrypt": "^5.0.2",
+    "@types/gravatar": "^1.8.6",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/lodash": "^4.17.4",
     "@types/ms": "^0.7.34",

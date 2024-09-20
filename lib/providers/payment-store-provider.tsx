@@ -16,6 +16,7 @@ import {
 } from "../stores/payment-store";
 import { useQueryState } from "nuqs";
 import { PaymentSort } from "@/lib/@types/payments";
+import { usePaymentFilter } from "../hooks/payments";
 
 export const PaymentStoreContext = createContext<StoreApi<PaymentStore> | null>(
     null
@@ -28,7 +29,7 @@ export function PaymentStoreProvider({ children }: { children: ReactNode }) {
     const page = 1;
     const [limit, setLimit] = useState(10);
     const storeStatus = useRef<"idle" | "loading" | "ready">("idle");
-    const filter = {};
+    const {getFilter} = usePaymentFilter();
     const sort = { createdAt: -1 } as PaymentSort;
 
     useEffect(() => {
@@ -37,6 +38,7 @@ export function PaymentStoreProvider({ children }: { children: ReactNode }) {
         }
         if (storeStatus.current == "idle") {
             storeStatus.current = "loading";
+            const filter = getFilter();
             fetchPayments(filter, sort, page, limit).then((state) => {
                 store.current.setState({ ...state, filter, sort, status: "loaded" });
                 storeStatus.current = "ready";

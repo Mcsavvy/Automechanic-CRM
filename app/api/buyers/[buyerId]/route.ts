@@ -1,6 +1,6 @@
 import { Buyer } from "@/lib/@types/buyer";
 import permissionRequired from "@/lib/decorators/permission";
-import { Permission } from "@/lib/permissions/base";
+import { Permission } from "@/lib/permissions/server";
 import { NextResponse } from "next/server";
 import BuyerDAO from "@/lib/inventory/dao/buyer";
 import mongoose, { Types } from "mongoose";

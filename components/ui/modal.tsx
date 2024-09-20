@@ -1,18 +1,73 @@
 "use client";
-import { useRef } from "react";
-import React, { FC } from "react";
+import React, { useRef, FC } from "react";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface ModalProps {
+export type ClassNames =
+  | "modal"
+  | "content"
+  | "header"
+  | "title"
+  | "close"
+  | "body";
+
+export interface ModalProps {
   id: string;
   title: React.ReactNode;
   children: React.ReactNode;
   classNames?: {
-    [key in "modal" | "parent" | "container" | "title" | "body"]?: string;
+    [key in ClassNames]?: string;
   };
-  onClose: () => void;
+  onClose?: () => void | Promise<void>;
 }
+
+/**
+ * close the modal with the given id
+ */
+export function closeModal(id: string) {
+  if (window.location.hash === `#${id}`) {
+    window.location.hash = "";
+    return true;
+  }
+  return false;
+}
+
+const classList: ModalProps["classNames"] = {
+  modal: `
+    fixed inset-0 z-50 overflow-y-auto overflow-x-hidden
+    flex items-center justify-center
+    bg-black/50 backdrop-blur-sm
+    transition-all duration-300 ease-in-out
+    -translate-y-full target:translate-y-0
+    `,
+  content: `
+    relative w-fit max-w-lg
+    bg-white shadow-lg rounded-lg
+    p-4 md:p-6
+    transform scale-95
+    transition-all duration-300 ease-in-out
+    target:scale-100
+    `,
+  header: `
+    flex items-center justify-between
+    px-4 md:px-6
+    `,
+  close: `
+    absolute end-4 top-4
+    cursor-pointer
+    flex justify-center items-center
+    p-0 m-0 w-8 h-8
+    border-0
+    text-gray-500 hover:text-gray-700
+    bg-transparent
+    `,
+  title: `
+    text-xl font-semibold text-pri-5
+    `,
+  body: `
+    p-4 md:p-6
+    `,
+};
 
 const Modal: FC<ModalProps> = ({
   id,
@@ -21,57 +76,47 @@ const Modal: FC<ModalProps> = ({
   classNames,
   onClose,
 }) => {
-  const modalRef = useRef<HTMLDivElement>(null);
-  const closeModal = () => {
-    onClose?.();
-    window.location.hash = "";
+  const contentArea = useRef<HTMLDivElement>(null);
+  const closeModalInternal = async () => {
+    closeModal(id);
+    await onClose?.();
+  };
+
+  const handleClickedOutside = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (
+      contentArea.current &&
+      !contentArea.current.contains(e.target as Node)
+    ) {
+      closeModalInternal();
+    }
   };
 
   return (
     <div
+      className={cn("modal", classList.modal, classNames?.modal)}
       id={id}
       tabIndex={-1}
-      className={cn(
-        "hidden target:flex bg-[rgba(0,0,0,0.5)] overflow-y-auto overflow-x-hidden bottom-4 fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full backdrop-blur-sm",
-        classNames?.modal
-      )}
-      onClick={(e) => {
-        if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
-          closeModal();
-        }
-      }}
+      onClick={handleClickedOutside}
     >
       <div
-        className={cn(
-          "relative p-4 w-full h-full",
-          classNames?.parent
-        )}
+        className={cn("modal-content", classList.content, classNames?.content)}
+        ref={contentArea}
       >
         <div
-          className={cn(
-            "relative bg-white rounded-lg border border-neu-6",
-            classNames?.container
-          )}
-          ref={modalRef}
+          className={cn("modal-header", classList.header, classNames?.header)}
         >
-          <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
-            <h3
-              className={cn(
-                "text-xl font-semibold text-primary",
-                classNames?.title
-              )}
-            >
-              {title}
-            </h3>
-            <button
-              type="button"
-              className="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
-              onClick={closeModal}
-            >
-              <X size={20} />
-            </button>
-          </div>
-          <div className={cn("p-4 md:p-5", classNames?.body)}>{children}</div>
+          <h2 className={cn("modal-title", classList.title, classNames?.title)}>
+            {title}
+          </h2>
+          <button
+            className={cn("modal-close", classList.close, classNames?.close)}
+            onClick={closeModalInternal}
+          >
+            <X size={24} />
+          </button>
+        </div>
+        <div className={cn("modal-body", classList.body, classNames?.body)}>
+          {children}
         </div>
       </div>
     </div>

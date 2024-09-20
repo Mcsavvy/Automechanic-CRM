@@ -7,6 +7,7 @@ import { useBuyerStore } from "@/lib/providers/buyer-provider";
 import EditBuyerModal from "./components/modals/edit-buyer";
 import DeleteBuyerModal from "./components/modals/delete-buyer";
 
+
 export default function Home() {
   const { buyers, page, setPage, pageCount, hasNextPage, hasPrevPage } =
     useBuyerStore((state) => state);

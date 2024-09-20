@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import permissionRequired from "@/lib/decorators/permission";
-import { Permission } from "@/lib/permissions/base";
+import { Permission } from "@/lib/permissions/server";
 import { IOrderDocument } from "@/lib/inventory/models/order";
 import qs from "qs";
 import { Order, OrderStatus, PaymentMethod, OrderSort, NewOrder } from "@/lib/@types/order";

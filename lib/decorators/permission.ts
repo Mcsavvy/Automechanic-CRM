@@ -1,8 +1,9 @@
-import { Permission } from "../permissions/base";
+import { Permission } from "../permissions/server";
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import User, { IUserDocument } from "../common/models/user";
-import jwt from "jsonwebtoken";
+import { SignJWT, jwtVerify, type JWTPayload } from "jose";
+import { AUTH_COOKIE_NAME, JWT_SECRET } from "@/config";
 
 type AuthContext = {
     user: IUserDocument;
@@ -25,7 +26,7 @@ export default function permissionRequired<T>(permission: Permission) {
             ...args: [NextRequest, ...Args]
         ): Promise<NextResponse> {
             const cookieJar = cookies();
-            const token = cookieJar.get("X-Auth-Token")?.value;
+            const token = cookieJar.get(AUTH_COOKIE_NAME)?.value;
             const req = args[0];
             if (!token) {
                 return NextResponse.json(
@@ -34,7 +35,13 @@ export default function permissionRequired<T>(permission: Permission) {
                 );
             }
             // decode the token and check for the required permissions
-            const payload = jwt.decode(token, { json: true });
+            const { payload } = await jwtVerify(
+              token as string,
+              new TextEncoder().encode(JWT_SECRET),
+              {
+                algorithms: ["HS256"],
+              }
+            );
             if (!payload || !payload.sub) {
                 return NextResponse.json(
                     { message: "Unauthorized" },

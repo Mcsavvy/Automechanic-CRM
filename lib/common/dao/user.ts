@@ -1,41 +1,42 @@
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import { SignJWT, jwtVerify, type JWTPayload } from "jose";
 import UserModel, { IUserDocument } from "../models/user";
-import mongoose, { FilterQuery } from 'mongoose';
+import mongoose, { FilterQuery } from "mongoose";
 import {
-    validateEmail,
-    validateFirstName,
-    validateLastName,
-    validatePassword,
-    validatePhoneNumber,
+  validateEmail,
+  validateFirstName,
+  validateLastName,
+  validatePassword,
+  validatePhoneNumber,
 } from "../validation";
+import { JWT_EXPIRY, JWT_SECRET } from "@/config";
 
 interface createUserParams {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone: string;
-    password: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  password: string;
 }
 
 interface updateUserParams {
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-    phone?: string;
-    password?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phone?: string;
+  password?: string;
 }
 
 interface PaginatedUsers {
-    users: IUserDocument[];
-    totalDocs: number;
-    limit: number;
-    page: number;
-    totalPages: number;
-    next: number | null;
-    prev: number | null;
-    hasPrevPage: boolean;
-    hasNextPage: boolean;
+  users: IUserDocument[];
+  totalDocs: number;
+  limit: number;
+  page: number;
+  totalPages: number;
+  next: number | null;
+  prev: number | null;
+  hasPrevPage: boolean;
+  hasNextPage: boolean;
 }
 
 async function addUser({
@@ -92,7 +93,7 @@ async function getUsers({
   const users = await UserModel.find(query)
     .skip(skip)
     .limit(limit)
-    .sort({ firstName: 1, lastName: 1})
+    .sort({ firstName: 1, lastName: 1 })
     .lean()
     .exec();
   const next = users.length === limit ? page + 1 : null;
@@ -112,54 +113,59 @@ async function getUsers({
 }
 
 async function updateUser(
-    id: mongoose.Types.ObjectId,
-    params: updateUserParams
+  id: mongoose.Types.ObjectId,
+  params: updateUserParams
 ) {
-    const firstName = params.firstName
-        ? validateFirstName(params.firstName)
-        : undefined;
-    const lastName = params.lastName
-        ? validateLastName(params.lastName)
-        : undefined;
-    const email = params.email ? validateEmail(params.email) : undefined;
-    const phone = params.phone ? validatePhoneNumber(params.phone) : undefined;
-    const password = params.password
-        ? validatePassword(params.password)
-        : undefined;
-    const passwordHash = password ? await bcrypt.hash(password, 10) : undefined;
+  const firstName = params.firstName
+    ? validateFirstName(params.firstName)
+    : undefined;
+  const lastName = params.lastName
+    ? validateLastName(params.lastName)
+    : undefined;
+  const email = params.email ? validateEmail(params.email) : undefined;
+  const phone = params.phone ? validatePhoneNumber(params.phone) : undefined;
+  const password = params.password
+    ? validatePassword(params.password)
+    : undefined;
+  const passwordHash = password ? await bcrypt.hash(password, 10) : undefined;
 
-    if (email && (await UserModel.countDocuments({ email, _id: {"$ne": id}, isDeleted: false }).exec()) > 0) {
-        throw new Error("User with email already exists");
-    }
-    const user = await UserModel.findOne({_id: id, isDeleted: false });
-    if (!user) {
-        throw new Error("User not found");
-    }
-    const details: updateUserParams = {};
-    const payload: any = {};
-    if (firstName){
-         payload.firstName = firstName
-         details.firstName = user.firstName
-
-    };
-    if (lastName) {
-        payload.lastName = lastName;
-        details.lastName = user.lastName;
-    }
-    if (email) {
-        payload.email = email;
-        details.email = user.email;
-    }
-    if (phone) {
-        payload.phone = phone;
-        details.phone = user.phone;
-    }
-    if (passwordHash) {
-        payload.password = passwordHash;
-        details.password = user.password
-    }
-    if (!payload) return user;
-
+  if (
+    email &&
+    (await UserModel.countDocuments({
+      email,
+      _id: { $ne: id },
+      isDeleted: false,
+    }).exec()) > 0
+  ) {
+    throw new Error("User with email already exists");
+  }
+  const user = await UserModel.findOne({ _id: id, isDeleted: false });
+  if (!user) {
+    throw new Error("User not found");
+  }
+  const details: updateUserParams = {};
+  const payload: any = {};
+  if (firstName) {
+    payload.firstName = firstName;
+    details.firstName = user.firstName;
+  }
+  if (lastName) {
+    payload.lastName = lastName;
+    details.lastName = user.lastName;
+  }
+  if (email) {
+    payload.email = email;
+    details.email = user.email;
+  }
+  if (phone) {
+    payload.phone = phone;
+    details.phone = user.phone;
+  }
+  if (passwordHash) {
+    payload.password = passwordHash;
+    details.password = user.password;
+  }
+  if (!payload) return user;
     Object.assign(user, payload);
     await user.save();
     return user;
@@ -178,43 +184,54 @@ async function deleteUser(id: mongoose.Types.ObjectId) {
 }
 
 async function authenticateUser(email: string, password: string) {
-    const user = await UserModel.findOne({ email, isDeleted: false});
-    if (!user) {
-        throw new Error("User not found");
-    }
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-        throw new Error("Invalid password");
-    }
-    const token = jwt.sign({ sub: user._id.toHexString() }, process.env.JWT_SECRET as string, {
-        expiresIn: process.env.JWT_EXPIRY, algorithm: "HS256"
-    });
-    return { token, user };
+  const user = await UserModel.findOne({ email, isDeleted: false });
+  if (!user) {
+    throw new Error("User not found");
+  }
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+  if (!isPasswordValid) {
+    throw new Error("Invalid password");
+  }
+  const payload: JWTPayload = { sub: user._id.toHexString() };
+  const token = await new SignJWT(payload)
+    .setProtectedHeader({
+      alg: "HS256",
+    })
+    .setIssuedAt()
+    .setExpirationTime(JWT_EXPIRY)
+    .sign(new TextEncoder().encode(JWT_SECRET));
+  return { token, user };
 }
 
 async function getUser(id: mongoose.Types.ObjectId) {
-    const user = await UserModel.findOne({ _id: id, isDeleted: false }, { password: 0 , __v: 0, isDeleted: 0}).exec();
-    return user
+  const user = await UserModel.findOne(
+    { _id: id, isDeleted: false },
+    { password: 0, __v: 0, isDeleted: 0 }
+  ).exec();
+  return user;
 }
 
-async function setUserStatus(id: mongoose.Types.ObjectId, status: "banned" | "active") {
-    const user = await UserModel.findOne({ _id: id, isDeleted: false });
-    if (!user) {
-        throw new Error("User not found");
-    }
-    user.status = status;
-    await user.save();
-    return user;
+async function setUserStatus(
+  id: mongoose.Types.ObjectId,
+  status: "banned" | "active"
+) {
+  const user = await UserModel.findOne({ _id: id, isDeleted: false });
+  if (!user) {
+    throw new Error("User not found");
+  }
+  user.status = status;
+  await user.save();
+  return user;
 }
 
 const UserDAO = {
-    addUser,
-    getUsers,
-    deleteUser,
-    updateUser,
-    authenticateUser,
-    getUser,
-    setUserStatus
+  addUser,
+  getUsers,
+  deleteUser,
+  updateUser,
+  authenticateUser,
+  getUser,
+  setUserStatus,
 };
 
 export default UserDAO;

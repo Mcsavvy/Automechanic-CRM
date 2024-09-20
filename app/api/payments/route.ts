@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import permissionRequired from "@/lib/decorators/permission";
-import { Permission } from "@/lib/permissions/base";
+import { Permission } from "@/lib/permissions/server";
 import OrderPaymentDAO from "@/lib/inventory/dao/orderPayment";
 import { NewPayment, PaymentSort } from "@/lib/@types/payments";
 import qs from "qs";
@@ -8,7 +8,7 @@ import { FilterQuery } from "mongoose";
 import { IOrderPaymentDocument } from "@/lib/inventory/models/orderPayment";
 import OrderDAO from "@/lib/inventory/dao/order";
 
-type CreateOrderPaymentPayload = Omit<NewPayment, "staffId">;
+type CreateOrderPaymentPayload = Omit<NewPayment, "confirmedBy">;
 type HasMinMax = Partial<{
   gte: string;
   lte: string;
@@ -81,12 +81,11 @@ export const GET = permissionRequired(Permission.AllowAny())(async function (
 
 export const POST = permissionRequired(Permission.AllowAny())(async function (
   req: NextRequest,
-  { params }: { params: { orderId: string } }
 ) {
   const currentUser = this.user;
   const payload: CreateOrderPaymentPayload = await req.json();
-  const order = await OrderDAO.getOrder(params.orderId);
-  const orderPayment = OrderPaymentDAO.createOrderPayment(params.orderId, {
+  const order = await OrderDAO.getOrder(payload.order);
+  const orderPayment = OrderPaymentDAO.createOrderPayment(payload.order, {
     amount: payload.amount,
     paymentMethod: payload.paymentMethod,
     confirmedBy: currentUser._id.toString(),
