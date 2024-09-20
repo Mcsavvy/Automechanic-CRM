@@ -24,7 +24,11 @@ const renderValue = (value: any) => {
   }
 };
 
-const DetailsTable = ({ details }) => {
+interface DetailsTableProps {
+  details: { [key: string]: any };
+}
+
+const DetailsTable: React.FC<DetailsTableProps> = ({ details }) => {
   return (
     <div className="font-nunito">
       {Object.entries(details).map(([key, value]) => (
