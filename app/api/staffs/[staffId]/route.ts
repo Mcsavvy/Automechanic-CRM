@@ -2,8 +2,11 @@ import { NextResponse, NextRequest } from "next/server";
 import permissionRequired from "@/lib/decorators/permission";
 import { Permission } from "@/lib/permissions/server";
 import UserDAO from "@/lib/common/dao/user";
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 import Staff from "@/lib/@types/staff";
+import LogDAO, { logParams } from "@/lib/common/dao/log";
+import user from "@/lib/populate/user";
+import { IUserDocument } from "@/lib/common/models/user";
 
 type UpdateStaffBody = Partial<Staff>;
 
@@ -34,10 +37,28 @@ export const PUT = permissionRequired(Permission.AllowAny())(async function (
     );
   }
   try {
+
+    const user = await UserDAO.getUser(mongoose.Types.ObjectId.createFromHexString(params.staffId));
+    if (!user) {
+      return NextResponse.json({ message: "Buyer not found" }, { status: 404 });
+    }
+    const details: { [key: string]: any } = {};
+    for (const key of Object.keys(body) as (keyof IUserDocument)[]) {
+      details[key] = user[key];
+    }
+    details.action_type = "updated"
     const staff = await UserDAO.updateUser(
       mongoose.Types.ObjectId.createFromHexString(staffId),
       body
     );
+    const logDetails: logParams = {
+      display: [this.user.fullName(), staff.fullName()], 
+      targetId: Types.ObjectId.createFromHexString(staff.id),
+      loggerId: Types.ObjectId.createFromHexString(this.user.id),
+      target: "Staff",
+      details
+    };
+    await LogDAO.logModification(logDetails);
     return NextResponse.json(staff);
   } catch (error) {
     if (error instanceof Error) {

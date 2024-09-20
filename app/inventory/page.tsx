@@ -42,20 +42,21 @@ export default function Home() {
           </li>
         </ul>
       </div>
-
-      <div className="flex p-[12px] md:p-[30px] flex-row flex-wrap gap-3 items-center justify-evenly w-full">
-        <RangeBar {...{ setBefore, setAfter, setMetric, before, after }} />
-        {tab == "chart" && (
-          <div className="w-full md:grid md:grid-cols-[7fr_3fr] md:auto-rows-min gap-4 overflow-y-visible scrollbar-thin flex flex-col items-center">
-            <Insights {...{ metric, before, after }} />
-            <BestPerformer {...{ before, after }} />
-            <div className="col-start-2 row-start-2 flex flex-col gap-3 invoice h-full w-full">
-              <StoreSummary {...{ before, after }} />
+            <div className="flex p-[12px] md:p-[30px] flex-row flex-wrap gap-3 items-center justify-evenly w-full">
+                <RangeBar {...{ setBefore, setAfter, setMetric, before, after }} />
+                {tab == "chart" &&
+                    <div className="w-full md:grid md:grid-cols-[7fr_3fr] md:auto-rows-min gap-4 overflow-y-visible scrollbar-thin flex flex-col items-center">
+                        <Insights {...{ metric, before, after }} />
+                        <BestPerformer {...{before, after}}/>
+                        <div className="col-start-2 row-start-2 flex flex-col gap-3 invoice h-full w-full">
+                            <StoreSummary {...{ before, after }} />
+                        </div>
+                    </div>
+                }
+                {tab == "recent" &&
+                    <RecentActions />
+                }
             </div>
-          </div>
-        )}
-        {tab == "recent" && <RecentActions {...{ before, after }} />}
-      </div>
-    </div>
-  );
+        </div>
+    );
 }

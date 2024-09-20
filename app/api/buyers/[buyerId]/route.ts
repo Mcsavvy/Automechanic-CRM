@@ -3,8 +3,9 @@ import permissionRequired from "@/lib/decorators/permission";
 import { Permission } from "@/lib/permissions/server";
 import { NextResponse } from "next/server";
 import BuyerDAO from "@/lib/inventory/dao/buyer";
-import mongoose from "mongoose";
-import BuyerModel from "@/lib/inventory/models/buyer";
+import mongoose, { Types } from "mongoose";
+import BuyerModel, { IBuyerDocument } from "@/lib/inventory/models/buyer";
+import LogDAO, { logParams } from "@/lib/common/dao/log";
 
 type UpdateBuyerBody = Partial<Buyer>;
 
@@ -35,14 +36,24 @@ export const PUT = permissionRequired(Permission.AllowAny())(async function (
       { status: 400 }
     );
   }
-
-  const buyer = await BuyerModel.findOneAndUpdate(
-    { _id: mongoose.Types.ObjectId.createFromHexString(params.buyerId) },
-    body
-  );
+  const buyer = await BuyerModel.findById(mongoose.Types.ObjectId.createFromHexString(params.buyerId));
   if (!buyer) {
     return NextResponse.json({ message: "Buyer not found" }, { status: 404 });
   }
+  const details: { [key: string]: any } = {};
+  for (const key of Object.keys(body) as (keyof IBuyerDocument)[]) {
+    details[key] = buyer[key];
+  }
+  Object.assign(buyer, body);
+  await buyer.save();
+  const logDetails: logParams = {
+    display: [this.user.fullName(), buyer.name], 
+    targetId: Types.ObjectId.createFromHexString(buyer.id),
+    loggerId: Types.ObjectId.createFromHexString(this.user.id),
+    target: "Buyer",
+    details
+  };
+  await LogDAO.logModification(logDetails);
   return NextResponse.json(buyer);
 });
 
@@ -54,6 +65,13 @@ export const DELETE = permissionRequired(Permission.AllowAny())(async function (
     const buyer = await BuyerDAO.deleteBuyer(
       mongoose.Types.ObjectId.createFromHexString(params.buyerId)
     );
+    const logDetails: logParams = {
+      display: [this.user.fullName(), buyer.name], 
+      targetId: Types.ObjectId.createFromHexString(params.buyerId),
+      loggerId: Types.ObjectId.createFromHexString(this.user.id),
+      target: "Buyer",
+    }
+    await LogDAO.logDeletion(logDetails);
     return new NextResponse(null, { status: 204 });
   } catch (error) {
     if (error instanceof Error)

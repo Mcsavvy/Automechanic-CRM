@@ -74,11 +74,13 @@ const fetchGroups = async () => {
         console.error(err)
     }
 }
-const Roles: React.FC = () => {
+const Roles = () => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
     const [scopes, setScopes] = useState<Scopes>(initialScopes)
+    const [originalName, setOriginalName] = useState('');
+    const [originalDescription, setOriginalDescription] = useState('');
     const [loading, setL] = useState(false)
     const handleScopeChange = (category: string, index: number | null = null) => {
         setScopes((prev) => {
@@ -138,6 +140,16 @@ const Roles: React.FC = () => {
             })
     }, [selectedGroup])
 
+    useEffect(() => {
+        if (selectedGroup) {
+            setOriginalName(selectedGroup.name);
+            setOriginalDescription(selectedGroup.description);
+            const populatedScopes = populateScopes(selectedGroup.permissions);
+            setScopes(populatedScopes);
+            setName(selectedGroup.name);
+            setDescription(selectedGroup.description);
+        }
+    }, [selectedGroup]);
 
     const renderCheckboxes = () => {
         return (
@@ -190,12 +202,28 @@ const Roles: React.FC = () => {
             return data
         } catch (err) {
             return err
-        }    
+        }
+    }
+
+    const reset = () => {
+        setOriginalName(name);
+        setOriginalDescription(description);
     }
     const handleSave = () => {
         if (!selectedGroup) return;
-        setL(true)
-        const permissions = Object.entries(scopes).reduce((acc, [category, { allChecked, items }]) => {
+        const changes: Partial<Group> = {};
+        let hasChanges = false;
+
+        if (name !== originalName) {
+            changes.name = name;
+            hasChanges = true;
+        }
+
+        if (description !== originalDescription) {
+            changes.description = description;
+            hasChanges = true;
+        }
+        const newPermissions = Object.entries(scopes).reduce((acc, [category, { allChecked, items }]) => {
             if (allChecked) {
                 acc[category] = true;
             } else {
@@ -207,29 +235,42 @@ const Roles: React.FC = () => {
             return acc;
         }, {} as Record<string, boolean | string[]>);
 
-        const updateData = {
-            name,
-            description,
-            permissions
-        };
-        const promise = new Promise<UpdateResponse>((resolve, reject) => {
-            updateGroup(selectedGroup.id, updateData)
-            .then((data) => {
-                resolve(data)
-            })
-            .catch((err) => {
-                reject(err.response.data)
-            })
-            .finally(() => setL(false))
-        })
+        if (JSON.stringify(newPermissions) !== JSON.stringify(selectedGroup.permissions)) {
+            changes.permissions = newPermissions;
+            setSelectedGroup(prevGroup => ({
+                ...prevGroup,
+                permissions: newPermissions
+            } as Group));
+            hasChanges = true;
+        }
 
-        toast.promise<UpdateResponse,UpdateResponse>(promise, {
+        if (!hasChanges) {
+            toast.info("No changes detected");
+            return;
+        }
+        setL(true)
+        const promise = new Promise<UpdateResponse>((resolve, reject) => {
+            updateGroup(selectedGroup.id, changes)
+                .then((data) => {
+                    resolve(data);
+                    reset()
+                })
+                .catch((err) => {
+                    reject(err.response.data);
+                })
+                .finally(() => {
+            reset()
+            setL(false)
+            });
+        });
+
+        toast.promise<UpdateResponse, UpdateResponse>(promise, {
             pending: "Updating...",
             success: {
-                render: ({data}) => data.message,
+                render: ({ data }) => data.message,
             },
             error: {
-                render: ({data}) => data.message || "An error occurred",
+                render: ({ data }) => data.message || "An error occurred",
             },
         });
     };
@@ -297,7 +338,8 @@ const Roles: React.FC = () => {
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
                                 placeholder='Admin description'
-                                className='w-full border border-neu-3 rounded-md resize-none p-3 max-h-[300px] focus:outline-none focus:border-pri-6'
+                                rows={7}
+                                className='w-full border border-neu-3 rounded-md resize-none p-3 h-[150px] focus:outline-none focus:border-pri-6'
                             ></textarea>
                         </div>
                         {renderCheckboxes()}

@@ -4,8 +4,9 @@ import { Permission } from "@/lib/permissions/server";
 import { IOrderDocument } from "@/lib/inventory/models/order";
 import qs from "qs";
 import { Order, OrderStatus, PaymentMethod, OrderSort, NewOrder } from "@/lib/@types/order";
-import { FilterQuery } from "mongoose";
+import { FilterQuery, Types } from "mongoose";
 import OrderDAO from "@/lib/inventory/dao/order";
+import LogDAO, { logParams } from "@/lib/common/dao/log";
 
 type HasMinMax = Partial<{
   gte: string;
@@ -91,5 +92,12 @@ export const POST = permissionRequired(Permission.AllowAny())(async function (
 ) {
   const order = await req.json() as NewOrder;
   const response = await OrderDAO.addOrder({...order, staff: this.user});
+  const logDetails: logParams = {
+    display: [this.user.fullName(), response.orderNo.toString()], 
+    targetId: Types.ObjectId.createFromHexString(response.id),
+    loggerId: Types.ObjectId.createFromHexString(this.user.id),
+    target: "Order",
+  }
+  await LogDAO.logCreation(logDetails);
   return NextResponse.json(response, { status: 201 });
 });

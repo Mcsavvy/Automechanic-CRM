@@ -9,7 +9,6 @@ import {
   validatePassword,
   validatePhoneNumber,
 } from "../validation";
-import LogDAO from "./log";
 import { JWT_EXPIRY, JWT_SECRET } from "@/config";
 
 interface createUserParams {
@@ -41,39 +40,31 @@ interface PaginatedUsers {
 }
 
 async function addUser({
-  firstName,
-  lastName,
-  email,
-  phone,
-  password,
-}: createUserParams) {
-  firstName = validateFirstName(firstName);
-  lastName = validateLastName(lastName);
-  email = validateEmail(email);
-  phone = validatePhoneNumber(phone);
-  password = validatePassword(password);
-
-  if (
-    (await UserModel.countDocuments({ email, isDeleted: false }).exec()) > 0
-  ) {
-    throw new Error("User with email already exists");
-  }
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const user = new UserModel({
     firstName,
     lastName,
     email,
     phone,
-    password: hashedPassword,
-  });
-  await user.save();
-  LogDAO.logCreation({
-    description: `User ${user.fullName()} created`,
-    target: "User",
-    targetId: user._id,
-    loggerId: user._id,
-  });
-  return user;
+    password,
+}: createUserParams) {
+    firstName = validateFirstName(firstName);
+    lastName = validateLastName(lastName);
+    email = validateEmail(email);
+    phone = validatePhoneNumber(phone);
+    password = validatePassword(password);
+
+    if ((await UserModel.countDocuments({ email, isDeleted: false }).exec()) > 0) {
+        throw new Error("User with email already exists");
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = new UserModel({
+        firstName,
+        lastName,
+        email,
+        phone,
+        password: hashedPassword,
+    });
+    await user.save();
+    return user;
 }
 
 async function getUsers({
@@ -175,35 +166,21 @@ async function updateUser(
     details.password = user.password;
   }
   if (!payload) return user;
-
-  Object.assign(user, payload);
-  await user.save();
-  LogDAO.logModification({
-    description: `User ${user.fullName()} updated`,
-    target: "User",
-    targetId: user._id,
-    loggerId: user._id,
-    details,
-  });
-  return user;
+    Object.assign(user, payload);
+    await user.save();
+    return user;
 }
 
 async function deleteUser(id: mongoose.Types.ObjectId) {
-  const user = await UserModel.findOneAndUpdate(
-    { _id: id, isDeleted: false },
-    { isDeleted: true },
-    { new: true }
-  );
-  if (!user) {
-    throw new Error("User not found");
-  }
-  LogDAO.logDeletion({
-    description: `User ${user.fullName()} deleted`,
-    target: "User",
-    targetId: user._id,
-    loggerId: user._id,
-  });
-  return user;
+    const user = await UserModel.findOneAndUpdate(
+        { _id: id, isDeleted: false },
+        { isDeleted: true },
+        { new: true }
+    );
+    if (!user) {
+        throw new Error("User not found");
+    }
+    return user;
 }
 
 async function authenticateUser(email: string, password: string) {

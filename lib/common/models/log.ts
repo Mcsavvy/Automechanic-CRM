@@ -2,8 +2,8 @@ import mongoose from 'mongoose';
 import { getBaseSchema, IBaseDocument, defineModel } from './base';
 import UserModel from './user';
 
-interface ILogDocument extends IBaseDocument {
-  description: string;
+export interface ILogDocument extends IBaseDocument {
+  display: string[];
   action: 'create' | 'update' | 'delete'; // The action carried out
   target: string; // The model affected
   details: {
@@ -15,7 +15,7 @@ interface ILogDocument extends IBaseDocument {
 }
 
 const LogSchema = getBaseSchema().add({
-  description: { type: String, required: true, default: ''},
+  display: { type: Array, required: true, default: ''},
   action: { type: String, required: true },
   details: { type: Object, required: false},
   target: { type: String, required: true },

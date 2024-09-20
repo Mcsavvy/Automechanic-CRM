@@ -1,5 +1,5 @@
 import User, { IUserDocument } from "@/lib/common/models/user";
-import { FilterQuery } from "mongoose";
+import { FilterQuery, Types } from "mongoose";
 import { NextResponse } from "next/server";
 import permissionRequired from "@/lib/decorators/permission";
 import { Permission } from "@/lib/permissions/server";
@@ -7,6 +7,7 @@ import UserDAO from "@/lib/common/dao/user";
 import GroupDAO from "@/lib/common/dao/group";
 import Group, { IGroupDocument } from "@/lib/common/models/group";
 import mongoose from "mongoose";
+import LogDAO, { logParams } from "@/lib/common/dao/log";
 export const GET = permissionRequired(Permission.AllowAny())(async function (
     req
 ) {
@@ -109,6 +110,13 @@ export const POST = permissionRequired(Permission.AllowAny())(async function (
     for (const group of groups) {
       await GroupDAO.addMember(group.id, user.id);
     }
+    const logDetails: logParams = {
+      display: [this.user.fullName(), user.fullName()], 
+      targetId: Types.ObjectId.createFromHexString(user.id),
+      loggerId: Types.ObjectId.createFromHexString(this.user.id),
+      target: "Staff",
+    }
+    await LogDAO.logCreation(logDetails);
     return NextResponse.json(user, { status: 201 });
   } catch (e) {
     if (e instanceof Error) {
