@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import User, { IUserDocument } from "../common/models/user";
 import { SignJWT, jwtVerify, type JWTPayload } from "jose";
-import { AUTH_COOKIE_NAME, JWT_SECRET } from "@/config";
+import { AUTH_COOKIE_NAME, JWT_SECRET } from "../../config";
 
 type AuthContext = {
     user: IUserDocument;
