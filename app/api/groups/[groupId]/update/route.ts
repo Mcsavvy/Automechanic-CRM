@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
 import permissionRequired from "@/lib/decorators/permission";
-import { Permission } from "@/lib/permissions/base";
+import { Permission } from "@/lib/permissions/server";
 import GroupModel, { IGroupDocument } from '@/lib/common/models/group'
 import LogDAO, { logParams } from "@/lib/common/dao/log";
 import mongoose, { Types } from "mongoose";

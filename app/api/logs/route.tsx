@@ -1,4 +1,4 @@
-import { Permission } from "@/lib/permissions/base";
+import { Permission } from "@/lib/permissions/server";
 import { ILogDocument } from "@/lib/common/models/log";
 import permissionRequired from "@/lib/decorators/permission";
 import { NextResponse } from "next/server";
