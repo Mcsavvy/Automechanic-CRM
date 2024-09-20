@@ -24,6 +24,7 @@ export const GET = permissionRequired(Permission.AllowAny())(async function (
     ];
   } else {
     query.$or = [
+      { id: search },
       { name: { $regex: search, $options: "i" } },
       { email: { $regex: search, $options: "i" } },
       { phone: { $regex: search, $options: "i" } },
