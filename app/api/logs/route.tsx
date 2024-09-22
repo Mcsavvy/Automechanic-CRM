@@ -17,6 +17,7 @@ interface LogQueryParams {
     b: string;
     a: string;
     t: string;
+    at: string;
     t_id: string;
     l_id: string;
     o: string;
@@ -31,6 +32,7 @@ export const GET = permissionRequired(Permission.AllowAny())(async function (
     const after = params.a ? new Date(params.a) : undefined;
     const order = (params.o ? parseInt(params.o) : -1) as SortOrder;
     const target = params.t ? params.t : undefined;
+    const action = params.at ? params.at : undefined;
     const targetId = params.t_id ? Types.ObjectId.createFromHexString(params.t_id) : undefined;
     const loggerId = params.l_id ? Types.ObjectId.createFromHexString(params.l_id) : undefined;
 
@@ -50,7 +52,9 @@ export const GET = permissionRequired(Permission.AllowAny())(async function (
     if (loggerId) {
         query.loggerId = loggerId;
     }
-    
+    if (action) {
+        query.action = action;
+    }
     const results = await LogDAO.getLogs({ filters: query, page, limit, order });
     return NextResponse.json(results);
 });
