@@ -1,11 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Lato');
-@import url('https://fonts.googleapis.com/css2?family=Nunito');
-@import url('https://fonts.googleapis.com/css2?family=Quicksand');
-@import url('https://fonts.googleapis.com/css2?family=Rambla');
+@import url("https://fonts.googleapis.com/css2?family=Lato");
+@import url("https://fonts.googleapis.com/css2?family=Nunito");
+@import url("https://fonts.googleapis.com/css2?family=Quicksand");
+@import url("https://fonts.googleapis.com/css2?family=Rambla");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 
 @layer base {
   :root {
@@ -43,43 +42,41 @@
     --background-end-rgb: 255, 255, 255;
 
     /* Primary: Prussian Blue */
-    --pri-100: #F2F6FF;
-    --pri-200: #B4CCFD;
-    --pri-300: #70A0EC;
-    --pri-400: #2D6DBE;
+    --pri-100: #f2f6ff;
+    --pri-200: #b4ccfd;
+    --pri-300: #70a0ec;
+    --pri-400: #2d6dbe;
     --pri-500: #003366;
     --pri-600: #003056;
-    --pri-700: #002B46;
+    --pri-700: #002b46;
     --pri-800: #002536;
-    --pri-900: #001C26;
+    --pri-900: #001c26;
 
     /* Accent: Robot Grendizer Gold */
-    --acc-100: #FCFFF2;
-    --acc-200: #F3FFBC;
-    --acc-300: #EEFC84;
-    --acc-400: #EBF54D;
-    --acc-500: #E8E817;
-    --acc-600: #B8AD08;
+    --acc-100: #fcfff2;
+    --acc-200: #f3ffbc;
+    --acc-300: #eefc84;
+    --acc-400: #ebf54d;
+    --acc-500: #e8e817;
+    --acc-600: #b8ad08;
     --acc-700: #877802;
     --acc-800: #574800;
     --acc-900: #050505;
 
     /* Neutral */
-    --neu-100: #FAFBFC;
-    --neu-200: #EAECEE;
-    --neu-300: #DBDDE0;
-    --neu-400: #CCCFD2;
-    --neu-500: #BCC0C4;
-    --neu-600: #94999D;
-    --neu-700: #6D7275;
-    --neu-800: #474C4E;
+    --neu-100: #fafbfc;
+    --neu-200: #eaecee;
+    --neu-300: #dbdde0;
+    --neu-400: #cccfd2;
+    --neu-500: #bcc0c4;
+    --neu-600: #94999d;
+    --neu-700: #6d7275;
+    --neu-800: #474c4e;
     --neu-900: #222526;
     --body: "Lato", sans-serif;
     --heading: "Quicksand", sans-serif;
     --progress: #ddd;
     --red-light: rgb(236, 183, 183);
-    
-    
   }
 
   @media (prefers-color-scheme: dark) {
@@ -92,9 +89,12 @@
 
   body {
     color: rgb(var(--foreground-rgb));
-    background: linear-gradient(to bottom,
+    background: linear-gradient(
+        to bottom,
         transparent,
-        rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
+        rgb(var(--background-end-rgb))
+      )
+      rgb(var(--background-start-rgb));
   }
 
   .dark {
@@ -192,17 +192,15 @@
     letter-spacing: 0.0015em;
     font-size: 1.15em;
     color: var(--pri-800);
-    text-shadow: 
-        0 0.23px var(--pri-300), -0.23px 0 var(--pri-100), 
-        -0.23px 0.46px var(--pri-300), -0.46px 0.23px var(--pri-100),
-        -0.46px 0.69px var(--pri-300), -0.69px 0.46px var(--pri-100),
-        -0.69px 0.92px var(--pri-300), -0.92px 0.69px var(--pri-100),
-        -0.92px 1.15px var(--pri-300), -1.15px 0.92px var(--pri-100), 
-        -1.15px 1.38px var(--pri-300), -1.38px 1.15px var(--pri-100),
-        -1.38px 1.61px var(--pri-300), -1.61px 1.38px var(--pri-100), 
-        -1.61px 1.84px var(--pri-300), -1.84px 1.61px var(--pri-100);
+    text-shadow: 0 0.23px var(--pri-300), -0.23px 0 var(--pri-100),
+      -0.23px 0.46px var(--pri-300), -0.46px 0.23px var(--pri-100),
+      -0.46px 0.69px var(--pri-300), -0.69px 0.46px var(--pri-100),
+      -0.69px 0.92px var(--pri-300), -0.92px 0.69px var(--pri-100),
+      -0.92px 1.15px var(--pri-300), -1.15px 0.92px var(--pri-100),
+      -1.15px 1.38px var(--pri-300), -1.38px 1.15px var(--pri-100),
+      -1.38px 1.61px var(--pri-300), -1.61px 1.38px var(--pri-100),
+      -1.61px 1.84px var(--pri-300), -1.84px 1.61px var(--pri-100);
     text-align: center;
-
   }
 
   .tab::before {
@@ -217,7 +215,25 @@
     left: 0;
     border-radius: 50px;
   }
+  .drawer > button.drawer-btn {
+    display: none;
+  }
+  @media (max-width: 1024px) {
+    .drawer {
+      position: fixed;
+      bottom: 3px;
+      transition: transform 0.3s ease-in-out;
+    }
 
+    .drawer-hidden {
+      transform: translateX(100%);
+    }
+    .drawer > button.drawer-btn {
+      display: inline-flex;
+    }
+  }
+
+  /* Drawer button styles */
 
   .loader {
     border: 4px solid var(--pri-600);
@@ -238,7 +254,7 @@
     }
   }
 
-   .origami-background {
+  .origami-background {
     background: repeating-linear-gradient(
       135deg,
       var(--acc-200),
@@ -247,7 +263,7 @@
       transparent 80px
     );
   }
-  .progress-bar{
+  .progress-bar {
     background: repeating-linear-gradient(
       to right,
       var(--progress),

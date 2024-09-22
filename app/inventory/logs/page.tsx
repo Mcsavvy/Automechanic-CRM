@@ -1,6 +1,7 @@
 "use client"
 import React, { useState, useEffect } from 'react'
 import LogItem from './components/log-item'
+import Filters from './components/filters'
 import axios from 'axios'
 import Log from '@/lib/@types/log'
 const groupByDate = (logs: Log[]) => {
@@ -16,10 +17,22 @@ const groupByDate = (logs: Log[]) => {
 const Logs: React.FC = () => {
     const [loading, setL] = useState(false)
     const [logs, setLogs] = useState<any>([])
+    const [before, setBefore] = useState<string>('')
+    const [after, setAfter] = useState<string>('')
+    const [action, setAction] = useState<string>('')
+    const [l_type, setType] = useState<string>('')
+
     const fetchLogs = async () => {
         setL(true)
         try {
-            const res = await axios.get('/api/logs')
+            setLogs([])
+            let query = '?'
+            if (before) query += `&b=${encodeURIComponent(before)}`;
+            if (after) query += `&a=${encodeURIComponent(after)}`;
+            if (action) query += `&at=${encodeURIComponent(action)}`;
+            if (l_type) query += `&t=${encodeURIComponent(l_type)}`;
+            if (!(before || after || action || l_type)) query = '';
+            const res = await axios.get(`/api/logs${query}`)
             setLogs(groupByDate(res.data.logs))
         } catch (error) {
             console.log(error)
@@ -28,12 +41,17 @@ const Logs: React.FC = () => {
     }
     useEffect(() => {
         fetchLogs()
-    }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [before, after, l_type, action])
+
     return (
-        <div className="absolute h-[calc(100vh-60px)] top-[60px] w-full overflow-auto scrollbar-thin">
-            <div className="md:p-[30px] p-3 w-[700px] max-w-[calc(100%-30px)] mx-auto  min-h-full bg-white rounded-md">
+        <div className="flex flex-row absolute h-[calc(100vh-60px)] top-[60px] w-full overflow-auto scrollbar-thin">
+            <div className="md:p-[30px] p-3 w-[700px] max-w-[calc(100%-30px)] mx-3 mt-3 bg-white min-h-[calc(100%-3em)] h-fit rounded-md">
                 {
-                    logs &&
+                    (!logs || loading) ?
+                    <div>
+                        Loading...
+                    </div>:
                     <ul>
                         {
                             Object.keys(logs).map((date, index) => (
@@ -54,6 +72,7 @@ const Logs: React.FC = () => {
                     </ul>
                 }
             </div>
+            <Filters {...{ setBefore, setAfter, setType, setAction }}/>
         </div>
     );
 }
