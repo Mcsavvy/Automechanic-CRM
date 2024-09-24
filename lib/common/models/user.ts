@@ -31,5 +31,5 @@ UserSchema.methods.fullName = function() {
 
 UserSchema.methods.hasPermission = hasPermission;
 
-// export default defineModel<IUserDocument>("User", UserSchema);
-export default defineModel<IUserDocument>("User", UserSchema);
+const UserModel = defineModel<IUserDocument>("User", UserSchema);
+export default UserModel;

@@ -24,5 +24,5 @@ const LogSchema = getBaseSchema().add({
 });
 
 
-
-export default defineModel<ILogDocument>("Log", LogSchema);
+const LogModel = defineModel<ILogDocument>("Log", LogSchema);
+export default LogModel;

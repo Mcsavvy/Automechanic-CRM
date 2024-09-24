@@ -14,6 +14,7 @@ import OrderItemDAO from "./orderItem";
 import OrderPaymentDAO from "./orderPayment";
 import { DocumentOrId } from "@/lib/@types";
 import { IUserDocument } from "@/lib/common/models/user";
+import { NotFoundError } from "@/lib/errors";
 
 type PopulatedBuyer = {
   name: string;
@@ -126,7 +127,10 @@ async function updateOrder(update: OrderModification): Promise<Order> {
     { new: true }
   );
   if (!order) {
-    throw new Error("Order not found");
+    throw new NotFoundError("Order not found", {
+      model: "Order",
+      id: update.id,
+    });
   }
   const items = await Promise.all(
     update.items.map(async (item: OrderItem | NewOrderItem) => {
