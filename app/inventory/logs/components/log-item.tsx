@@ -1,7 +1,7 @@
 import { Fingerprint, UsersRound, Package, ReceiptText, ChevronRight, ChevronDown } from "lucide-react"
 import React, { FC, useState } from "react"
 import Link from 'next/link'
-import { formatDateTime } from '@/lib/utils';
+import { formatDateTime, formatInvoiceNumber } from '@/lib/utils';
 import Log from '@/lib/@types/log'
 import ContactAvatar from '@/components/ui/contact-avatar'
 import DetailsTable from './details-table'
@@ -23,7 +23,7 @@ const customMessages: any = {
             " erased the profile of "
         ]
     },
-    Staff: {
+    User: {
         create: [
             " added a new staff member: ",
             " registered a new employee: ",
@@ -98,19 +98,18 @@ const customMessages: any = {
     },
     Order: {
         create: [
-            " placed an order for ",
-            " initiated a purchase for ",
-            " made an order for "
+            " placed order ",
+            " initiated a purchase for order ",
         ],
         update: [
-            " updated the order status for ",
-            " modified the order details for ",
-            " changed the order information for "
+            " updated order ",
+            " modified order ",
+            " changed order "
         ],
         delete: [
-            " canceled the order for ",
-            " voided the purchase for ",
-            " deleted the order for "
+            " canceled order ",
+            " voided order ",
+            " deleted order "
         ]
     }
 }
@@ -118,6 +117,7 @@ const getRandomMessage = (messages: string[]) => {
     return messages[Math.floor(Math.random() * messages.length)];
 }
 const parseLog = (log: LogProps) => {
+    console.log(log)
     const data: any = {}
     if (["Group", 'Staff'].includes(log.target) && log.action == "update") {
         data.message = getRandomMessage(customMessages[log.target][log.action][log.details['action_type']])
@@ -157,6 +157,7 @@ const parseLog = (log: LogProps) => {
         case 'Order': {
             data.avatar = { icon: ReceiptText }
             data.link = `/inventory/orders/${log.targetId}`
+            data.display = [log.display[0], formatInvoiceNumber(log.display[1])]
             break
         }
     }
