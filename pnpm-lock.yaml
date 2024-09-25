@@ -41,6 +41,9 @@ importers:
       '@tanstack/react-table':
         specifier: ^8.17.3
         version: 8.20.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tanstack/table-core':
+        specifier: ^8.20.5
+        version: 8.20.5
       '@types/asciichart':
         specifier: ^1.5.8
         version: 1.5.8

@@ -22,6 +22,7 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-tooltip": "^1.0.7",
     "@tanstack/react-table": "^8.17.3",
+    "@tanstack/table-core": "^8.20.5",
     "@types/asciichart": "^1.5.8",
     "axios": "^1.6.8",
     "bcrypt": "^5.1.1",
