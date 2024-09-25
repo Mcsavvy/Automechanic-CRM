@@ -155,7 +155,7 @@ const PaymentSummary: React.FC<
   outstanding,
 }) => {
   return (
-    <div className="flex flex-col gap-2 p-2 min-w-80 w-full">
+    <div className="flex flex-col gap-2 p-2 w-full">
       <div className="flex justify-between gap-2">
         <label className="text-sm text-gray-500">Discount</label>
         <NumberInput
@@ -298,7 +298,7 @@ export default function InvoicePayments({
   }
 
   return (
-    <div className="min-h-[90vh] flex flex-col justify-start items-start gap-4 md:w-[35%] md:min-w-[310px] p-2 flex-grow border border-gray-200 rounded-lg shadow">
+    <div className="flex flex-col justify-start items-start gap-4 w-full p-2 flex-grow border border-gray-200 rounded-lg shadow">
       <h1 className="text-xl font-bold text-gray-800 p-2">Payment</h1>
       <PaymentDates
         issueDate={issueDate}
@@ -340,7 +340,7 @@ export default function InvoicePayments({
           outstanding,
         }}
       />
-      <div className="flex flex-grow items-end justify-around pl-2 pt-0 h-[70px] min-w-80 w-full gap-2 mt-auto">
+      <div className="flex flex-grow items-end justify-around pl-2 pt-0 h-[70px] w-full gap-2 mt-auto">
         <SaveButton status={saveStatus} handleSave={handleSave} />
         {/* <Button variant={"destructive"} onClick={() => {}} className="w-full bg-black text-white">
           Export

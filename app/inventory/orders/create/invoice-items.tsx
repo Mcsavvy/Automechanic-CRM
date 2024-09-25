@@ -107,7 +107,7 @@ const Item: React.FC<
       <TableCell className="bg-neu-1 w-full align-top p-2">
         <NumberInput
           value={quantity}
-          min={1}
+          min={0}
           max={qtyInStock}
           disabled={!name}
           onChange={(value) => handleChange(good, value, cost)}
@@ -191,7 +191,7 @@ export default function InvoiceItems({
   }
 
   return (
-    <div className="min-h-[90vh] flex flex-col justify-start items-start gap-4 flex-grow w-full md:w-[60%] border border-gray-200 rounded-lg shadow p-2">
+    <div className="flex flex-col justify-start items-start gap-4 border border-gray-200 rounded-lg shadow p-2">
       <h1 className="text-xl font-bold text-gray-800 p-2">Invoice</h1>
       <div className="flex gap-4 w-full flex-wrap p-2 pl-5">
         <div className="flex flex-col gap-2">

@@ -21,7 +21,7 @@ export default function Home() {
   const [tab, setTab] = useState("recent");
 
   return (
-    <div className="absolute h-[calc(100vh-60px)] top-[60px] w-full  overflow-auto">
+    <div className="pt-[60px] w-full overflow-x-hidden overflow-y-scroll scrollbar-thin">
       <div className="sticky top-0 w-full z-10 overflow-x-clip">
         <ul className="px-[30px] pt-3 pb-0 font-quicksand flex flex-row items-start bg-white overflow-x-clip overflow-y-clip gap-4">
           <li
@@ -42,21 +42,19 @@ export default function Home() {
           </li>
         </ul>
       </div>
-            <div className="flex p-[12px] md:p-[30px] flex-row flex-wrap gap-3 items-center justify-evenly w-full">
-                <RangeBar {...{ setBefore, setAfter, setMetric, before, after }} />
-                {tab == "chart" &&
-                    <div className="w-full md:grid md:grid-cols-[7fr_3fr] md:auto-rows-min gap-4 overflow-y-visible scrollbar-thin flex flex-col items-center">
-                        <Insights {...{ metric, before, after }} />
-                        <BestPerformer {...{before, after}}/>
-                        <div className="col-start-2 row-start-2 flex flex-col gap-3 invoice h-full w-full">
-                            <StoreSummary {...{ before, after }} />
-                        </div>
-                    </div>
-                }
-                {tab == "recent" &&
-                    <RecentActions />
-                }
+      <div className="flex p-[12px] md:p-[30px] flex-row flex-wrap gap-3 items-center justify-evenly w-full">
+        <RangeBar {...{ setBefore, setAfter, setMetric, before, after }} />
+        {tab == "chart" && (
+          <div className="w-full md:grid md:grid-cols-[7fr_3fr] md:auto-rows-min gap-4 overflow-y-visible scrollbar-thin flex flex-col items-center">
+            <Insights {...{ metric, before, after }} />
+            <BestPerformer {...{ before, after }} />
+            <div className="col-start-2 row-start-2 flex flex-col gap-3 invoice h-full w-full">
+              <StoreSummary {...{ before, after }} />
             </div>
-        </div>
-    );
+          </div>
+        )}
+        {tab == "recent" && <RecentActions />}
+      </div>
+    </div>
+  );
 }
