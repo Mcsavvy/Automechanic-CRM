@@ -5,6 +5,7 @@ import axios from '@/lib/axios';
 import { OrderInsights } from '@/lib/@types/insights';
 import { Chart, BarController, BarElement, CategoryScale, LinearScale, Tooltip } from "chart.js";
 import { Bar } from 'react-chartjs-2';
+import { formatCurrencyShort } from '@/lib/utils';
 
 Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip)
 interface InsightProps {
@@ -135,40 +136,71 @@ const Insights: FC<InsightProps> = ({ metric, before, after }) => {
     }, [insights, metric]);
 
     return (
-        <>
-            <div className="w-full bg-white flex self-start items-start justify-center border border-neu-3 shadow-md overflow-auto min-h-[200px]">
-                <div className=" w-full bg-white p-4 flex grow flex-col gap-3">
-                    <h3 className="text-lg text-pri-5 font-semibold font-quicksand">Revenue Summary</h3>
-                    {insights.length > 0 && <Bar data={chartData} options={options} />}
-                </div >
-            </div>
-            <div className=" self-start border border-neu-3 shadow-md  min-h-[250px] w-full p-4 bg-white">
-                <h3 className="flex flex-col items-start text-lg text-pri-6 font-semibold font-quicksand">Order Summary within this period
-                    <span className={`font-semibold text-xl font-quicksand ${profit >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                        {
-                            Intl.NumberFormat('en-US', {
-                                style: 'currency',
-                                currency: 'NGN'
-                            }).format(profit >= 0 ? profit : 0 - profit)
-                                .replace("NGN", "₦")
-                        }
-                    </span>
-                </h3>
-                {Object.keys(summary).length > 0 &&
-                    <>
-                        <ul className="flex flex-col gap-1 items-start">
-                            <li className="w-full flex flex-row items-center justify-between"><span>Paid:</span><span className="font-semibold text-acc-7">{summary.paid}</span></li>
-                            <li className="w-full flex flex-row items-center justify-between"><span>Pending:</span><span className="font-semibold text-acc-7">{summary.pending}</span></li>
-                            <li className="w-full flex flex-row items-center justify-between"><span>Interested:</span><span className="font-semibold text-acc-7">{summary.rest}</span></li>
-                            <li className="w-full flex flex-row items-center justify-between"><span>Cancelled:</span><span className="font-semibold text-acc-7">{summary.cancelled}</span></li>
-                            <li className="w-full flex flex-row items-center justify-between"><span>Errors:</span><span className="font-semibold text-acc-7">{summary.errors}</span></li>
-                            <li className="w-full flex flex-row items-center justify-between font-semibold text-lg"><span>Total:</span><span className="font-semibold text-acc-7">{summary.total}</span></li>
-                        </ul>
-                    </>
-                }
-            </div>
-        </>
-    )
+      <>
+        <div className="w-full h-full bg-white flex self-start items-start justify-center border border-neu-3 shadow-md overflow-auto min-h-[200px]">
+          <div className="h-full w-full bg-white p-4 flex grow flex-col gap-3">
+            <h3 className="flex flex-col text-lg text-pri-5 font-semibold font-quicksand">
+              Revenue Summary
+            </h3>
+            {insights.length > 0 && <Bar data={chartData} options={options} className='my-auto' />}
+          </div>
+        </div>
+        <div className="self-start h-full flex flex-col gap-y-4 border border-neu-3 shadow-md  min-h-[250px] w-full p-4 bg-white">
+          <h3 className="text-lg text-pri-6 font-semibold font-quicksand truncate">
+            Order Summary For Period
+          </h3>
+          <p
+            className={`font-semibold text-4xl text-center mt-4 font-quicksand ${
+              profit >= 0 ? (profit > 0? "text-green-500" : "text-gray-500") : "text-red-500"
+            }`}
+          >
+            {formatCurrencyShort(profit)}
+          </p>
+          {Object.keys(summary).length > 0 && (
+            <>
+              <ul className="flex flex-col gap-y-2 items-start">
+                <li className="w-full flex flex-row items-center justify-between">
+                  <span>Paid:</span>
+                  <span className="font-semibold text-acc-7">
+                    {summary.paid}
+                  </span>
+                </li>
+                <li className="w-full flex flex-row items-center justify-between">
+                  <span>Pending:</span>
+                  <span className="font-semibold text-acc-7">
+                    {summary.pending}
+                  </span>
+                </li>
+                <li className="w-full flex flex-row items-center justify-between">
+                  <span>Interested:</span>
+                  <span className="font-semibold text-acc-7">
+                    {summary.rest}
+                  </span>
+                </li>
+                <li className="w-full flex flex-row items-center justify-between">
+                  <span>Cancelled:</span>
+                  <span className="font-semibold text-acc-7">
+                    {summary.cancelled}
+                  </span>
+                </li>
+                <li className="w-full flex flex-row items-center justify-between">
+                  <span>Errors:</span>
+                  <span className="font-semibold text-acc-7">
+                    {summary.errors}
+                  </span>
+                </li>
+                <li className="w-full flex flex-row items-center justify-between font-semibold text-lg">
+                  <span>Total:</span>
+                  <span className="font-semibold text-acc-7">
+                    {summary.total}
+                  </span>
+                </li>
+              </ul>
+            </>
+          )}
+        </div>
+      </>
+    );
 }
 
 export default Insights
