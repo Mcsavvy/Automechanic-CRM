@@ -36,12 +36,15 @@ OrderItemSchema.pre("save", async function (next) {
 OrderItemSchema.post("save", async function (doc: IOrderItemDocument, next) {
   try {
     // @ts-ignore
-    const qtyDifference = doc.isNew ? doc.qty : doc.qty - doc._originalQty;
+    const qtyDifference = doc.qty - (doc._originalQty || 0);
+    console.log(`Reducing good quantity by ${qtyDifference}`);
     await GoodModel.findByIdAndUpdate(doc.goodId, {
-      $inc: { quantity: -qtyDifference },
+      $inc: { qty: -qtyDifference },
     });
+    console.log("Order item saved successfully.");
     next();
   } catch (error) {
+    console.error("Error saving order item:", error);
     // @ts-ignore
     next(error);
   }
@@ -71,9 +74,14 @@ OrderItemSchema.post(
   async function (doc: IOrderItemDocument, next) {
     try {
       // @ts-ignore
+      const qtyDifference = doc._originalQty;
+      console.assert(qtyDifference, "Original quantity not found");
+      console.log(
+        `Restoring good '${doc.goodId}' quantity by ${qtyDifference}`
+      );
       await GoodModel.findByIdAndUpdate(doc.goodId, {
         // @ts-ignore
-        $inc: { quantity: doc._originalQty },
+        $inc: { quantity: qtyDifference },
       });
       next();
     } catch (error) {
