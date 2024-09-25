@@ -40,7 +40,7 @@ const BestPerformer: FC<Partial<BestPerformerProps>> = ({ before, after }) => {
                 Best performing products<Button variant={"outline"} className="font-semibold">Add a new Product</Button>
             </h3>
             <table className="relative w-full rounded-md mb-4">
-                <thead className="sticky top-0 bg-neu-1 top-0 text-[14px] font-rambla font-bold text-pri-6 border-b z-10 border-neu-3">
+                <thead className="sticky top-0 bg-neu-1 text-[14px] font-rambla font-bold text-pri-6 border-b z-10 border-neu-3">
                     <tr>
                         <th className="text-left px-4 py-2 sticky left-0 bg-neu-1">Name</th>
                         <th className="text-left px-4 py-2 bg-neu-1">Category</th>
