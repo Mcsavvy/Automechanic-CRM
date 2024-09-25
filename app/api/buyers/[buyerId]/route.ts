@@ -6,6 +6,7 @@ import BuyerDAO from "@/lib/inventory/dao/buyer";
 import mongoose, { Types } from "mongoose";
 import BuyerModel, { IBuyerDocument } from "@/lib/inventory/models/buyer";
 import LogDAO, { logParams } from "@/lib/common/dao/log";
+import { buildErrorResponse, EntityNotFound } from "@/lib/errors";
 
 type UpdateBuyerBody = Partial<Buyer>;
 
@@ -19,9 +20,7 @@ export const GET = permissionRequired(Permission.AllowAny())(async function (
     );
     return NextResponse.json(buyer);
   } catch (error) {
-    if (error instanceof Error)
-      return NextResponse.json({ message: error.message }, { status: 404 });
-    return NextResponse.json({ message: "An error occurred" }, { status: 500 });
+    return buildErrorResponse(error);
   }
 });
 
@@ -36,9 +35,11 @@ export const PUT = permissionRequired(Permission.AllowAny())(async function (
       { status: 400 }
     );
   }
-  const buyer = await BuyerModel.findById(mongoose.Types.ObjectId.createFromHexString(params.buyerId));
+  const buyer = await BuyerModel.findById(
+    mongoose.Types.ObjectId.createFromHexString(params.buyerId)
+  );
   if (!buyer) {
-    return NextResponse.json({ message: "Buyer not found" }, { status: 404 });
+    return EntityNotFound.construct("Customer", params.buyerId);
   }
   const details: { [key: string]: any } = {};
   for (const key of Object.keys(body) as (keyof IBuyerDocument)[]) {
@@ -47,11 +48,11 @@ export const PUT = permissionRequired(Permission.AllowAny())(async function (
   Object.assign(buyer, body);
   await buyer.save();
   const logDetails: logParams = {
-    display: [this.user.fullName(), buyer.name], 
+    display: [this.user.fullName(), buyer.name],
     targetId: Types.ObjectId.createFromHexString(buyer.id),
     loggerId: Types.ObjectId.createFromHexString(this.user.id),
     target: "Buyer",
-    details
+    details,
   };
   await LogDAO.logModification(logDetails);
   return NextResponse.json(buyer);
@@ -66,16 +67,14 @@ export const DELETE = permissionRequired(Permission.AllowAny())(async function (
       mongoose.Types.ObjectId.createFromHexString(params.buyerId)
     );
     const logDetails: logParams = {
-      display: [this.user.fullName(), buyer.name], 
+      display: [this.user.fullName(), buyer.name],
       targetId: Types.ObjectId.createFromHexString(params.buyerId),
       loggerId: Types.ObjectId.createFromHexString(this.user.id),
       target: "Buyer",
-    }
+    };
     await LogDAO.logDeletion(logDetails);
     return new NextResponse(null, { status: 204 });
   } catch (error) {
-    if (error instanceof Error)
-      return NextResponse.json({ message: error.message }, { status: 400 });
-    return NextResponse.json({ message: "An error occurred" }, { status: 500 });
+    return buildErrorResponse(error);
   }
 });

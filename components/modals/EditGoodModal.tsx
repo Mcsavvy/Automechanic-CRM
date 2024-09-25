@@ -192,7 +192,6 @@ const EditGoodModal: FC<EditGoodProps> = () => {
     }
     if (validateForm(data)) {
       setStatus("saving");
-      console.log(updatedFields);
       updateGood(goodRef.current!.id, updatedFields).then(() => {
         setStatus("ready");
         toast.success("Product Updated!", {

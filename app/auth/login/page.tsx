@@ -2,7 +2,7 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
-import axios from "axios";
+import axios from "@/lib/axios";
 import { useAuthStore } from "@/lib/providers/auth-store-provider";
 import { User } from "@/lib/@types/user";
 

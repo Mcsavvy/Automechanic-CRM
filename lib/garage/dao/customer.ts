@@ -7,6 +7,7 @@ import {
 } from "../../common/validation";
 import mongoose, { mongo } from "mongoose";
 import LogDAO from "../../common/dao/log";
+import { EntityNotFound } from "@/lib/errors";
 
 interface createCustomerParams {
     firstName: string;
@@ -57,7 +58,7 @@ async function updateCustomer (userId: mongoose.Types.ObjectId, customerId: mong
     }
     const customer = await CustomerModel.findOne(query);
     if (!customer) {
-        throw new Error("Customer not found");
+        EntityNotFound.throw("Customer", customerId.toString());
     }
     const details: updateCustomerParams = {};
     const payload: any = {};
@@ -93,7 +94,7 @@ async function deleteCustomer (userId: mongoose.Types.ObjectId, id: mongoose.Typ
         { new: true }
     );
     if (!customer) {
-        throw new Error("Customer not found");
+        EntityNotFound.throw("Customer", id.toString());
     }
     return customer;
 }

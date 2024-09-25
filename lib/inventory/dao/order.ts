@@ -14,6 +14,7 @@ import OrderItemDAO from "./orderItem";
 import OrderPaymentDAO from "./orderPayment";
 import { DocumentOrId } from "@/lib/@types";
 import { IUserDocument } from "@/lib/common/models/user";
+import { EntityNotFound, IntegrityError, PageNotFound, ValidationError, ValueError } from "@/lib/errors";
 
 type PopulatedBuyer = {
   name: string;
@@ -24,20 +25,17 @@ type PopulatedBuyer = {
 
 function transformOrder(order: IOrderDocument) {
   const result = {
-    ...order,
+    items: [],
+    status: order.status,
+    orderNo: order.orderNo,
+    discount: order.discount,
+    amountPaid: order.amountPaid,
     id: order._id.toHexString(),
-    buyerId: order.buyerId._id.toHexString(),
+    cancelReason: order.cancelReason,
     createdAt: order.createdAt.toISOString(),
     overdueLimit: order.overdueLimit.toISOString(),
-    items: [],
-  };
-  // remove the _id and __v fields
-  Object.keys(result).forEach((key) => {
-    if (key === "_id" || key === "__v") {
-      delete result[key];
-    }
-  });
-  return result as Omit<Order, "buyer" | "buyerId" | "payments">;
+  } satisfies Omit<Order, "buyer" | "buyerId" | "payments">;
+  return result;
 }
 
 function transformBuyer(buyer: PopulatedBuyer) {
@@ -79,13 +77,12 @@ async function addOrder(
   // validate the order data
 
   const buyerId = new mongoose.Types.ObjectId(order.buyerId);
-  const newOrder = new OrderModel({
+  const newOrder = await OrderModel.create({
     ...order,
     createdAt,
     overdueLimit,
     buyerId,
   });
-  await newOrder.save();
   const items = await Promise.all(
     order.items.map((item) => {
       const goodId = new mongoose.Types.ObjectId(item.goodId);
@@ -104,7 +101,7 @@ async function addOrder(
       });
     }) ?? []
   );
-  newOrder.populate({
+  await newOrder.populate({
     path: "buyerId",
     select: "name email _id phone",
   });
@@ -126,7 +123,7 @@ async function updateOrder(update: OrderModification): Promise<Order> {
     { new: true }
   );
   if (!order) {
-    throw new Error("Order not found");
+    EntityNotFound.throw("Order", update.id);
   }
   const items = await Promise.all(
     update.items.map(async (item: OrderItem | NewOrderItem) => {
@@ -152,10 +149,16 @@ async function updateOrder(update: OrderModification): Promise<Order> {
 async function deleteOrder(id: mongoose.Types.ObjectId) {
   const order = await OrderModel.findById(id);
   if (!order) {
-    throw new Error("Order not found");
+    EntityNotFound.throw("Order", id.toString());
   }
   if (["pending", "paid"].includes(order.status)) {
-    throw new Error("Cannot delete this order. A transaction is still ongoing");
+    IntegrityError.throw(
+      "Cannot delete this order. A transaction is still ongoing",
+      {
+        code: "order_has_transaction",
+        order_id: id.toString(),
+      }
+    );
   }
   await order.deleteOne();
   return order;
@@ -169,14 +172,14 @@ async function getOrder(
   if (id) query = { _id: id };
   if (filters) query = { ...query, ...filters };
   if (!id && !filters) {
-    throw new Error("id or filters must be provided");
+    ValueError.throw("id or filters must be provided");
   }
   const order = await OrderModel.findOne(query).lean().populate({
     path: "buyerId",
     select: "name email _id phone",
   });
   if (!order) {
-    throw new Error("Good not found");
+    EntityNotFound.throw("Order", query);
   }
   return {
     ...transformBuyer(order.buyerId as PopulatedBuyer),
@@ -197,17 +200,17 @@ async function getOrders({
   sort: OrderSort;
 }): Promise<PaginatedOrders> {
   if (page < 1) {
-    throw new Error("Invalid page number");
+    PageNotFound.throw(page, "Order", { query: filters, limit });
   }
   if (limit < 1) {
-    throw new Error("Invalid limit");
+    PageNotFound.throw(page, "Order", { query: filters, limit });
   }
 
   const query = { ...filters } as FilterQuery<Order>;
   const totalDocs = await OrderModel.countDocuments(query).exec();
   const pageCount = Math.ceil(totalDocs / limit);
   if (page > 1 && page > pageCount) {
-    throw new Error("Page not found");
+    PageNotFound.throw(page, "Order", { query: filters, limit });
   }
   const skip = (page - 1) * limit;
   const orders = await OrderModel.find(query)

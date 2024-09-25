@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import GoodDAO from "@/lib/inventory/dao/good";
 import LogDAO, { logParams } from "@/lib/common/dao/log";
 import mongoose, { Types } from "mongoose";
+import { EntityNotFound } from "@/lib/errors";
 interface UpdateGoodBody {
   name?: string;
   costPrice?: number;
@@ -34,7 +35,7 @@ export const PUT = permissionRequired(Permission.AllowAny())(async function (
     mongoose.Types.ObjectId.createFromHexString(params.goodId)
   );
   if (!prevGood) {
-    return NextResponse.json({ message: "Good not found" }, { status: 404 });
+    return EntityNotFound.construct("Good", params.goodId)
   }
   const details: { [key: string]: any } = {};
   for (const key of Object.keys(body) as (keyof UpdateGoodBody)[]) {
@@ -45,7 +46,7 @@ export const PUT = permissionRequired(Permission.AllowAny())(async function (
     body
   );
   if (!good) {
-    return NextResponse.json({ message: "Good not found" }, { status: 404 });
+      return EntityNotFound.construct("Good", params.goodId);
   }
   const logDetails: logParams = {
     display: [this.user.fullName(), good.name],
@@ -67,7 +68,7 @@ export const DELETE = permissionRequired(Permission.AllowAny())(async function (
   );
 
   if (!good) {
-    return NextResponse.json({ message: "Good not found" }, { status: 404 });
+    return EntityNotFound.construct("Good", params.goodId);
   }
   const logDetails: logParams = {
     display: [this.user.fullName(), good.name],

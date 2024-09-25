@@ -2,7 +2,7 @@
 import { type ReactNode, createContext, useRef, useContext, useState, useEffect } from "react";
 import { type StoreApi, useStore } from "zustand";
 import { type AuthStore, type AuthState, createAuthStore, defaultAuthState } from "@/lib/stores/auth-store";
-import axios from "axios";
+import axios from "@/lib/axios";
 
 export const AuthStoreContext = createContext<StoreApi<AuthStore> | null>(null);
 

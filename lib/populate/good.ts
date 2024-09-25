@@ -265,7 +265,7 @@ export default async function populateGoods() {
         name: product.name,
         description: product.description,
         productId: product.sku,
-        costPrice: faker.commerce.price(5000, 50000),
+        costPrice: faker.commerce.price({min: 5000, max: 50000}), // Random price between 5000 and 50000
         qty: Math.floor(Math.random() * 100), // Random number between 0 and 100
         minQty: Math.floor(Math.random() * 10), // Random number between 0 and 10
         categories: [data.category],

@@ -64,11 +64,12 @@ const Payment: React.FC<
   );
 };
 
-
-const PaymentDates: React.FC<Pick<
-  CreateInvoiceState, 
-  "issueDate" | "dueDate" | "setIssueDate" | "setDueDate"
->> = ({ issueDate, dueDate, setIssueDate, setDueDate }) => {
+const PaymentDates: React.FC<
+  Pick<
+    CreateInvoiceState,
+    "issueDate" | "dueDate" | "setIssueDate" | "setDueDate"
+  >
+> = ({ issueDate, dueDate, setIssueDate, setDueDate }) => {
   return (
     <div className="flex md:flex-col flex-wrap gap-4 p-2">
       <div className="flex flex-col gap-2">
@@ -87,10 +88,9 @@ const PaymentDates: React.FC<Pick<
   );
 };
 
-const Payments: React.FC<Pick<
-  CreateInvoiceState,
-  "payments" | "setPayments"
->> = ({payments, setPayments}) => {
+const Payments: React.FC<
+  Pick<CreateInvoiceState, "payments" | "setPayments">
+> = ({ payments, setPayments }) => {
   const bodyRef = React.useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -121,35 +121,38 @@ const Payments: React.FC<Pick<
   }
   return (
     <div className="flex flex-col overflow-x-auto w-full scrollbar-thin gap-4 p-2 max-h-[15rem] min-h-[6rem]">
-        {payments.map((payment, index) => (
-          <Payment
-            key={index}
-            first={index === 0}
-            bodyRef={bodyRef}
-            {...payment}
-            handleChange={(amount, method) =>
-              handleChangePayment(index, amount, method)
-            }
-            handleDelete={() => handleDeletePayment(index)}
-          />
-        ))}
-      </div>
-  )
-}
+      {payments.map((payment, index) => (
+        <Payment
+          key={index}
+          first={index === 0}
+          bodyRef={bodyRef}
+          {...payment}
+          handleChange={(amount, method) =>
+            handleChangePayment(index, amount, method)
+          }
+          handleDelete={() => handleDeletePayment(index)}
+        />
+      ))}
+    </div>
+  );
+};
 
-const PaymentSummary: React.FC<Pick<
-  CreateInvoiceState,
-  "discount" | "setDiscount"
-> & {
-  subTotal: number;
-  discountAmount: number;
-  total: number;
-  amountPaid: number;
-  outstanding: number;
-}> = ({
-  discount, setDiscount,
-  subTotal, discountAmount, total, amountPaid,
-  outstanding
+const PaymentSummary: React.FC<
+  Pick<CreateInvoiceState, "discount" | "setDiscount"> & {
+    subTotal: number;
+    discountAmount: number;
+    total: number;
+    amountPaid: number;
+    outstanding: number;
+  }
+> = ({
+  discount,
+  setDiscount,
+  subTotal,
+  discountAmount,
+  total,
+  amountPaid,
+  outstanding,
 }) => {
   return (
     <div className="flex flex-col gap-2 p-2 min-w-80 w-full">
@@ -179,7 +182,7 @@ const PaymentSummary: React.FC<Pick<
         <label className="text-sm text-gray-500">Total</label>
         <p className="text-sm text-gray-500">{formatMoney(total)}</p>
       </div>
-      <div className="flex justify-between gap-2">
+      <div className={cn("flex justify-between gap-2", amountPaid == total && "hidden")}>
         <label className="text-sm text-gray-500">
           {amountPaid >= total ? "Change" : "Outstanding"}
         </label>
@@ -188,8 +191,8 @@ const PaymentSummary: React.FC<Pick<
         </p>
       </div>
     </div>
-  )
-}
+  );
+};
 
 const SaveButton: React.FC<{
   status: "idle" | "loading" | "error";
@@ -234,16 +237,17 @@ export default function InvoicePayments({
   handleSave: saveInvoice,
 }: CreateInvoiceState) {
   const subTotal = items.reduce(
-    (acc, item) => acc + item.cost * item.quantity
-  , 0);
+    (acc, item) => acc + item.cost * item.quantity,
+    0
+  );
   const discountAmount = subTotal * (discount / 100);
   const total = subTotal - discountAmount;
   const amountPaid = payments.reduce((acc, payment) => acc + payment.amount, 0);
   const outstanding = total - amountPaid;
   const canAddPayment = amountPaid < total;
-  const [saveStatus, setSaveStatus] = React.useState<"idle" | "loading" | "error">(
-    "idle"
-  );
+  const [saveStatus, setSaveStatus] = React.useState<
+    "idle" | "loading" | "error"
+  >("idle");
   const router = useRouter();
 
   useEffect(() => {
@@ -255,7 +259,17 @@ export default function InvoicePayments({
   }, [notes, dueDate, issueDate, discount, customer, items, payments]);
 
   function handleAddPayment() {
-    setPayments([...payments, { amount: 0, paymentMethod: "cash" }]);
+    setPayments([
+      ...payments.filter((p) => p.amount != 0),
+      { amount: 0, paymentMethod: "cash" },
+    ]);
+  }
+
+  function handleAddOutstanding() {
+    setPayments([
+      ...payments.filter((p) => p.amount != 0),
+      { amount: outstanding, paymentMethod: "cash" },
+    ]);
   }
 
   async function handleSave() {
@@ -265,7 +279,9 @@ export default function InvoicePayments({
       setSaveStatus("idle");
       toast.success("Invoice saved successfully.", { toastId: "invoice-save" });
       setTimeout(() => {
-        toast.info("Redirecting to invoice page...", { toastId: "invoice-save" });
+        toast.info("Redirecting to invoice page...", {
+          toastId: "invoice-save",
+        });
       }, 1000);
       setTimeout(() => {
         router.push(`/inventory/orders/${order.id}`);
@@ -290,26 +306,45 @@ export default function InvoicePayments({
         setIssueDate={setIssueDate}
         setDueDate={setDueDate}
       />
-      <Payments payments={payments} setPayments={setPayments} /> 
-      <Button
-        variant="ghost"
-        onClick={handleAddPayment}
-        disabled={!canAddPayment}
-      >
-        <PlusCircle size={24} strokeWidth={1.5} className="mr-2" />
-        Add Payment
-      </Button>
+      <Payments payments={payments} setPayments={setPayments} />
+      <div className="flex justify-between items-center">
+        <Button
+          variant="ghost"
+          onClick={handleAddPayment}
+          disabled={!canAddPayment}
+          hidden={outstanding <= 0}
+        >
+          <PlusCircle size={24} strokeWidth={1.5} className="mr-2" />
+          Add Payment
+        </Button>
+        {/* here there's a button that when clicked adds a payment containing the outstanding ammount */}
+        <Button
+          variant="ghost"
+          onClick={handleAddOutstanding}
+          disabled={!canAddPayment}
+          hidden={outstanding <= 0}
+        >
+          <PlusCircle size={24} strokeWidth={1.5} className="mr-2" />
+          Add Outstanding
+        </Button>
+      </div>
+
       <PaymentSummary
         {...{
-          discount, setDiscount, subTotal, discountAmount,
-          total, amountPaid, outstanding
+          discount,
+          setDiscount,
+          subTotal,
+          discountAmount,
+          total,
+          amountPaid,
+          outstanding,
         }}
       />
       <div className="flex flex-grow items-end justify-around pl-2 pt-0 h-[70px] min-w-80 w-full gap-2 mt-auto">
         <SaveButton status={saveStatus} handleSave={handleSave} />
-        <Button variant={"destructive"} onClick={() => {}} className="w-full bg-black text-white">
+        {/* <Button variant={"destructive"} onClick={() => {}} className="w-full bg-black text-white">
           Export
-        </Button>
+        </Button> */}
       </div>
     </div>
   );

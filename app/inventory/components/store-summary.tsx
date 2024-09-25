@@ -1,6 +1,6 @@
 "use client"
 import { FC, useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from "@/lib/axios";
 import { Button } from '@/components/ui/button';
 import { formatCurrencyShort, formatPercentage } from '@/lib/utils';
 import Link from 'next/link';
@@ -48,7 +48,6 @@ const StoreSummary: FC<Partial<StoreSummaryProps>> = ({ before, after }) => {
                 throw response;
             }
             let data = response.data;
-            console.log("Data", data)
             return data
         } catch (err) {
             console.error(err)
@@ -63,9 +62,6 @@ const StoreSummary: FC<Partial<StoreSummaryProps>> = ({ before, after }) => {
                 setStore(storeSummary || {})
             })
     }, [before, after])
-    useEffect(() => {
-        console.log("Summary", mvp)
-    })
     return (
         <div className="self-stretch flex flex-col gap-2  border border-neu-3 overflow-y-auto scrollbar-thin bg-white rounded-md shadow-inner p-4">
             <h3 className="text-lg text-pri-5 font-semibold font-quicksand flex items-center justify-between">Store overview

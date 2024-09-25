@@ -27,6 +27,5 @@ GroupSchema.methods.hasMember = function (userId: mongoose.Types.ObjectId) {
     return this.members_ids.includes(userId);
 };
 
-
-
-export default defineModel<IGroupDocument>("Group", GroupSchema);
+const GroupModel = defineModel<IGroupDocument>("Group", GroupSchema);
+export default GroupModel;

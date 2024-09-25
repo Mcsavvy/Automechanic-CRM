@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "@/lib/axios";
 import { createStore } from "zustand/vanilla";
 import { NewPayment, PaginatedPayments, Payment, PaymentSort } from "../@types/payments";
 import { PaymentMethod } from "../@types/order";

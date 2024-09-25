@@ -8,6 +8,7 @@ import {
   OrderStatus,
   NewOrderItem,
 } from "@/lib/@types/order";
+import { EntityNotFound, IntegrityError } from "@/lib/errors";
 
 export type PopulatedGood = {
   _id: mongoose.Types.ObjectId;
@@ -21,19 +22,15 @@ export type PopulatedGood = {
 
 export function transformOrderItem(item: IOrderItemDocument) {
   const result = {
-    ...item,
     id: item._id.toHexString(),
+    qty: item.qty,
     goodId: item.goodId._id.toHexString(),
     good: transformOrderItemGood(item.goodId as PopulatedGood),
     orderId: item.orderId._id.toHexString(),
-  };
-  // remove the _id and __v fields
-  Object.keys(result).forEach((key) => {
-    if (key === "_id" || key === "__v") {
-      delete result[key];
-    }
-  });
-  return result as OrderItem;
+    costPrice: item.costPrice,
+    sellingPrice: item.sellingPrice,
+  } satisfies OrderItem;
+  return result;
 }
 
 export function transformOrderItemGood(good: PopulatedGood) {
@@ -60,14 +57,29 @@ async function addOrderItem(
 
   const good = await GoodModel.findById(goodId);
   if (!good) {
-    throw new Error("Good not found");
+    EntityNotFound.throw(
+      "Good",
+      typeof goodId === "string" ? goodId : goodId.toString()
+    );
   }
   if (good.qty < params.qty) {
-    throw new Error("Not enough stock");
+    IntegrityError.throw(
+      "qty",
+      {
+        code: "not_enough_stock",
+        goodId: good._id.toHexString(),
+        qty: good.qty,
+        requestedQty: params.qty,
+      },
+      "Not enough stock"
+    );
   }
   const order = await OrderModel.findById(orderId);
   if (!order) {
-    throw new Error("Order not found");
+    EntityNotFound.throw(
+      "Order",
+      typeof orderId === "string" ? orderId : orderId.toString()
+    );
   }
   const orderItem = new OrderItemModel({
     ...params,
@@ -87,7 +99,10 @@ async function getOrderItem(id: mongoose.Types.ObjectId | string) {
     })
     .lean();
   if (!orderItem) {
-    throw new Error("OrderItem not found");
+    EntityNotFound.throw(
+      "OrderItem",
+      typeof id === "string" ? id : id.toString()
+    );
   }
   return transformOrderItem(orderItem);
 }
@@ -105,12 +120,24 @@ async function getOrderItems(orderId: mongoose.Types.ObjectId | string) {
 async function deleteOrderItem(id: mongoose.Types.ObjectId | string) {
   const orderItem = await OrderItemModel.findById(id);
   if (!orderItem) {
-    throw new Error("OrderItem not found");
+    EntityNotFound.throw(
+      "OrderItem",
+      typeof id === "string" ? id : id.toString()
+    );
   }
-  await orderItem.populate("orderId", "status");
-  const order = orderItem.orderId as { status: OrderStatus };
+  await orderItem.populate("orderId", "status, _id");
+  const order = orderItem.orderId as {
+    status: OrderStatus;
+    _id: mongoose.Types.ObjectId;
+  };
   if (["pending", "paid"].includes(order.status)) {
-    throw new Error(
+    IntegrityError.throw(
+      "orderItem",
+      {
+        code: "transaction_ongoing",
+        orderId: order._id.toHexString(),
+        orderStatus: order.status,
+      },
       "Cannot delete this orderItem. A transaction is still ongoing"
     );
   }
@@ -126,7 +153,10 @@ async function updateOrderItem(
     new: true,
   });
   if (!orderItem) {
-    throw new Error("OrderItem not found");
+    EntityNotFound.throw(
+      "OrderItem",
+      typeof id === "string" ? id : id.toString()
+    );
   }
   return transformOrderItem(orderItem);
 }

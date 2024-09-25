@@ -1,6 +1,6 @@
 import { DashboardProps } from '@/lib/@types/dashboard';
 import { useState, useEffect, FC } from 'react';
-import axios from 'axios';
+import axios from "@/lib/axios";
 import LogItem from '../logs/components/log-item';
 import Log from '@/lib/@types/log';
 
@@ -17,7 +17,6 @@ const Recents: FC<Partial<DashboardProps>> = ({ before, after }) => {
             if (response.status !== 200) {
                 throw response;
             }
-            console.log('Values', response.data);
             return response.data.logs || [];
         } catch (err) {
             console.error(err);

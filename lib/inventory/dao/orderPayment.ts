@@ -19,6 +19,7 @@ import { FilterQuery } from "mongoose";
 import { getDocument } from "../../common/dao/base";
 import User, { IUserDocument } from "../../common/models/user";
 import BuyerModel, { IBuyerDocument } from "../models/buyer";
+import { EntityNotFound, PageNotFound } from "@/lib/errors";
 
 type OrderPaymentQuery<T extends IOrderPaymentDocument> = {
   sort?: PaymentSort;
@@ -66,7 +67,12 @@ async function transformPayment(
     { lean: true }
   );
   if (!customer) {
-    throw new Error("Customer not found");
+    EntityNotFound.throw(
+      "Customer",
+      typeof payment.customer === "string"
+        ? payment.customer
+        : payment.customer.toString()
+    );
   }
   const order = await getDocument(
     OrderModel,
@@ -78,7 +84,12 @@ async function transformPayment(
     { lean: true }
   );
   if (!order) {
-    throw new Error("Order not found");
+    EntityNotFound.throw(
+      "Order",
+      typeof payment.order === "string"
+        ? payment.order
+        : payment.order.toString()
+    );
   }
   const confirmedBy = await getDocument(
     User,
@@ -91,7 +102,12 @@ async function transformPayment(
     { lean: true }
   );
   if (!confirmedBy) {
-    throw new Error("Staff not found");
+    EntityNotFound.throw(
+      "Staff",
+      typeof payment.confirmedBy === "string"
+        ? payment.confirmedBy
+        : payment.confirmedBy.toString()
+    );
   }
   return {
     ...payment,
@@ -111,7 +127,10 @@ async function createOrderPayment(
   if (typeof order === "string" || order instanceof mongoose.Types.ObjectId) {
     orderInstance = await OrderModel.findById(order);
     if (!orderInstance) {
-      throw new Error(`Order with id ${order} not found`);
+      EntityNotFound.throw(
+        "Order",
+        typeof order === "string" ? order : order.toString()
+      );
     }
   } else {
     orderInstance = order as IOrderDocument;
@@ -131,7 +150,12 @@ async function getOrderPayment(
 ) {
   const orderPayment = await OrderPaymentModel.findById(orderPaymentId).lean();
   if (!orderPayment) {
-    throw new Error("Order payment not found");
+    EntityNotFound.throw(
+      "OrderPayment",
+      typeof orderPaymentId === "string"
+        ? orderPaymentId
+        : orderPaymentId.toString()
+    );
   }
   return transformPayment(orderPayment);
 }
@@ -172,7 +196,7 @@ async function getPayments<T extends IOrderPaymentDocument>({
   }
   const pageCount = Math.ceil(totalDocs / limit);
   if (page > 1 && page > pageCount) {
-    throw new Error("Page not found");
+    PageNotFound.throw(page, "Payment", { query: filters, limit });
   }
   const transformedPayments = await Promise.all(payments.map(transformPayment));
   const next = page < pageCount ? page + 1 : null;
@@ -200,7 +224,12 @@ async function updateOrderPayment(
     { new: true }
   );
   if (!orderPayment) {
-    throw new Error("Order payment not found");
+    EntityNotFound.throw(
+      "OrderPayment",
+      typeof orderPaymentId === "string"
+        ? orderPaymentId
+        : orderPaymentId.toString()
+    );
   }
   return transformPayment(orderPayment);
 }
@@ -212,7 +241,12 @@ async function deleteOrderPayment(
     orderPaymentId
   );
   if (!orderPayment) {
-    throw new Error("Order payment not found");
+    EntityNotFound.throw(
+      "OrderPayment",
+      typeof orderPaymentId === "string"
+        ? orderPaymentId
+        : orderPaymentId.toString()
+    );
   }
   return transformPayment(orderPayment);
 }

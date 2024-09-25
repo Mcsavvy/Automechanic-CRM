@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { formatDistanceToNow } from "date-fns";
+import { ValueError } from "./errors";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -94,7 +95,7 @@ export function formatDateTime(
   const date = new Date(val);
 
   if (isNaN(date.getTime())) {
-    throw new Error("Invalid date string");
+    ValueError.throw("date", val, "Invalid date");
   }
 
   switch (style) {
