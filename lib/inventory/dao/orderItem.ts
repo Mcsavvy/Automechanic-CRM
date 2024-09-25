@@ -8,7 +8,7 @@ import {
   OrderStatus,
   NewOrderItem,
 } from "@/lib/@types/order";
-import { EntityNotFound, IntegrityError } from "@/lib/errors";
+import { EntityNotFound, IntegrityError } from "../../errors";
 
 export type PopulatedGood = {
   _id: mongoose.Types.ObjectId;
@@ -81,13 +81,12 @@ async function addOrderItem(
       typeof orderId === "string" ? orderId : orderId.toString()
     );
   }
-  const orderItem = new OrderItemModel({
+  const orderItem = await OrderItemModel.create({
     ...params,
     costPrice: good.costPrice,
     orderId,
     goodId,
   });
-  await orderItem.save();
   return transformOrderItem(orderItem);
 }
 

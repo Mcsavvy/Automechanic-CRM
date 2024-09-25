@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { OrderModel} from "../models/order";
 import { OrderItemModel } from "../models/orderItem";
 import { BuyerModel } from "../models/buyer";
-import { EntityNotFound, ValueError } from "@/lib/errors";
+import { EntityNotFound, ValueError } from "../../errors";
 
 interface InvoiceItem {
     productId: string;

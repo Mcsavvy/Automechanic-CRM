@@ -14,7 +14,7 @@ import OrderItemDAO from "./orderItem";
 import OrderPaymentDAO from "./orderPayment";
 import { DocumentOrId } from "@/lib/@types";
 import { IUserDocument } from "@/lib/common/models/user";
-import { EntityNotFound, IntegrityError, PageNotFound, ValidationError, ValueError } from "@/lib/errors";
+import { EntityNotFound, IntegrityError, PageNotFound, ValidationError, ValueError } from "../../errors";
 
 type PopulatedBuyer = {
   name: string;
