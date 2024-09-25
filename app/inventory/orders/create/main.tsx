@@ -42,6 +42,15 @@ export default function CreateInvoice({invoiceNumber, topGoods}: {invoiceNumber:
             if (item.cost == item.costPrice) {
                 throw new Error(`Please set a selling price for ${item.name}`)
             }
+            if (item.qtyInStock < item.quantity) {
+                throw new Error(`Only ${item.qtyInStock} ${item.name} available in stock`);
+            }
+            if (item.quantity < 1) {
+                throw new Error(`Please set a quantity for ${item.name}`);
+            }
+            if (item.cost < 0) {
+                throw new Error(`Please set a valid selling price for ${item.name}`);
+            }
         }
 
         return await createOrder({
@@ -90,7 +99,7 @@ export default function CreateInvoice({invoiceNumber, topGoods}: {invoiceNumber:
     };
 
     return (
-      <section className="flex gap-4 w-full h-full flex-wrap">
+      <section className="grid w-full grid-cols-1 md:grid-cols-[minmax(0,_3fr)_minmax(0,_2fr)] gap-x-4 gap-y-4 pb-8">
           <InvoiceItems {...state} />
           <InvoicePayments {...state} />
       </section>
