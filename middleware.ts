@@ -66,18 +66,29 @@ async function middleware(req: NextRequest) {
   if (!token && isLoginPage) {
     return NextResponse.next();
   }
-
-  const { payload } = await jwtVerify(
-    token as string,
-    new TextEncoder().encode(JWT_SECRET),
-    {
-      algorithms: ["HS256"],
+  let payload: JWTPayload;
+  try {
+    payload = (
+      await jwtVerify(token as string, new TextEncoder().encode(JWT_SECRET), {
+        algorithms: ["HS256"],
+      })
+    ).payload;
+  } catch (e) {
+    console.error("Error verifying JWT", e);
+    if (isLoginPage) {
+      return NextResponse.next();
     }
-  );
+    if (isAPIRoute) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+    return NextResponse.redirect(
+      new URL("/auth/login?redirect=" + path, req.url)
+    );
+  }
   const uid = payload.sub;
   if (!uid) {
     if (isLoginPage) {
-        return NextResponse.next();
+      return NextResponse.next();
     }
     console.warn("User ID is required");
     // clear the cookie
