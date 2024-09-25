@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import Group, { IGroupDocument } from "../models/group";
 import User, { IUserDocument } from "../models/user";
 import { ObjectOrId, getDocument } from "./base";
-import { EntityNotFound, IntegrityError } from "@/lib/errors";
+import { EntityNotFound, IntegrityError } from "../../errors";
 
 interface createGroupParams {
   name: string;

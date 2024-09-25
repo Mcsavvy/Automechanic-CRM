@@ -19,7 +19,7 @@ import { FilterQuery } from "mongoose";
 import { getDocument } from "../../common/dao/base";
 import User, { IUserDocument } from "../../common/models/user";
 import BuyerModel, { IBuyerDocument } from "../models/buyer";
-import { EntityNotFound, PageNotFound } from "@/lib/errors";
+import { EntityNotFound, PageNotFound } from "../../errors";
 
 type OrderPaymentQuery<T extends IOrderPaymentDocument> = {
   sort?: PaymentSort;

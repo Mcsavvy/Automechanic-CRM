@@ -1,7 +1,7 @@
 import mongoose, { FilterQuery, SortOrder } from "mongoose";
 import LogModel, { ILogDocument } from "../models/log";
 import { PaginatedDocs } from "@/lib/@types/pagination";
-import { EntityNotFound, PageNotFound } from "@/lib/errors";
+import { EntityNotFound, PageNotFound } from "../../errors";
 
 export interface logParams {
   display: string[];

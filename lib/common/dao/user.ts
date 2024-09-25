@@ -15,7 +15,7 @@ import {
   IntegrityError,
   PageNotFound,
   PasswordError,
-} from "@/lib/errors";
+} from "../../errors";
 
 interface createUserParams {
   firstName: string;

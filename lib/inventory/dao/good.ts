@@ -7,7 +7,7 @@ import {
   IntegrityError,
   PageNotFound,
   ValueError,
-} from "@/lib/errors";
+} from "../../errors";
 
 interface PaginatedGoods {
   goods: (IGoodDocument & { id: string })[];

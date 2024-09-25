@@ -7,7 +7,7 @@ import {
 } from "../../common/validation";
 import mongoose, { mongo } from "mongoose";
 import LogDAO from "../../common/dao/log";
-import { EntityNotFound } from "@/lib/errors";
+import { EntityNotFound } from "../../errors";
 
 interface createCustomerParams {
     firstName: string;

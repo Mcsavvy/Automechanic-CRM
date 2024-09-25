@@ -9,7 +9,7 @@ import {
   createRevenueByGoodChart,
   createRevenueByPeriodChart,
 } from "../../core/insightsVisualizer";
-import { ValueError } from "@/lib/errors";
+import { ValueError } from "../../errors";
 
 async function revenueByBuyer(visualize: boolean = false) {
   const results = await OrderModel.aggregate([

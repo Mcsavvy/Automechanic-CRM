@@ -4,7 +4,7 @@ import { OrderModel } from '../models/order';
 import { FilterQuery } from 'mongoose';
 import { PaginatedDocs } from '@/lib/@types/pagination';
 import { Buyer } from '@/lib/@types/buyer';
-import { EntityNotFound, IntegrityError, PageNotFound, ValueError } from '@/lib/errors';
+import { EntityNotFound, IntegrityError, PageNotFound, ValueError } from '../../errors';
 
 interface PaginatedBuyers extends PaginatedDocs {
     buyers: Buyer[];
