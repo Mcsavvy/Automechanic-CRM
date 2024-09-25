@@ -14,14 +14,11 @@ import Image from "next/image";
 import { companyAddress, companyName, companyPhoneNumber } from "@/data";
 
 async function downloadReceipt(element: HTMLDivElement, name: string) {
-  console.log("element", element);
   const canvas = await html2canvas(element, {
     scale: 1,
   });
-  console.log("canvas", canvas);
   const imgData = canvas.toDataURL("image/png");
   const pdf = new jsPDF("landscape", "pt", "a4");
-  console.log(imgData);
   const imgProps = pdf.getImageProperties(imgData);
   const pdfWidth = pdf.internal.pageSize.getWidth();
   const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;

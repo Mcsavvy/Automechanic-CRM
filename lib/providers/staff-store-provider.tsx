@@ -25,7 +25,6 @@ export function StaffStoreProvider({ children }: { children: ReactNode }) {
         if (storeStatus.current == "idle") {
             storeStatus.current = "loading";
             getStaffs(page, limit, filter).then((state): void => {
-                console.log("state", state)
                 store.current.setState({...state, filter, loaded: true});
                 storeStatus.current = "ready";
             });

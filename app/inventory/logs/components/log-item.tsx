@@ -117,7 +117,6 @@ const getRandomMessage = (messages: string[]) => {
     return messages[Math.floor(Math.random() * messages.length)];
 }
 const parseLog = (log: LogProps) => {
-    console.log(log)
     const data: any = {}
     if (["Group", 'Staff'].includes(log.target) && log.action == "update") {
         data.message = getRandomMessage(customMessages[log.target][log.action][log.details['action_type']])

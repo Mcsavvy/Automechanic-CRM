@@ -1,6 +1,6 @@
 "use client"
 import { FC, useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from "@/lib/axios";
 import { Button } from '@/components/ui/button';
 import { formatCurrencyShort } from '@/lib/utils';
 import Link from 'next/link';
@@ -34,9 +34,6 @@ const BestPerformer: FC<Partial<BestPerformerProps>> = ({ before, after }) => {
         fetchGoods(before, after).
             then(data => setGoods(data))
     }, [before, after])
-    useEffect(() => {
-        console.log("Goods", goods)
-    })
     return (
         <div className="self-stretch border border-neu-3 h-[400px] md:h-[450px] w-full bg-white rounded-md shadow-md overflow-auto">
             <h3 className="sticky left-0 text-lg text-acc-7 p-4 flex flex-row flex-wrap gap-3 items-center justify-between w-full font-semibold font-quicksand">

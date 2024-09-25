@@ -6,7 +6,7 @@ import { Plus } from "lucide-react";
 import EditGoodModal from "@/components/modals/EditGoodModal";
 import DeleteGoodModal from "@/components/modals/DeleteGoodModal";
 import AddGoodModal from "@/components/modals/AddGoodModal";
-import axios from "axios";
+import axios from "@/lib/axios";
 import Good from "@/lib/@types/goods";
 import { DataTable } from "@/components/goods/data-table";
 import { GoodStoreProvider, useGoodStore } from "@/lib/providers/good-store-provider";

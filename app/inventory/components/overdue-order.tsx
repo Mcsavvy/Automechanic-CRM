@@ -1,6 +1,6 @@
 "use client"
 import { FC, useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from "@/lib/axios";
 import { Button } from '@/components/ui/button';
 import { MoveRight } from 'lucide-react';
 import { formatCurrencyShort } from '@/lib/utils';
@@ -35,9 +35,6 @@ const Overdue: FC<Partial<OverdueProps>> = ({ before, after }) => {
         fetchOrders(before, after).
             then(data => setOrders(data))
     }, [before, after])
-    useEffect(() => {
-        console.log("Orders", orders)
-    })
     return (
         <div className="h-[350px] grow  w-full flex flex-col gap-2  border border-neu-3 overflow-y-auto scrollbar-thin bg-white rounded-md shadow-inner ">
             <h3 className="w-full sticky top-0 bg-white text-lg text-red-500 font-semibold font-quicksand pt-4 px-4">Overdue orders</h3>

@@ -1,7 +1,7 @@
 "use client"
 import { RefreshCcw, TrendingUp, TrendingDown } from 'lucide-react';
 import { useState, useEffect, FC } from 'react'
-import axios from 'axios'
+import axios from '@/lib/axios';
 import { OrderInsights } from '@/lib/@types/insights';
 import { Chart, BarController, BarElement, CategoryScale, LinearScale, Tooltip } from "chart.js";
 import { Bar } from 'react-chartjs-2';

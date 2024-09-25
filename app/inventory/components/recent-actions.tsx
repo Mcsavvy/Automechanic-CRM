@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Boxes, Users, ReceiptText, UsersRound, CircleDollarSign, ShoppingCart, TrendingUp, TrendingDown, LoaderPinwheel, ChevronDown, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 import { FC, useState, useEffect } from 'react'
-import axios from 'axios';
+import axios from "@/lib/axios";
 import { formatCurrencyShort, formatPercentage } from '@/lib/utils';
 import { DashboardProps } from '@/lib/@types/dashboard';
 import { useWindowWidth } from '../hooks/useWindowWidth'
@@ -63,9 +63,6 @@ const RecentActions: FC<Partial<DashboardProps>> = ({ before, after }) => {
                 setS(false)
             })
     }, [before, after])
-    useEffect(() => {
-        console.log("Summary", mvp)
-    })
     return (
         <div className="flex md:flex-row-reverse w-[100%] flex-wrap items-stretch justify-between gap-6 rounded-md">
             <div className="flex flex-col w-full md:w-[calc(40%-2em)] gap-6 h-full self-stretch">

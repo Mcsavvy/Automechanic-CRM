@@ -8,7 +8,6 @@ import { ValueError } from "./value";
 import { IntegrityError } from "./integrity";
 import { NextResponse } from "next/server";
 
-
 const registery: Record<string, typeof BaseError<ErrorSchema>> = {};
 
 export function registerError<S extends ErrorSchema>(
@@ -57,7 +56,7 @@ export function buildErrorResponse(
           name: error.name,
         },
       },
-      { status, statusText, headers }
+      { status: status || 500, statusText, headers }
     );
   }
   return new UnknownError(error.toString(), {}).toResponse(
@@ -77,7 +76,7 @@ export function deserializeError(data: ErrorSchema) {
 
 export function fromResponse(data: any) {
   if (data.details) {
-    return deserializeError(data.details);
+    return deserializeError({ ...data.details, message: data.message });
   }
   return new UnknownError(data.message, {});
 }
@@ -92,7 +91,6 @@ registerError("PasswordError", PasswordError);
 registerError("IntegrityError", IntegrityError);
 registerError("EntityNotFound", EntityNotFound);
 registerError("ValidationError", ValidationError);
-
 
 export {
   Forbidden,

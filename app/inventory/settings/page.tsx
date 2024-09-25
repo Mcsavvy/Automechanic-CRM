@@ -5,7 +5,7 @@ import React from "react";
 import { toast } from "react-toastify";
 import { CgSpinner } from "react-icons/cg";
 import Select from "react-select";
-import axios from "axios";
+import axios from "@/lib/axios";
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useAuthStore } from "@/lib/providers/auth-store-provider";
@@ -128,10 +128,6 @@ export default function Settings() {
         setSelectedGroups([]);
     };
 
-    useEffect(() => {
-        console.log(user)
-    }, [user]);
-
     return (
         <div className="relative bg-white py-[30px] px-[30px] w-full h-full overflow-auto">
             <div
@@ -246,13 +242,6 @@ export default function Settings() {
                                         }
                                     });
                                 }
-                                console.log({
-                                    firstname,
-                                    lastname,
-                                    email,
-                                    phone,
-                                    selectedGroups,
-                                });
                             }}
                             disabled={status === "loading"}
                             className=" w-full text-center"

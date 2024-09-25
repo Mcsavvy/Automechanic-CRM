@@ -4,7 +4,7 @@ import React from "react";
 import { toast } from "react-toastify";
 import { CgSpinner } from "react-icons/cg";
 import Select from "react-select";
-import axios from "axios";
+import axios from "@/lib/axios";
 import Modal from "../ui/modal";
 
 async function getGroups() {

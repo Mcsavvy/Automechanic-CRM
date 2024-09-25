@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import LogItem from './components/log-item'
 import Filters from './components/filters'
-import axios from 'axios'
+import axios from "@/lib/axios"
 import Log from '@/lib/@types/log'
 const groupByDate = (logs: Log[]) => {
     return logs.reduce((acc: any, log) => {

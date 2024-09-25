@@ -1,6 +1,6 @@
 import Good from "../@types/goods";
 import { createStore } from "zustand/vanilla";
-import axios from "axios";
+import axios from "@/lib/axios";
 import lodash from "lodash";
 
 export interface GoodCreate {
@@ -196,7 +196,6 @@ export const getGoods = async (
     limit: number,
     filter?: GoodFilter
 ): Promise<PaginatedGoods> => {
-    console.log("getGoods", page, limit, filter);
     const queryParams = new URLSearchParams();
     queryParams.append("l", limit.toString());
     queryParams.append("p", page.toString());

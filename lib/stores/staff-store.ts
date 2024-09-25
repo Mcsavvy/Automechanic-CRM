@@ -1,7 +1,7 @@
 import Staff from "../@types/staff";
 import Group from "../@types/group";
 import { createStore } from "zustand/vanilla";
-import axios from "axios";
+import axios from "@/lib/axios";
 import lodash from "lodash";
 
 interface StaffCreate {
@@ -162,7 +162,6 @@ export const getStaffs = async (
   limit: number,
   filter?: StaffFilter
 ): Promise<PaginatedStaffs> => {
-  console.log("getStaffs", page, limit, filter);
   const queryParams = new URLSearchParams();
   queryParams.append("l", limit.toString());
   queryParams.append("p", page.toString());
@@ -176,9 +175,7 @@ export const getStaffs = async (
     if (response.status !== 200) {
       throw response;
     }
-    console.log(response.data);
     const staffs: any[] = response.data.users;
-    console.log(staffs);
     return {
       staff: staffs.map((staff: any) => ({
         id: staff._id.toString() as string,
@@ -197,6 +194,7 @@ export const getStaffs = async (
       totalPages: response.data.totalPages,
     };
   } catch (error) {
+    console.log("error", error);
     throw error;
   }
 };

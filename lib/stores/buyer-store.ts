@@ -1,6 +1,6 @@
 import { PaginatedDocs } from "../@types/pagination";
 import { Buyer } from "../@types/buyer";
-import axios from "axios";
+import axios from "@/lib/axios";
 import { createStore } from "zustand/vanilla";
 import { get } from "lodash";
 

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import { MoveLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import axios from 'axios'
+import axios from "@/lib/axios"
 import Group from '@/lib/@types/group'
 import {
     AlertDialog,
@@ -135,7 +135,6 @@ const Roles = () => {
     useEffect(() => {
         fetchGroups()
             .then(data => {
-                console.log("All Groupds", data)
                 setG(data)
             })
     }, [selectedGroup])

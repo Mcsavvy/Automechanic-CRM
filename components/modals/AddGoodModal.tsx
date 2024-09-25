@@ -163,7 +163,6 @@ const AddGoodModal: FC<AddGoodProps> = () => {
     const payload = getPayload(data);
     if (validateForm(data)) {
       setStatus("saving");
-      console.log(payload);
       createGood(payload).then(() => {
         setStatus("idle");
         toast.success("Product Created!", {

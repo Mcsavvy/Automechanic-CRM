@@ -9,6 +9,7 @@ export class PasswordError extends BaseError<PasswordErrorSchema> {
   password!: string;
   userId!: string | { [key: string]: string };
   name = "PasswordError";
+  static statusCode = 400;
 
   initialize(data: PasswordErrorSchema): void {
     this.password = data.password;

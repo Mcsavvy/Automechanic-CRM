@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { createStore } from "zustand/vanilla";
-import axios from "axios";
+import axios from "@/lib/axios";
 import { User, AnonymousUser } from "../@types/user";
 
 export type AuthState =
@@ -34,7 +34,6 @@ export const createAuthStore = (state: AuthState) => {
         await axios.post("/api/auth/logout");
         set(defaultAuthState);
       } catch (error) {
-        console.error(error);
       }
     },
   }));
