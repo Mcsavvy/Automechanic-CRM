@@ -63,7 +63,7 @@ const StoreSummary: FC<Partial<StoreSummaryProps>> = ({ before, after }) => {
             })
     }, [before, after])
     return (
-        <div className="self-stretch flex flex-col gap-2  border border-neu-3 overflow-y-auto scrollbar-thin bg-white rounded-md shadow-inner p-4">
+        <div className="self-stretch h-full flex flex-col justify-between gap-2  border border-neu-3 overflow-y-auto scrollbar-thin bg-white rounded-md shadow-inner p-4">
             <h3 className="text-lg text-pri-5 font-semibold font-quicksand flex items-center justify-between">Store overview
                 <Link href="/inventory/products">
                     <Button variant={"outline"} className="font-semibold">Go to store</Button>
