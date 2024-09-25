@@ -25,20 +25,17 @@ type PopulatedBuyer = {
 
 function transformOrder(order: IOrderDocument) {
   const result = {
-    ...order,
+    items: [],
+    status: order.status,
+    orderNo: order.orderNo,
+    discount: order.discount,
+    amountPaid: order.amountPaid,
     id: order._id.toHexString(),
-    buyerId: order.buyerId._id.toHexString(),
+    cancelReason: order.cancelReason,
     createdAt: order.createdAt.toISOString(),
     overdueLimit: order.overdueLimit.toISOString(),
-    items: [],
-  };
-  // remove the _id and __v fields
-  Object.keys(result).forEach((key) => {
-    if (key === "_id" || key === "__v") {
-      delete result[key];
-    }
-  });
-  return result as Omit<Order, "buyer" | "buyerId" | "payments">;
+  } satisfies Omit<Order, "buyer" | "buyerId" | "payments">;
+  return result;
 }
 
 function transformBuyer(buyer: PopulatedBuyer) {
@@ -80,13 +77,12 @@ async function addOrder(
   // validate the order data
 
   const buyerId = new mongoose.Types.ObjectId(order.buyerId);
-  const newOrder = new OrderModel({
+  const newOrder = await OrderModel.create({
     ...order,
     createdAt,
     overdueLimit,
     buyerId,
   });
-  await newOrder.save();
   const items = await Promise.all(
     order.items.map((item) => {
       const goodId = new mongoose.Types.ObjectId(item.goodId);
@@ -105,7 +101,7 @@ async function addOrder(
       });
     }) ?? []
   );
-  newOrder.populate({
+  await newOrder.populate({
     path: "buyerId",
     select: "name email _id phone",
   });

@@ -21,19 +21,15 @@ export type PopulatedGood = {
 
 export function transformOrderItem(item: IOrderItemDocument) {
   const result = {
-    ...item,
     id: item._id.toHexString(),
+    qty: item.qty,
     goodId: item.goodId._id.toHexString(),
     good: transformOrderItemGood(item.goodId as PopulatedGood),
     orderId: item.orderId._id.toHexString(),
-  };
-  // remove the _id and __v fields
-  Object.keys(result).forEach((key) => {
-    if (key === "_id" || key === "__v") {
-      delete result[key];
-    }
-  });
-  return result as OrderItem;
+    costPrice: item.costPrice,
+    sellingPrice: item.sellingPrice,
+  } satisfies OrderItem;
+  return result;
 }
 
 export function transformOrderItemGood(good: PopulatedGood) {
