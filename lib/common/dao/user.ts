@@ -10,6 +10,12 @@ import {
   validatePhoneNumber,
 } from "../validation";
 import { JWT_EXPIRY, JWT_SECRET } from "../../../config";
+import {
+  EntityNotFound,
+  IntegrityError,
+  PageNotFound,
+  PasswordError,
+} from "@/lib/errors";
 
 interface createUserParams {
   firstName: string;
@@ -40,31 +46,36 @@ interface PaginatedUsers {
 }
 
 async function addUser({
+  firstName,
+  lastName,
+  email,
+  phone,
+  password,
+}: createUserParams) {
+  firstName = validateFirstName(firstName);
+  lastName = validateLastName(lastName);
+  email = validateEmail(email);
+  phone = validatePhoneNumber(phone);
+  password = validatePassword(password);
+
+  if (
+    (await UserModel.countDocuments({ email, isDeleted: false }).exec()) > 0
+  ) {
+    IntegrityError.throw("User with email already exists", {
+      code: "user_email_exists",
+      email,
+    });
+  }
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const user = new UserModel({
     firstName,
     lastName,
     email,
     phone,
-    password,
-}: createUserParams) {
-    firstName = validateFirstName(firstName);
-    lastName = validateLastName(lastName);
-    email = validateEmail(email);
-    phone = validatePhoneNumber(phone);
-    password = validatePassword(password);
-
-    if ((await UserModel.countDocuments({ email, isDeleted: false }).exec()) > 0) {
-        throw new Error("User with email already exists");
-    }
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new UserModel({
-        firstName,
-        lastName,
-        email,
-        phone,
-        password: hashedPassword,
-    });
-    await user.save();
-    return user;
+    password: hashedPassword,
+  });
+  await user.save();
+  return user;
 }
 
 async function getUsers({
@@ -77,17 +88,17 @@ async function getUsers({
   limit: number;
 }): Promise<PaginatedUsers> {
   if (page < 1) {
-    throw new Error("Invalid page number");
+    PageNotFound.throw(page, "User", { query: filters, limit });
   }
   if (limit < 1) {
-    throw new Error("Invalid limit");
+    PageNotFound.throw(page, "User", { query: filters, limit });
   }
 
   const query = filters ? filters : {};
   const totalDocs = await UserModel.countDocuments(query).exec();
   const totalPages = Math.ceil(totalDocs / limit);
   if (page > 1 && page > totalPages) {
-    throw new Error("Page not found");
+    PageNotFound.throw(page, "User", { query: filters, limit });
   }
   const skip = (page - 1) * limit;
   const users = await UserModel.find(query)
@@ -137,11 +148,14 @@ async function updateUser(
       isDeleted: false,
     }).exec()) > 0
   ) {
-    throw new Error("User with email already exists");
+    IntegrityError.throw("User with email already exists", {
+      code: "user_email_exists",
+      email,
+    });
   }
   const user = await UserModel.findOne({ _id: id, isDeleted: false });
   if (!user) {
-    throw new Error("User not found");
+    EntityNotFound.throw("User", id.toString());
   }
   const details: updateUserParams = {};
   const payload: any = {};
@@ -166,31 +180,31 @@ async function updateUser(
     details.password = user.password;
   }
   if (!payload) return user;
-    Object.assign(user, payload);
-    await user.save();
-    return user;
+  Object.assign(user, payload);
+  await user.save();
+  return user;
 }
 
 async function deleteUser(id: mongoose.Types.ObjectId) {
-    const user = await UserModel.findOneAndUpdate(
-        { _id: id, isDeleted: false },
-        { isDeleted: true },
-        { new: true }
-    );
-    if (!user) {
-        throw new Error("User not found");
-    }
-    return user;
+  const user = await UserModel.findOneAndUpdate(
+    { _id: id, isDeleted: false },
+    { isDeleted: true },
+    { new: true }
+  );
+  if (!user) {
+    EntityNotFound.throw("User", id.toString());
+  }
+  return user;
 }
 
 async function authenticateUser(email: string, password: string) {
   const user = await UserModel.findOne({ email, isDeleted: false });
   if (!user) {
-    throw new Error("User not found");
+    EntityNotFound.throw("User", { email });
   }
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) {
-    throw new Error("Invalid password");
+    PasswordError.throw(password, user._id.toString(), "Invalid password");
   }
   const payload: JWTPayload = { sub: user._id.toHexString() };
   const token = await new SignJWT(payload)
@@ -217,7 +231,7 @@ async function setUserStatus(
 ) {
   const user = await UserModel.findOne({ _id: id, isDeleted: false });
   if (!user) {
-    throw new Error("User not found");
+    EntityNotFound.throw("User", id.toString());
   }
   user.status = status;
   await user.save();

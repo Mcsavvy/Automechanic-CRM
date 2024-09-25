@@ -5,6 +5,7 @@ import GroupModel, { IGroupDocument } from '@/lib/common/models/group'
 import LogDAO, { logParams } from "@/lib/common/dao/log";
 import mongoose, { Types } from "mongoose";
 import Group from "@/lib/@types/group";
+import { buildErrorResponse, EntityNotFound } from "@/lib/errors";
 
 export const POST = permissionRequired(Permission.AllowAny())(async function (
   req: NextRequest,
@@ -23,7 +24,7 @@ export const POST = permissionRequired(Permission.AllowAny())(async function (
         { new: false }
       );
     if (!group) {
-      return NextResponse.json({ message: "Group not found" }, { status: 404 });
+        return EntityNotFound.construct("Group", groupId.toHexString());
     }
     const details: any = { action_type: "updated" };
     for (const key of Object.keys(updateFields)) {
@@ -41,6 +42,6 @@ export const POST = permissionRequired(Permission.AllowAny())(async function (
     return NextResponse.json({ message: "Role successfully updated" }, { status: 200 });
   } catch (error) {
     console.error('Error updating group:', error);
-    return NextResponse.json({ message: "Error updating role" }, { status: 500 });
+    return buildErrorResponse(error);
   }
 });

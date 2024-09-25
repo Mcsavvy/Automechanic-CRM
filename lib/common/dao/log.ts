@@ -1,6 +1,7 @@
 import mongoose, { FilterQuery, SortOrder } from "mongoose";
 import LogModel, { ILogDocument } from "../models/log";
 import { PaginatedDocs } from "@/lib/@types/pagination";
+import { EntityNotFound, PageNotFound } from "@/lib/errors";
 
 export interface logParams {
   display: string[];
@@ -34,10 +35,10 @@ async function getLogs({
   order: SortOrder;
 }): Promise<PaginatedLogs> {
   if (page < 1) {
-    throw new Error("Invalid page number");
+    PageNotFound.throw(page, "Log", { query: filters, limit });
   }
   if (limit < 1) {
-    throw new Error("Invalid limit");
+    PageNotFound.throw(page, "Log", { query: filters, limit });
   }
   if (![1, -1].includes(parseInt(order.toString()))) {
     order = -1
@@ -46,7 +47,7 @@ async function getLogs({
   const totalDocs = await LogModel.countDocuments(query).exec();
   const totalPages = Math.ceil(totalDocs / limit);
   if (page > 1 && page > totalPages) {
-    throw new Error("Page not found");
+    PageNotFound.throw(page, "Log", { query: filters, limit });
   }
   const skip = (page - 1) * limit;
   const logs = await LogModel.find(query).sort({ createdAt: order }).skip(skip).limit(limit).lean().exec();

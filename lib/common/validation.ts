@@ -1,45 +1,35 @@
 import { phone } from "phone";
-
-export class ValidationError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "ValidationError";
-  }
-}
+import { ValidationError } from "../errors";
 
 export function validateEmail(email: string): string {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
-    throw new ValidationError("Invalid email");
+    ValidationError.throw("email", email, "Invalid email address");
   }
   return email;
 }
 
 export function validatePassword(password: string): string {
   if (password.length < 8) {
-    throw new ValidationError("Password must be at least 8 characters long");
+    ValidationError.throw("password", password, "Password must be at least 8 characters long");
   }
   return password;
 }
 
 export function validateFirstName(fname: string): string {
   if (fname.length < 1) {
-    throw new ValidationError("First name must be at least 1 character long");
+    ValidationError.throw("fname", fname, "First name must be at least 1 character long");
   } else if (fname.length > 50) {
-    throw new ValidationError(
-      "First name must not be more than 50 characters long"
-    );
+    ValidationError.throw("fname", fname, "First name must not be more than 50 characters long");
   }
   return fname;
 }
 
 export function validateLastName(lname: string): string {
   if (lname.length < 1) {
-    throw new ValidationError("Last name must be at least 1 character long");
+    ValidationError.throw("lname", lname, "Last name must be at least 1 character long");
   } else if (lname.length > 50) {
-    throw new ValidationError(
-      "Last name must not be more than 50 characters long"
-    );
+    ValidationError.throw("lname", lname, "Last name must not be more than 50 characters long");
   }
   return lname;
 }
@@ -47,7 +37,7 @@ export function validateLastName(lname: string): string {
 export function validatePhoneNumber(phoneNumber: string): string {
   const output = phone(phoneNumber, { country: "NG" });
   if (!output.isValid) {
-    throw new ValidationError("Invalid phone number");
+    ValidationError.throw("phoneNumber", phoneNumber, "Invalid phone number");
   }
   return output.phoneNumber;
 }

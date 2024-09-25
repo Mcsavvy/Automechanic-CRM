@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { OrderModel} from "../models/order";
 import { OrderItemModel } from "../models/orderItem";
 import { BuyerModel } from "../models/buyer";
+import { EntityNotFound, ValueError } from "@/lib/errors";
 
 interface InvoiceItem {
     productId: string;
@@ -42,12 +43,12 @@ function getDiscount(price: number, discount: number, rev: boolean = false): num
 
 async function getInvoice(orderId?: mongoose.Types.ObjectId, orderDoc?: any) : Promise<InvoiceTable> {
     if (!orderId && !orderDoc) {
-        throw new Error("Provide the orderId or the order doc");
+        ValueError.throw("Provide the orderId or the order doc");
     }
 
     const order = orderId ? await OrderModel.findById(orderId).select('-__v').lean() : orderDoc;
     if (!order) {
-        throw new Error("Order not found");
+        EntityNotFound.throw("Order", orderId!.toString());
     }
 
     const [buyer, orderItems] = await Promise.all([
@@ -55,7 +56,7 @@ async function getInvoice(orderId?: mongoose.Types.ObjectId, orderDoc?: any) : P
         OrderItemModel.find({ orderId }).select('-costPrice -__v').populate('goodId').lean()
     ]);
     if (!buyer) {
-        throw new Error("Buyer not found");
+        EntityNotFound.throw("Customer", order.buyerId);
     }
     let invoiceTotal = 0;
     let invoiceGrandTotal = 0;

@@ -5,6 +5,7 @@ import UserDAO from "@/lib/common/dao/user";
 import mongoose, { Types } from "mongoose";
 import { LogDAO } from "@/lib/common/dao";
 import { logParams } from "@/lib/common/dao/log";
+import { buildErrorResponse } from "@/lib/errors";
 
 export const POST = permissionRequired(Permission.AllowAny())(async function (
   req: NextRequest,
@@ -27,16 +28,7 @@ export const POST = permissionRequired(Permission.AllowAny())(async function (
     };
     await LogDAO.logModification(logDetails);
   } catch (error) {
-    if (error instanceof Error) {
-      if (error.message === "User not found") {
-        return NextResponse.json(
-          { message: "Staff not found" },
-          { status: 404 }
-        );
-      }
-      return NextResponse.json({ message: error.message }, { status: 400 });
-    }
-    return NextResponse.json({ message: "Unknown error" }, { status: 500 });
+    buildErrorResponse(error);
   }
   return new NextResponse(null, { status: 204 });
 });

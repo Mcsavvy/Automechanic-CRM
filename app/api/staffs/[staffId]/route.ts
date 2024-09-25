@@ -7,6 +7,7 @@ import Staff from "@/lib/@types/staff";
 import LogDAO, { logParams } from "@/lib/common/dao/log";
 import user from "@/lib/populate/user";
 import { IUserDocument } from "@/lib/common/models/user";
+import { EntityNotFound, buildErrorResponse } from "@/lib/errors";
 
 type UpdateStaffBody = Partial<Staff>;
 
@@ -19,7 +20,7 @@ export const GET = permissionRequired(Permission.AllowAny())(async function (
     mongoose.Types.ObjectId.createFromHexString(staffId)
   );
   if (!result) {
-    return NextResponse.json({ message: "Staff not found" }, { status: 404 });
+    return EntityNotFound.construct("Staff", staffId);
   }
   return NextResponse.json(result);
 });
@@ -37,39 +38,31 @@ export const PUT = permissionRequired(Permission.AllowAny())(async function (
     );
   }
   try {
-
-    const user = await UserDAO.getUser(mongoose.Types.ObjectId.createFromHexString(params.staffId));
+    const user = await UserDAO.getUser(
+      mongoose.Types.ObjectId.createFromHexString(staffId)
+    );
     if (!user) {
-      return NextResponse.json({ message: "Buyer not found" }, { status: 404 });
+      return EntityNotFound.construct("Staff", staffId);
     }
     const details: { [key: string]: any } = {};
     for (const key of Object.keys(body) as (keyof IUserDocument)[]) {
       details[key] = user[key];
     }
-    details.action_type = "updated"
+    details.action_type = "updated";
     const staff = await UserDAO.updateUser(
       mongoose.Types.ObjectId.createFromHexString(staffId),
       body
     );
     const logDetails: logParams = {
-      display: [this.user.fullName(), staff.fullName()], 
+      display: [this.user.fullName(), staff.fullName()],
       targetId: Types.ObjectId.createFromHexString(staff.id),
       loggerId: Types.ObjectId.createFromHexString(this.user.id),
       target: "Staff",
-      details
+      details,
     };
     await LogDAO.logModification(logDetails);
     return NextResponse.json(staff);
   } catch (error) {
-    if (error instanceof Error) {
-      if (error.message === "User not found") {
-        return NextResponse.json(
-          { message: "Staff not found" },
-          { status: 404 }
-        );
-      }
-      return NextResponse.json({ message: error.message }, { status: 400 });
-    }
-    return NextResponse.json({ message: "Unknown error" }, { status: 500 });
+    return buildErrorResponse(error);
   }
 });
