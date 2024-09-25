@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "shell": "ts-node ./lib/core/shell.ts",
-    "test": "jest"
+    "test": "jest --detectOpenHandles"
   },
   "dependencies": {
     "@iconscout/react-unicons": "^2.0.2",
