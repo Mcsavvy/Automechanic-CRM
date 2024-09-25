@@ -23,7 +23,7 @@ const customMessages: any = {
             " erased the profile of "
         ]
     },
-    User: {
+    Staff: {
         create: [
             " added a new staff member: ",
             " registered a new employee: ",
