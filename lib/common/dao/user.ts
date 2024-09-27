@@ -61,10 +61,14 @@ async function addUser({
   if (
     (await UserModel.countDocuments({ email, isDeleted: false }).exec()) > 0
   ) {
-    IntegrityError.throw("User with email already exists", {
-      code: "user_email_exists",
-      email,
-    });
+    IntegrityError.throw(
+      "email",
+      {
+        code: "user_email_exists",
+        email,
+      },
+      "An account with that email already exists."
+    );
   }
   const hashedPassword = await bcrypt.hash(password, 10);
   const user = new UserModel({
@@ -95,6 +99,7 @@ async function getUsers({
   }
 
   const query = filters ? filters : {};
+  query.isDeleted = false;
   const totalDocs = await UserModel.countDocuments(query).exec();
   const totalPages = Math.ceil(totalDocs / limit);
   if (page > 1 && page > totalPages) {
@@ -152,10 +157,14 @@ async function updateUser(
       isDeleted: false,
     }).exec()) > 0
   ) {
-    IntegrityError.throw("User with email already exists", {
-      code: "user_email_exists",
-      email,
-    });
+    IntegrityError.throw(
+      "email",
+      {
+        code: "user_email_exists",
+        email,
+      },
+      "An account with this email already exists."
+    );
   }
   const user = await UserModel.findOne({ _id: id, isDeleted: false });
   if (!user) {
@@ -196,7 +205,10 @@ async function deleteUser(id: mongoose.Types.ObjectId) {
     { new: true }
   );
   if (!user) {
-    EntityNotFound.throw("User", id.toString());
+    EntityNotFound.throw("User", {
+      id: id.toString(),
+      isDeleted: "false",
+    });
   }
   return user;
 }
@@ -225,8 +237,20 @@ async function getUser(id: mongoose.Types.ObjectId) {
   const user = await UserModel.findOne(
     { _id: id, isDeleted: false },
     { password: 0, __v: 0, isDeleted: 0 }
-  ).exec();
-  return user;
+  )
+    .lean()
+    .exec();
+  if (!user) {
+    EntityNotFound.throw("User", {
+      id: id.toString(),
+      isDeleted: "false",
+    });
+  }
+  return {
+    ...user,
+    id: user._id.toString(),
+    phone: user.phone.replace("+234", "0"),
+  };
 }
 
 async function setUserStatus(
@@ -235,7 +259,10 @@ async function setUserStatus(
 ) {
   const user = await UserModel.findOne({ _id: id, isDeleted: false });
   if (!user) {
-    EntityNotFound.throw("User", id.toString());
+    EntityNotFound.throw("User", {
+      id: id.toString(),
+      isDeleted: "false",
+    });
   }
   user.status = status;
   await user.save();
