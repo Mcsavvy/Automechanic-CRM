@@ -111,7 +111,11 @@ async function getUsers({
   const prev = page > 1 ? page - 1 : null;
   return {
     // @ts-ignore
-    users: users.map((good) => ({ ...good, id: good._id.toString() })),
+    users: users.map((user) => ({
+      ...user,
+      id: user._id.toString(),
+      phone: user.phone.replace("+234", "0"),
+    })),
     totalDocs,
     limit,
     page,
