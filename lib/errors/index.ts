@@ -66,6 +66,15 @@ export function buildErrorResponse(
   );
 }
 
+export function toError(error: any) {
+  if (error instanceof BaseError) {
+    return error;
+  } else if (error instanceof Error) {
+    return new UnknownError(error.message, {});
+  }
+  return new UnknownError(error.toString(), {});
+}
+
 export function deserializeError(data: ErrorSchema) {
   const error = getError(data.name);
   if (error) {
