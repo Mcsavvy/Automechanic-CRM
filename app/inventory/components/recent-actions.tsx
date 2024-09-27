@@ -58,7 +58,7 @@ const RecentActions: FC<Partial<DashboardProps>> = ({ before, after }) => {
       link: "#actions/buyer/create",
     },
     { front: "New Product", icon: Boxes, link: "#actions/product/add-new" },
-    { front: "Add Staff", icon: Users, link: "#actions/staff/add-new-staff" },
+    { front: "Add Staff", icon: Users, link: "#actions/staff/create" },
   ];
   const fetchSummary = async (before?: string, after?: string) => {
     try {
