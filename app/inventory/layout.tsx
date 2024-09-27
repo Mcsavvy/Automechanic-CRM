@@ -3,7 +3,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/lib/providers/auth-store-provider";
 import MainDropdown from "../../components/dropdown/MainDropdown";
-import AddNewStaffModal from "../../components/modals/AddNewStaffModal";
+import AddNewStaffModal from "./staffs/components/modals/create-staff";
 import { useRouter, usePathname } from "next/navigation";
 import {
   ChevronDown,
@@ -177,7 +177,6 @@ export default function DashboardLayout({
   }, []);
   return (
     <React.Fragment>
-      <AddNewStaffModal />
       <LogoutModal />
       <div className="fixed flex flex-row items-center justify-start top-0 left-0">
         <nav
