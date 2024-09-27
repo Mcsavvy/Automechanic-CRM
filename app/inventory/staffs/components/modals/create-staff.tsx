@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { CgSpinner } from "react-icons/cg";
 import { useStaffStore } from "@/lib/providers/staff-store-provider";
 import Modal from "@/components/ui/modal";
+import { toError } from "@/lib/errors";
 
 type FormData = {
   firstName: string;
@@ -120,7 +121,8 @@ export default function AddNewStaffModal() {
           clearForm();
         })
         .catch((error) => {
-          toast.error("Could not add staff", { toastId: "staff-add-error" });
+          const e = toError(error)
+          toast.error(error.message, { toastId: "staff-add-error" });
           setStatus("idle");
         });
     }

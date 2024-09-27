@@ -9,6 +9,7 @@ import Staff from "@/lib/@types/staff";
 import { useQueryState } from "nuqs";
 import { cachedRetrieve } from "@/lib/utils";
 import Modal from "@/components/ui/modal";
+import { toError } from "@/lib/errors";
 
 type FormData = {
   firstName: string;
@@ -122,7 +123,7 @@ export default function EditStaffModal() {
     setStatus("loading");
   };
 
-  function handleCreateStaff() {
+  function handleEditStaff() {
     const data: FormData = {
       firstName,
       lastName,
@@ -136,19 +137,16 @@ export default function EditStaffModal() {
     }
     if (validateForm(data)) {
       setStatus("saving");
-      updateStaff(staffId, {
-        ...data,
-        password: email,
-        groups: [] as string[],
-      })
+      updateStaff(staffId, payload)
         .then(() => {
           toast.success("Staff updated", {
             toastId: "staff-updated",
           });
           clearForm();
         })
-        .catch(() => {
-          toast.error("Could not update staff", {
+        .catch((error) => {
+          const e = toError(error);
+          toast.error(e.message, {
             toastId: "staff-update-error",
           });
           setStatus("idle");
@@ -258,7 +256,7 @@ export default function EditStaffModal() {
           type="submit"
           onClick={(e) => {
             e.preventDefault();
-            handleCreateStaff();
+            handleEditStaff();
           }}
           disabled={status !== "idle"}
           className="w-full text-white bg-pri-6 hover:bg-pri-4 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
