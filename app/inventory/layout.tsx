@@ -31,6 +31,7 @@ import { companyName } from "@/data";
 import * as gravatar from "gravatar";
 import { Button } from "@/components/ui/button";
 import LogoutModal from "@/components/modals/LogoutModal";
+import Link from "next/link";
 
 interface BaseSectionItem {
   icon: React.ReactNode;
@@ -67,12 +68,12 @@ const sections: Section[] = [
         getIsActive: (pathname) => pathname.startsWith("/inventory/products"),
         link: "/inventory/products",
       },
-      {
-        icon: <FileLineChart size={20} strokeWidth={1.5} />,
-        content: "Reports",
-        getIsActive: (pathname) => pathname.startsWith("/inventory/reports"),
-        link: "/inventory/reports",
-      },
+      // {
+      //   icon: <FileLineChart size={20} strokeWidth={1.5} />,
+      //   content: "Reports",
+      //   getIsActive: (pathname) => pathname.startsWith("/inventory/reports"),
+      //   link: "/inventory/reports",
+      // },
       {
         icon: <ReceiptText size={20} strokeWidth={1.5} />,
         content: "Invoices",
@@ -91,27 +92,27 @@ const sections: Section[] = [
         getIsActive: (pathname) => pathname.startsWith("/inventory/buyers"),
         link: "/inventory/buyers",
       },
-      {
-        icon: <TrendingUp size={20} strokeWidth={1.5} />,
-        content: "Sales Trends",
-        getIsActive: (pathname) =>
-          pathname.startsWith("/inventory/sales-trends"),
-        link: "/inventory/sales-trends",
-      },
-      {
-        icon: <CandlestickChart size={20} strokeWidth={1.5} />,
-        content: "Profit & Loss",
-        getIsActive: (pathname) =>
-          pathname.startsWith("/inventory/profit-loss"),
-        link: "/inventory/profit-loss",
-      },
-      {
-        icon: <AreaChart size={20} strokeWidth={1.5} />,
-        content: "Revenue Analysis",
-        getIsActive: (pathname) =>
-          pathname.startsWith("/inventory/revenue-analysis"),
-        link: "/inventory/revenue-analysis",
-      },
+      // {
+      //   icon: <TrendingUp size={20} strokeWidth={1.5} />,
+      //   content: "Sales Trends",
+      //   getIsActive: (pathname) =>
+      //     pathname.startsWith("/inventory/sales-trends"),
+      //   link: "/inventory/sales-trends",
+      // },
+      // {
+      //   icon: <CandlestickChart size={20} strokeWidth={1.5} />,
+      //   content: "Profit & Loss",
+      //   getIsActive: (pathname) =>
+      //     pathname.startsWith("/inventory/profit-loss"),
+      //   link: "/inventory/profit-loss",
+      // },
+      // {
+      //   icon: <AreaChart size={20} strokeWidth={1.5} />,
+      //   content: "Revenue Analysis",
+      //   getIsActive: (pathname) =>
+      //     pathname.startsWith("/inventory/revenue-analysis"),
+      //   link: "/inventory/revenue-analysis",
+      // },
     ],
   },
   {
@@ -227,25 +228,19 @@ export default function DashboardLayout({
                 {canShowSection(section.name, section.show) && (
                   <ul className="flex flex-col">
                     {section.items.map((item, idx) => (
-                      <li
+                      <Link
+                        //@ts-ignore
+                        href={item.link}
                         key={idx}
-                        onClick={
-                          "link" in item
-                            ? () => {
-                                router.push(item.link);
-                                if (window.innerWidth < 768) {
-                                  setShowMenu(false);
-                                }
-                              }
-                            : item.onClick
-                        }
+                        //@ts-ignore
+                        onClick={item.onClick}
                         className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[15px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${
                           item.getIsActive(pathname) ? "active-nav" : ""
                         }`}
                       >
                         {item.icon}
                         {item.content}
-                      </li>
+                      </Link>
                     ))}
                   </ul>
                 )}
