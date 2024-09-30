@@ -10,7 +10,6 @@ import mongoose from "mongoose";
 import LogDAO, { logParams } from "@/lib/common/dao/log";
 import { EntityNotFound, buildErrorResponse } from "@/lib/errors";
 
-
 export const GET = permissionRequired(Permission.AllowAny())(async function (
   req
 ) {
@@ -96,28 +95,24 @@ export const POST = permissionRequired(Permission.AllowAny())(async function (
     }
     groups.push(doc);
   }
-  try {
-    // create user
-    const user = await UserDAO.addUser({
-      firstName: body.firstName,
-      lastName: body.lastName,
-      phone: body.phone,
-      email: body.email,
-      password: body.email,
-    });
-    // add user to groups
-    for (const group of groups) {
-      await GroupDAO.addMember(group.id, user.id);
-    }
-    const logDetails: logParams = {
-      display: [this.user.fullName(), user.fullName()],
-      targetId: Types.ObjectId.createFromHexString(user.id),
-      loggerId: Types.ObjectId.createFromHexString(this.user.id),
-      target: "Staff",
-    };
-    await LogDAO.logCreation(logDetails);
-    return NextResponse.json(user, { status: 201 });
-  } catch (e) {
-    return buildErrorResponse(e);
+  // create user
+  const user = await UserDAO.addUser({
+    firstName: body.firstName,
+    lastName: body.lastName,
+    phone: body.phone,
+    email: body.email,
+    password: body.email,
+  });
+  // add user to groups
+  for (const group of groups) {
+    await GroupDAO.addMember(group.id, user.id);
   }
+  const logDetails: logParams = {
+    display: [this.user.fullName(), `${user.firstName} ${user.lastName}`],
+    targetId: Types.ObjectId.createFromHexString(user.id),
+    loggerId: Types.ObjectId.createFromHexString(this.user.id),
+    target: "Staff",
+  };
+  await LogDAO.logCreation(logDetails);
+  return NextResponse.json(user, { status: 201 });
 });
