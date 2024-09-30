@@ -12,6 +12,7 @@ export interface User {
     firstName: string;
     lastName: string;
     phone?: string;
+    status?: 'active' | 'banned';
     permissions: {
         [key: string]: string[] | boolean;
     };
@@ -28,4 +29,13 @@ export interface AnonymousUser {
         [key: string]: string[] | boolean;
     };
     groups: Group[];
+}
+
+export interface UpdateUser {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phone?: string;
+  password?: string;
+  confirmPassword?: string;
 }
