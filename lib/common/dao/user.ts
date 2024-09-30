@@ -141,7 +141,7 @@ async function getUsers({
   const prev = page > 1 ? page - 1 : null;
   return {
     // @ts-ignore
-    users: users.map(transformUser),
+    users: await Promise.all(users.map(transformUser)),
     totalDocs,
     limit,
     page,
