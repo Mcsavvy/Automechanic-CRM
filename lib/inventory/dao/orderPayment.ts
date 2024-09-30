@@ -84,12 +84,13 @@ async function transformPayment(
     { lean: true }
   );
   if (!order) {
-    EntityNotFound.throw(
-      "Order",
-      typeof payment.order === "string"
-        ? payment.order
-        : payment.order.toString()
-    );
+    EntityNotFound.throw("Order", {
+      id:
+        typeof payment.order === "string"
+          ? payment.order
+          : payment.order.toString(),
+      payment: payment._id.toString(),
+    });
   }
   const confirmedBy = await getDocument(
     User,
