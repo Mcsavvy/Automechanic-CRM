@@ -31,9 +31,14 @@ export const createAuthStore = (state: AuthState) => {
     setAuth: (auth: AuthState) => set(auth),
     clearAuth: async () => {
       try {
-        await axios.post("/api/auth/logout");
+        const res = await axios.post("/api/auth/logout");
+        if (res.status !== 200) {
+          throw res;
+        }
         set(defaultAuthState);
       } catch (error) {
+        console.error("Failed to logout", error);
+        throw error;
       }
     },
   }));
