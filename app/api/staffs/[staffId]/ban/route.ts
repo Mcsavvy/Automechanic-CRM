@@ -20,7 +20,7 @@ export const POST = permissionRequired(Permission.AllowAny())(async function (
       "banned"
     );
     const logDetails: logParams = {
-      display: [this.user.fullName(), user.fullName()],
+      display: [this.user.fullName(), `${user.firstName} ${user.lastName}`],
       targetId: Types.ObjectId.createFromHexString(user.id),
       loggerId: Types.ObjectId.createFromHexString(this.user.id),
       target: "Staff",

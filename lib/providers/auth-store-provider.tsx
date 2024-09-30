@@ -9,7 +9,7 @@ export const AuthStoreContext = createContext<StoreApi<AuthStore> | null>(null);
 
 export async function getAuthState(): Promise<AuthState> {
     try {
-        const response = await axios.post("/api/auth/me");
+        const response = await axios.get("/api/auth/me");
         if (response.status !== 200) {
             throw response;
         }
@@ -24,6 +24,7 @@ export async function getAuthState(): Promise<AuthState> {
             permissions: response.data.permissions
         }
     } catch (error) {
+        console.error("Error getting auth state", error);
         return {
             id: null,
             email: null,

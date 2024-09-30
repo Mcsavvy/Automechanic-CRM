@@ -80,7 +80,7 @@ export const columns: ColumnDef<Staff>[] = [
             );
         },
         cell: ({ row }) => {
-            const phone = row.original.phone.replace("+234", "0");
+            const phone = row.original.phone;
             return (
                 <a className="text-left text-pri-3 font-medium" href={`tel:${phone}`} target="_blank">
                     {phone}

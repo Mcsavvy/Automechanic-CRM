@@ -36,11 +36,11 @@ export const POST = withErrorBoundary(async function (req: NextRequest) {
   try {
     const { token, user } = await UserDAO.authenticateUser(email, password);
     const response: LoginResponse = {
-      id: user._id.toHexString(),
-      email: user.email,
+      id: user.id,
+      email: user.email!,
       lastName: user.lastName,
       firstName: user.firstName,
-      phone: user.phone,
+      phone: user.phone!,
     };
     cookies().set("X-Auth-Token", token, {
       httpOnly: true,

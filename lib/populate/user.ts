@@ -19,7 +19,7 @@ export default async function populateUsers(number: number) {
     });
     users.push(user);
     const group = allGroups[Math.floor(Math.random() * allGroups.length)];
-    await GroupDAO.addMember(group._id, user._id);
+    await GroupDAO.addMember(group._id, user.id);
   }
   return users;
 }
