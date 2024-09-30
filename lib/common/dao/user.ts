@@ -208,9 +208,11 @@ async function updateUser(
     payload.password = passwordHash;
   }
   if (!payload) return transformUser(user, true);
-  Object.assign(user, payload);
-  await user.save();
-  return await transformUser(user, true);
+  await user.updateOne(payload, { new: true });
+  return await transformUser(
+    (await UserModel.findOne({ _id: id, isDeleted: false }))!,
+    true
+  );
 }
 
 async function deleteUser(id: mongoose.Types.ObjectId) {
