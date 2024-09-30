@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { SignJWT, jwtVerify, type JWTPayload } from "jose";
+import { SignJWT, type JWTPayload } from "jose";
 import UserModel, { IUserDocument } from "../models/user";
 import mongoose, { FilterQuery } from "mongoose";
 import {
@@ -16,6 +16,8 @@ import {
   PageNotFound,
   PasswordError,
 } from "../../errors";
+import { UpdateUser, User } from "../../@types/user";
+import GroupModel, { IGroupDocument } from "../models/group";
 
 interface createUserParams {
   firstName: string;
@@ -25,16 +27,8 @@ interface createUserParams {
   password: string;
 }
 
-interface updateUserParams {
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  phone?: string;
-  password?: string;
-}
-
 interface PaginatedUsers {
-  users: IUserDocument[];
+  users: User[];
   totalDocs: number;
   limit: number;
   page: number;
@@ -43,6 +37,37 @@ interface PaginatedUsers {
   prev: number | null;
   hasPrevPage: boolean;
   hasNextPage: boolean;
+}
+
+async function transformUser(
+  user: IUserDocument,
+  addGroups = false
+): Promise<User> {
+  let groups: IGroupDocument[] = [];
+  if (addGroups) {
+    groups = await GroupModel.find(
+      { members_ids: user._id, isDeleted: false },
+      {
+        _id: 1,
+        name: 1,
+        permissions: 1,
+      }
+    );
+  }
+  return {
+    id: user._id.toString(),
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    status: user.status,
+    permissions: user.permissions,
+    groups: groups.map((group) => ({
+      id: group._id.toString(),
+      name: group.name,
+      permissions: group.permissions,
+    })),
+    phone: user.phone.replace("+234", "0"),
+  };
 }
 
 async function addUser({
@@ -79,7 +104,7 @@ async function addUser({
     password: hashedPassword,
   });
   await user.save();
-  return user;
+  return await transformUser(user);
 }
 
 async function getUsers({
@@ -116,11 +141,7 @@ async function getUsers({
   const prev = page > 1 ? page - 1 : null;
   return {
     // @ts-ignore
-    users: users.map((user) => ({
-      ...user,
-      id: user._id.toString(),
-      phone: user.phone.replace("+234", "0"),
-    })),
+    users: users.map(transformUser),
     totalDocs,
     limit,
     page,
@@ -134,8 +155,8 @@ async function getUsers({
 
 async function updateUser(
   id: mongoose.Types.ObjectId,
-  params: updateUserParams
-) {
+  params: UpdateUser
+): Promise<User> {
   const firstName = params.firstName
     ? validateFirstName(params.firstName)
     : undefined;
@@ -170,32 +191,26 @@ async function updateUser(
   if (!user) {
     EntityNotFound.throw("User", id.toString());
   }
-  const details: updateUserParams = {};
   const payload: any = {};
   if (firstName) {
     payload.firstName = firstName;
-    details.firstName = user.firstName;
   }
   if (lastName) {
     payload.lastName = lastName;
-    details.lastName = user.lastName;
   }
   if (email) {
     payload.email = email;
-    details.email = user.email;
   }
   if (phone) {
     payload.phone = phone;
-    details.phone = user.phone;
   }
   if (passwordHash) {
     payload.password = passwordHash;
-    details.password = user.password;
   }
-  if (!payload) return user;
+  if (!payload) return transformUser(user, true);
   Object.assign(user, payload);
   await user.save();
-  return user;
+  return await transformUser(user, true);
 }
 
 async function deleteUser(id: mongoose.Types.ObjectId) {
@@ -210,7 +225,7 @@ async function deleteUser(id: mongoose.Types.ObjectId) {
       isDeleted: "false",
     });
   }
-  return user;
+  return await transformUser(user);
 }
 
 async function authenticateUser(email: string, password: string) {
@@ -230,7 +245,7 @@ async function authenticateUser(email: string, password: string) {
     .setIssuedAt()
     .setExpirationTime(JWT_EXPIRY)
     .sign(new TextEncoder().encode(JWT_SECRET));
-  return { token, user };
+  return { token, user: await transformUser(user, true) };
 }
 
 async function getUser(id: mongoose.Types.ObjectId) {
@@ -246,11 +261,7 @@ async function getUser(id: mongoose.Types.ObjectId) {
       isDeleted: "false",
     });
   }
-  return {
-    ...user,
-    id: user._id.toString(),
-    phone: user.phone.replace("+234", "0"),
-  };
+  return await transformUser(user, true);
 }
 
 async function setUserStatus(
@@ -266,7 +277,7 @@ async function setUserStatus(
   }
   user.status = status;
   await user.save();
-  return user;
+  return await transformUser(user, true);
 }
 
 const UserDAO = {
