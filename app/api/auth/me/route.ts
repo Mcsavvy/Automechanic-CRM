@@ -4,7 +4,7 @@ import { Permission } from "@/lib/permissions/server";
 import {type User} from "@/lib/@types/user";
 import Group from "@/lib/common/models/group";
 
-export const POST = permissionRequired(Permission.AllowAny())(async function (
+export const GET = permissionRequired(Permission.AllowAny())(async function (
   req
 ) {
   const user = this.user;
