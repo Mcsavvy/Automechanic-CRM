@@ -46,6 +46,7 @@ export const PUT = permissionRequired(Permission.AllowAny())(async function (
     }
     const details: { [key: string]: any } = {};
     for (const key of Object.keys(body) as (keyof IUserDocument)[]) {
+      // @ts-ignore
       details[key] = user[key];
     }
     details.action_type = "updated";
@@ -54,7 +55,7 @@ export const PUT = permissionRequired(Permission.AllowAny())(async function (
       body
     );
     const logDetails: logParams = {
-      display: [this.user.fullName(), staff.fullName()],
+      display: [this.user.fullName(), `${user.firstName} ${user.lastName}`],
       targetId: Types.ObjectId.createFromHexString(staff.id),
       loggerId: Types.ObjectId.createFromHexString(this.user.id),
       target: "Staff",
