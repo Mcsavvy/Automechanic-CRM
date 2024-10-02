@@ -64,6 +64,7 @@ export default function permissionRequired<T>(permission: Permission) {
       try {
         return await handler.call(context, ...args);
       } catch (error) {
+        console.error(error)
         return buildErrorResponse(error);
       }
     };

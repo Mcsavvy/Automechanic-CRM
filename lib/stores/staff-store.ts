@@ -178,7 +178,7 @@ export const getStaffs = async (
     const staffs: any[] = response.data.users;
     return {
       staff: staffs.map((staff: any) => ({
-        id: staff._id.toString() as string,
+        id: staff.id as string,
         firstName: staff.firstName as string,
         lastName: staff.lastName as string,
         phone: staff.phone as string,
