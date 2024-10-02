@@ -113,12 +113,14 @@ const Roles = () => {
     const populateScopes = (permissions: Record<string, boolean | string[]>) => {
         const newScopes = { ...initialScopes };
         Object.entries(permissions).forEach(([category, value]) => {
+            console.log(category)
             if (typeof value === 'boolean' && value) {
                 newScopes[category] = {
                     allChecked: true,
                     items: newScopes[category].items.map(item => ({ ...item, checked: true }))
                 };
             } else if (Array.isArray(value)) {
+                console.log("Cat", category)
                 newScopes[category] = {
                     allChecked: false,
                     items: newScopes[category].items.map(item => ({
