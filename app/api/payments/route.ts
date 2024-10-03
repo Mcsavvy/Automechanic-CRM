@@ -93,8 +93,8 @@ export const POST = permissionRequired(Permission.AllowAny())(async function (
     customer: order.buyerId,
   });
   const logDetails: logParams = {
-    display: [this.user.fullName(), order.orderNo.toString()], 
-    targetId: Types.ObjectId.createFromHexString(orderPayment.id),
+    display: [orderPayment.customer.name, order.orderNo.toString()], 
+    targetId: Types.ObjectId.createFromHexString(order.id),
     loggerId: Types.ObjectId.createFromHexString(this.user.id),
     target: "Payment",
   }

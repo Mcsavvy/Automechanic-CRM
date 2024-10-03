@@ -165,6 +165,12 @@ const parseLog = (log: LogProps) => {
             data.display = [log.display[0], formatInvoiceNumber(log.display[1])]
             break
         }
+        case 'Payment': {
+            data.avatar = { name: log.display[0] }
+            data.link = `/inventory/orders/${log.targetId}`
+            data.display = [log.display[0], formatInvoiceNumber(log.display[1])]
+            break
+        }
     }
     return data
 }
