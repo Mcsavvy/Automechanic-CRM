@@ -90,6 +90,32 @@ export const groupPermissions: {
   },
 };
 
+export const ScopeDescription = {
+  "user.create": "Can create new staffs",
+  "user.read": "Can view staffs",
+  "user.update": "Can update staff information",
+  "user.delete": "Can delete user",
+  "customer.create": "Can create new customers",
+  "customer.read": "Can view customer details",
+  "customer.update": "Can update customers",
+  "customer.delete": "Can delete customer",
+  "product.create": "Can create new products",
+  "product.read": "Can view products",
+  "product.update": "Can update product details",
+  "product.delete": "Can delete product",
+  "order.create": "Can create new invoices",
+  "order.read": "Can view invoices",
+  "order.update": "Can update invoices",
+  "order.delete": "Can delete invoices",
+  "payment.create": "Can create new payments",
+  "payment.read": "Can view payments",
+  "payment.update": "Can update payments",
+  "payment.delete": "Can delete payments",
+  "permission.read": "Can view staff roles",
+  "permission.update": "Can update staff roles",
+  "log.read": "Can view logs",
+};
+
 export const groups: Group[] = [
   {
     name: "Owner",
@@ -115,3 +141,41 @@ export const groups: Group[] = [
     permissions: groupPermissions.Teller,
   },
 ];
+
+// validate that all actions for a permission scope have descriptions
+const missingDescriptions = permissions
+  .map((permission) =>
+    permission.actions.map((action) =>
+      `${permission.scope}.${action}` in ScopeDescription
+        ? null
+        : `${permission.scope}.${action}`
+    )
+  )
+  .flat()
+  .filter((x) => x !== null);
+
+if (missingDescriptions.length > 0) {
+  throw new Error(
+    `Missing descriptions for the following permissions: ${missingDescriptions.join(
+      ", "
+    )}`
+  );
+}
+
+// validate that all groups have every permission set
+const missingPermissions = groups
+  .map((group) =>
+    permissions.map((permission) =>
+      permission.scope in group.permissions
+        ? null
+        : `${group.name} is missing permission ${permission.scope}`
+    )
+  )
+  .flat()
+  .filter((x) => x !== null);
+
+if (missingPermissions.length > 0) {
+  throw new Error(
+    `Missing permissions: \n- ${missingPermissions.join("\n- ")}`
+  );
+}
