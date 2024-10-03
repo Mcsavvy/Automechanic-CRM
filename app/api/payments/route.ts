@@ -4,9 +4,10 @@ import { Permission } from "@/lib/permissions/server";
 import OrderPaymentDAO from "@/lib/inventory/dao/orderPayment";
 import { NewPayment, PaymentSort } from "@/lib/@types/payments";
 import qs from "qs";
-import { FilterQuery } from "mongoose";
+import { FilterQuery, Types } from "mongoose";
 import { IOrderPaymentDocument } from "@/lib/inventory/models/orderPayment";
 import OrderDAO from "@/lib/inventory/dao/order";
+import LogDAO, { logParams } from "@/lib/common/dao/log";
 
 type CreateOrderPaymentPayload = Omit<NewPayment, "confirmedBy">;
 type HasMinMax = Partial<{
@@ -85,12 +86,18 @@ export const POST = permissionRequired(Permission.AllowAny())(async function (
   const currentUser = this.user;
   const payload: CreateOrderPaymentPayload = await req.json();
   const order = await OrderDAO.getOrder(payload.order);
-  const orderPayment = OrderPaymentDAO.createOrderPayment(payload.order, {
+  const orderPayment = await OrderPaymentDAO.createOrderPayment(payload.order, {
     amount: payload.amount,
     paymentMethod: payload.paymentMethod,
     confirmedBy: currentUser._id.toString(),
     customer: order.buyerId,
   });
-
+  const logDetails: logParams = {
+    display: [this.user.fullName(), order.orderNo.toString()], 
+    targetId: Types.ObjectId.createFromHexString(orderPayment.id),
+    loggerId: Types.ObjectId.createFromHexString(this.user.id),
+    target: "Payment",
+  }
+  await LogDAO.logCreation(logDetails);
   return NextResponse.json(orderPayment, { status: 201 });
 });

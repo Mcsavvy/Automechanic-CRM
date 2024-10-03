@@ -15,8 +15,9 @@ interface FilterProps {
     setAfter: (val: string) => void;
     setAction: (val: string) => void;
     setType: (val: string) => void;
+    setPage: (val: null) => void;
 }
-const Filters: FC<FilterProps> = ({ setBefore, setAfter, setAction, setType }) => {
+const Filters: FC<FilterProps> = ({ setBefore, setAfter, setAction, setType, setPage }) => {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [a, setA] = useState<string>('')
     const [b, setB] = useState<string>('')
@@ -38,6 +39,7 @@ const Filters: FC<FilterProps> = ({ setBefore, setAfter, setAction, setType }) =
     }
     const clear = () => {
         setBefore('')
+        setPage(null)
         setAfter('')
         setAction('')
         setType('')
@@ -107,7 +109,7 @@ const Filters: FC<FilterProps> = ({ setBefore, setAfter, setAction, setType }) =
                                 <SelectItem value="Buyer">Customers</SelectItem>
                                 <SelectItem value="Staff">Staff</SelectItem>
                                 <SelectItem value="Good">Products</SelectItem>
-                                <SelectItem value="Payments">Payments</SelectItem>
+                                <SelectItem value="Payment">Payments</SelectItem>
                                 <SelectItem value="Order">Orders</SelectItem>
                                 <SelectItem value="Group">Roles</SelectItem>
                             </SelectGroup>

@@ -111,6 +111,12 @@ const customMessages: any = {
             " voided order ",
             " deleted order "
         ]
+    },
+    Payment: {
+        create: [
+            " placed a new payment for order ",
+            " paid another installment for order "
+        ],
     }
 }
 const getRandomMessage = (messages: string[]) => {

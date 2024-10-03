@@ -4,6 +4,8 @@ import LogItem from './components/log-item'
 import Filters from './components/filters'
 import axios from "@/lib/axios"
 import Log from '@/lib/@types/log'
+import { Button } from '@/components/ui/button'
+import { setRequestMeta } from 'next/dist/server/request-meta'
 const groupByDate = (logs: Log[]) => {
     return logs.reduce((acc: any, log) => {
         const date = new Date(log.createdAt).toDateString()
@@ -21,6 +23,11 @@ const Logs: React.FC = () => {
     const [after, setAfter] = useState<string>('')
     const [action, setAction] = useState<string>('')
     const [l_type, setType] = useState<string>('')
+    const [page, setPage] = useState<number | null>(null)
+    const [hasPrevPage, setPrev] = useState(false)
+    const [hasNextPage, setNext] = useState(false)
+    const [pageCount, setCount] = useState(null)
+    const [pageMeta, setPM] = useState({prev: '', next: ''})
 
     const fetchLogs = async () => {
         setL(true)
@@ -28,51 +35,80 @@ const Logs: React.FC = () => {
             setLogs([])
             let query = '?'
             if (before) query += `&b=${encodeURIComponent(before)}`;
+            if (page) query += `&p=${encodeURIComponent(page)}`;
             if (after) query += `&a=${encodeURIComponent(after)}`;
             if (action) query += `&at=${encodeURIComponent(action)}`;
             if (l_type) query += `&t=${encodeURIComponent(l_type)}`;
-            if (!(before || after || action || l_type)) query = '';
+            if (!(before || after || action || l_type || page)) query = '';
             const res = await axios.get(`/api/logs${query}`)
             setLogs(groupByDate(res.data.logs))
+            setPage(res.data.page)
+            setPrev(res.data.hasPrevPage)
+            setNext(res.data.hasNextPage)
+            setCount(res.data.totalPages)
+            setPM({prev: res.data.prev, next: res.data.next})
         } catch (error) {
             console.log(error)
         }
         setL(false)
     }
+    const onPrev = () => {
+        setPage(parseInt(pageMeta.prev))
+    }
+    const onNext = () => {
+        setPage(parseInt(pageMeta.next))
+    }
     useEffect(() => {
         fetchLogs()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [before, after, l_type, action])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [before, after, l_type, action, page])
 
     return (
         <div className="flex flex-row absolute h-[calc(100vh-60px)] top-[60px] w-full overflow-auto scrollbar-thin">
             <div className="md:p-[30px] p-3 w-[700px] max-w-[calc(100%-30px)] mx-3 mt-3 bg-white min-h-[calc(100%-3em)] h-fit rounded-md">
                 {
                     (!logs || loading) ?
-                    <div>
-                        Loading...
-                    </div>:
-                    <ul>
-                        {
-                            Object.keys(logs).map((date, index) => (
-                                <li key={index} className="flex flex-col gap-2 items-start justify-start">
-                                    <h1 className="text-lg font-bold text-acc-7">{date}</h1>
-                                    <ul className='flex flex-col items-start justify-start gap-2'>
-                                        {
-                                            logs[date].map((log: Log, index: number) => (
-                                                <li key={index} className="flex items-center justify-between">
-                                                    <LogItem {...log} preview={true} />
-                                                </li>
-                                            ))
-                                        }
-                                    </ul>
-                                </li>
-                            ))
-                        }
-                    </ul>
+                        <div>
+                            Loading...
+                        </div> :
+                        <div>
+                            <ul className='mb-[100px]'>
+                                {
+                                    Object.keys(logs).map((date, index) => (
+                                        <li key={index} className="flex flex-col gap-2 items-start justify-start">
+                                            <h1 className="text-lg font-bold text-acc-7">{date}</h1>
+                                            <ul className='flex flex-col items-start justify-start gap-2'>
+                                                {
+                                                    logs[date].map((log: Log, index: number) => (
+                                                        <li key={index} className="flex items-center justify-between">
+                                                            <LogItem {...log} preview={true} />
+                                                        </li>
+                                                    ))
+                                                }
+                                            </ul>
+                                        </li>
+                                    ))
+                                }
+                            </ul>
+                            <div className="fixed bottom-0 bg-white w-[700px] max-w-[calc(100%-30px)] flex flex-row items-center justify-start gap-6 p-3  pt-0 h-[70px]">
+                                <div className="flex flex-row items-center justify-start gap-3">
+                                    <Button variant={"outline"} onClick={onPrev} disabled={!hasPrevPage}>
+                                        Prev
+                                    </Button>
+                                    <Button variant={"outline"} onClick={onNext} disabled={!hasNextPage}>
+                                        Next
+                                    </Button>
+                                </div>
+                                <p>
+                                    Page <span className="text-pri-6">{page}</span> of{" "}
+                                    <span className="text-pri-6">{pageCount}</span>
+                                </p>
+                            </div>
+                        </div>
+
                 }
             </div>
-            <Filters {...{ setBefore, setAfter, setType, setAction }}/>
+            <Filters {...{ setBefore, setAfter, setType, setAction, setPage }} />
         </div>
     );
 }
