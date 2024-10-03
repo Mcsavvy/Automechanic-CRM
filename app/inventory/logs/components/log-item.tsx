@@ -111,6 +111,12 @@ const customMessages: any = {
             " voided order ",
             " deleted order "
         ]
+    },
+    Payment: {
+        create: [
+            " placed a new payment for order ",
+            " paid another installment for order "
+        ],
     }
 }
 const getRandomMessage = (messages: string[]) => {
@@ -155,6 +161,12 @@ const parseLog = (log: LogProps) => {
         }
         case 'Order': {
             data.avatar = { icon: ReceiptText }
+            data.link = `/inventory/orders/${log.targetId}`
+            data.display = [log.display[0], formatInvoiceNumber(log.display[1])]
+            break
+        }
+        case 'Payment': {
+            data.avatar = { name: log.display[0] }
             data.link = `/inventory/orders/${log.targetId}`
             data.display = [log.display[0], formatInvoiceNumber(log.display[1])]
             break
