@@ -27,18 +27,6 @@ interface Scopes {
   };
 }
 
-const fetchGroups = async () => {
-  try {
-    const response = await axios.get("/api/groups/all");
-    if (response.status !== 200) {
-      throw response;
-    }
-    let data = response.data;
-    return data;
-  } catch (err) {
-    console.error(err);
-  }
-};
 
 const Roles = () => {
   const [name, setName] = useState("");
