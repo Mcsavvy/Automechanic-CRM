@@ -90,30 +90,37 @@ export const groupPermissions: {
   },
 };
 
-export const ScopeDescription = {
-  "user.create": "Can create new staffs",
-  "user.read": "Can view staffs",
-  "user.update": "Can update staff information",
-  "user.delete": "Can delete user",
-  "customer.create": "Can create new customers",
-  "customer.read": "Can view customer details",
-  "customer.update": "Can update customers",
-  "customer.delete": "Can delete customer",
-  "product.create": "Can create new products",
-  "product.read": "Can view products",
-  "product.update": "Can update product details",
-  "product.delete": "Can delete product",
-  "order.create": "Can create new invoices",
-  "order.read": "Can view invoices",
-  "order.update": "Can update invoices",
-  "order.delete": "Can delete invoices",
-  "payment.create": "Can create new payments",
-  "payment.read": "Can view payments",
-  "payment.update": "Can update payments",
-  "payment.delete": "Can delete payments",
-  "permission.read": "Can view staff roles",
-  "permission.update": "Can update staff roles",
-  "log.read": "Can view logs",
+export const scopeDescriptions: {[key: string]: string} = {
+  // user
+  "user.create": "Register a new staff",
+  "user.read": "View staff data and actions",
+  "user.update": "Update staff details",
+  "user.delete": "Deactivate a staff's account",
+  // customer
+  "customer.create": "Register a new customer",
+  "customer.read": "View customer data and actions",
+  "customer.update": "Update customer details",
+  "customer.delete": "Remove a customer from the system",
+  // product
+  "product.create": "List a new product",
+  "product.read": "View product details",
+  "product.update": "Modify product details, restock, or change price",
+  "product.delete": "Remove a product from the system",
+  // order
+  "order.create": "Create an order for a customer",
+  "order.read": "View all orders, print invoices & receipts",
+  "order.update": "Update order details",
+  "order.delete": "Delete an invoice",
+  // payment
+  "payment.create": "Record a customer's payment",
+  "payment.read": "View payment history of customers",
+  "payment.update": "Update payment details",
+  "payment.delete": "Delete a payment record",
+  // permission
+  "permission.read": "View all roles and permissions",
+  "permission.update": "Modify a role's data and permissions",
+  // log
+  "log.read": "View system logs",
 };
 
 export const groups: Group[] = [
@@ -146,7 +153,7 @@ export const groups: Group[] = [
 const missingDescriptions = permissions
   .map((permission) =>
     permission.actions.map((action) =>
-      `${permission.scope}.${action}` in ScopeDescription
+      `${permission.scope}.${action}` in scopeDescriptions
         ? null
         : `${permission.scope}.${action}`
     )
