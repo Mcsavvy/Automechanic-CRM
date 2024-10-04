@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Rambla, Quicksand, Lato } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 import { AuthStoreProvider } from "@/lib/providers/auth-store-provider";
-import { appDescription, appTitle, companyName } from "@/data";
+import { appDescription, appTitle } from "@/data";
+import { GroupStoreProvider } from "@/lib/providers/group-store-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -32,7 +33,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className} safe-container`}>
         <ToastContainer position="top-center" hideProgressBar />
-        <AuthStoreProvider>{children}</AuthStoreProvider>
+        <GroupStoreProvider>
+        <AuthStoreProvider>
+          {children}
+        </AuthStoreProvider>
+        </GroupStoreProvider>
       </body>
     </html>
   );

@@ -7,6 +7,7 @@ import GroupDisplay from "./components/group";
 import Group from "@/lib/@types/group";
 import { toast } from "react-toastify";
 import { initialScopes, populateScopes } from "./utils";
+import { useGroupStore } from "@/lib/providers/group-store-provider";
 
 interface ScopeItem {
   action: string;
@@ -47,14 +48,8 @@ const Roles = () => {
   const [originalName, setOriginalName] = useState("");
   const [originalDescription, setOriginalDescription] = useState("");
   const [loading, setL] = useState(false);
-  const [groups, setG] = useState<Group[]>([]);
+  const {groups} = useGroupStore(state => state);
 
-  useEffect(() => {
-    fetchGroups().then((data) => {
-      console.log(data);
-      setG(data);
-    });
-  }, []);
 
   useEffect(() => {
     if (selectedGroup) {
