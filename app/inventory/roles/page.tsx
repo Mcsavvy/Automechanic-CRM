@@ -107,7 +107,7 @@ const Roles = () => {
               </label>
               <div className="ml-4 grid grid-cols-1 gap-2">
                 {items.map((scope, index) => (
-                  <label key={index} className="flex items-center">
+                  <label key={index} className="flex items-start">
                     <input
                       type="checkbox"
                       checked={scope.checked}
@@ -115,7 +115,7 @@ const Roles = () => {
                       disabled={allChecked}
                       className="mr-2"
                     />
-                    <span className="font-medium w-32">{scope.label}</span>
+                    <span className="font-medium w-24 md:w-32 shrink-0">{scope.label}</span>
                     <span className="text-sm text-gray-600 ml-2">
                       {scope.description}
                     </span>
