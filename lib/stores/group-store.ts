@@ -1,6 +1,7 @@
 import axios from "axios";
 import Group, { GroupModification } from "@/lib/@types/group";
 import { createStore } from "zustand/vanilla";
+import { toError } from "../errors";
 
 export async function getGroup(id: string): Promise<Group> {
   try {
@@ -69,7 +70,8 @@ export const createGroupStore = (state: GroupState = initialGroupState) =>
         set({ status: "idle" });
         return group;
       } catch (error) {
-        set({ status: "error", error: error.message });
+        const e = toError(error);
+        set({ status: "error", error: e.message });
         throw error;
       }
     },
@@ -80,7 +82,8 @@ export const createGroupStore = (state: GroupState = initialGroupState) =>
         set({ status: "idle" });
         return updatedGroup;
       } catch (error) {
-        set({ status: "error", error: error.message });
+        const e = toError(error);
+        set({ status: "error", error: e.message });
         throw error;
       }
     },
