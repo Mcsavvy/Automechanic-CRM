@@ -99,7 +99,7 @@ export default function CreateInvoice({invoiceNumber, topGoods}: {invoiceNumber:
     };
 
     return (
-      <section className="grid w-full grid-cols-1 md:grid-cols-[minmax(0,_3fr)_minmax(0,_2fr)] gap-x-4 gap-y-4 pb-8">
+      <section className="grid w-full grid-cols-1 md:grid-cols-[minmax(0,_3fr)_minmax(0,_2fr)] gap-x-4 gap-y-4 pb-16">
           <InvoiceItems {...state} />
           <InvoicePayments {...state} />
       </section>
