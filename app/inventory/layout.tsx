@@ -33,15 +33,12 @@ import { Button } from "@/components/ui/button";
 import LogoutModal from "@/components/modals/LogoutModal";
 import Link from "next/link";
 
-interface BaseSectionItem {
+interface SectionItem {
   icon: React.ReactNode;
   content: React.ReactNode | string;
+  link: string;
   getIsActive: (pathname: string) => boolean;
 }
-
-type SectionItem =
-  | (BaseSectionItem & { link: string })
-  | (BaseSectionItem & { onClick: () => void });
 
 interface Section {
   name: string;
@@ -229,11 +226,9 @@ export default function DashboardLayout({
                   <ul className="flex flex-col">
                     {section.items.map((item, idx) => (
                       <Link
-                        //@ts-ignore
                         href={item.link}
                         key={idx}
-                        //@ts-ignore
-                        onClick={item.onClick}
+                        onClick={() => setShowMenu(false)}
                         className={`cursor-pointer flex flex-row gap-[8px] justify-start items-center p-3 text-[15px] hover:bg-pri-5 hover:text-white transition-all duration-200 ease-in active:scale-95 ${
                           item.getIsActive(pathname) ? "active-nav" : ""
                         }`}

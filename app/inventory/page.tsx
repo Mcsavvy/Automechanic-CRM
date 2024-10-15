@@ -21,7 +21,7 @@ export default function Home() {
   const [tab, setTab] = useState("recent");
 
   return (
-    <div className="pt-[60px] w-full overflow-x-hidden overflow-y-scroll scrollbar-thin">
+    <div className="pt-[60px] pb-16 w-full overflow-x-hidden overflow-y-scroll scrollbar-thin">
       <div className="w-full z-10 overflow-x-clip">
         <ul className="px-[30px] pt-3 pb-0 font-quicksand flex flex-row items-start overflow-x-clip overflow-y-clip gap-4">
           <li
