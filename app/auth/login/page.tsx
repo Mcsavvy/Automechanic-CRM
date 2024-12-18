@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import axios from "@/lib/axios";
 import { useAuthStore } from "@/lib/providers/auth-store-provider";
 import { User } from "@/lib/@types/user";
+import Image from "next/image";
 
 interface LoginResponse extends User {}
 
@@ -73,6 +74,10 @@ const LoginPage: React.FC = () => {
         onSubmit={handleSubmit}
         className="bg-white p-8 rounded-lg shadow-lg max-w-sm w-full"
       >
+        <div className="flex flex-col items-center mb-6">
+          <Image src="/logo.png" width={100} height={100} alt="Logo" />
+          <h1 className="text-2xl font-bold text-gray-900 mt-2">Falore Autos</h1>
+        </div>
         <div className="mb-6">
           <label
             htmlFor="email"
