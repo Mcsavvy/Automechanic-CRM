@@ -42,11 +42,6 @@ function validateName({ name }: FormData) {
   if (!name.trim()) {
     toast.error("Name is required", { toastId: "name-required" });
     return false;
-  } else if (name.length < 5) {
-    toast.error("Name must be at least 5 characters", {
-      toastId: "name-invalid",
-    });
-    return false;
   }
   return true;
 }
