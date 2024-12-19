@@ -39,11 +39,6 @@ function validateDescription({ description }: FormData) {
       toastId: "description-required",
     });
     return false;
-  } else if (description.length < 10) {
-    toast.error("Description is too short", {
-      toastId: "description-invalid",
-    });
-    return false;
   }
   return true;
 }
