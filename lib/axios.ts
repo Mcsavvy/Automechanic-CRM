@@ -13,7 +13,7 @@ async function convertErrorToInstance(error: any) {
 }
 
 axiosInstance.interceptors.response.use(
-  (config) => config,
+  (response) => response,
   (error) => {
     const instance = convertErrorToInstance(error);
     return instance;
