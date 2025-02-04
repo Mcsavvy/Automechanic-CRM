@@ -3,11 +3,10 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import axios from "@/lib/axios";
-import { useAuthStore } from "@/lib/providers/auth-store-provider";
 import { User } from "@/lib/@types/user";
 import Image from "next/image";
 
-interface LoginResponse extends User {}
+interface LoginResponse extends User { }
 
 interface ErrorResponse {
   message: string;
@@ -16,38 +15,29 @@ interface ErrorResponse {
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { setAuth } = useAuthStore((state) => state);
   const router = useRouter();
   const query = useSearchParams();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const promise = new Promise<LoginResponse>((resolve, reject) => {
-      axios
-        .post("/api/auth/login", { email, password })
-        .then((response) => {
-          const data = response.data as LoginResponse;
-          const redirect = query.get("redirect");
-          setAuth({
-            id: data.id,
-            email: data.email,
-            firstName: data.firstName,
-            lastName: data.lastName,
-            phone: data.phone,
-            groups: data.groups,
-            permissions: data.permissions,
-            loggedIn: true,
-          });
-          if (redirect) {
-            router.push(redirect);
-          } else {
-            router.push("/");
-          }
-          resolve(data);
-        })
-        .catch((error) => {
-          reject(error.response.data as ErrorResponse);
-        });
+    const promise = new Promise<LoginResponse>(async (resolve, reject) => {
+
+      try {
+        const response = await axios.post("/api/auth/login", { email, password })
+        if (response.status !== 200) {
+          throw response;
+        }
+        const data = response.data as LoginResponse;
+        const redirect = query.get("redirect");
+        if (redirect) {
+          router.push(redirect);
+        } else {
+          router.push("/");
+        }
+        resolve(data);
+      } catch (error) {
+        reject(error);
+      }
     });
     toast.promise<LoginResponse, ErrorResponse>(promise, {
       pending: "Logging in...",
