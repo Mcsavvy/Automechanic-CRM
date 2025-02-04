@@ -52,7 +52,7 @@ export const POST = withErrorBoundary(async function (req: NextRequest) {
     if (error instanceof EntityNotFound || error instanceof PasswordError) {
       return new LoginError("Could not authenticate user", {
         cause: error.serialize(),
-      }).toResponse();
+      }).toResponse(401);
     }
     return buildErrorResponse(error, 500);
   }

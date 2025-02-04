@@ -22,7 +22,6 @@ export class PasswordError extends BaseError<PasswordErrorSchema> {
     return {
       ...super.serialize(),
       password: this.password,
-      userId: this.userId,
     };
   }
 
