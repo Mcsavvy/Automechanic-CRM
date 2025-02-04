@@ -3,6 +3,9 @@
         "editor.defaultFormatter": "vscode.css-language-features",
         "tailwindCSS.suggestions": true,
     },
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
     "files.associations": {
         "*.css": "tailwindcss"
     }
