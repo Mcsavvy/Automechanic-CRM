@@ -11,6 +11,8 @@
     "test": "jest --detectOpenHandles"
   },
   "dependencies": {
+    "@casl/ability": "^6.7.3",
+    "@casl/react": "^5.0.0",
     "@iconscout/react-unicons": "^2.0.2",
     "@radix-ui/react-alert-dialog": "^1.0.5",
     "@radix-ui/react-checkbox": "^1.1.1",
