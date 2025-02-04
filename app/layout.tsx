@@ -3,9 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
-import { AuthStoreProvider } from "@/lib/providers/auth-store-provider";
 import { appDescription, appTitle } from "@/data";
-import { GroupStoreProvider } from "@/lib/providers/group-store-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -33,11 +31,8 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className} safe-container`}>
         <ToastContainer position="top-center" hideProgressBar />
-        <GroupStoreProvider>
-        <AuthStoreProvider>
-          {children}
-        </AuthStoreProvider>
-        </GroupStoreProvider>
+
+        {children}
       </body>
     </html>
   );
