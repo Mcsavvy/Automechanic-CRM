@@ -17,7 +17,7 @@ async function implicitTokenRefresh(payload: JWTPayload) {
   const now = Math.floor(Date.now() / 1000);
   const leeway = ms(JWT_EXPIRY_LEEWAY);
   if (now >= payload.exp + leeway) {
-    console.debug("Refreshing token");
+    // console.debug("Refreshing token");
     return await new SignJWT(payload)
       .setProtectedHeader({
         alg: "HS256",
@@ -48,10 +48,10 @@ async function middleware(req: NextRequest) {
   const isLoginPage = path.startsWith("/auth/login");
   const isAPIRoute = path.startsWith("/api");
   const token = cookieJar.get(AUTH_COOKIE_NAME)?.value;
-  console.debug("path", path);
+  // console.debug("path", path);
 
   if (isPublicRoute && !isLoginPage) {
-    console.debug("Unprotected route");
+    // console.debug("Unprotected route");
     return NextResponse.next();
   }
 
@@ -74,7 +74,7 @@ async function middleware(req: NextRequest) {
       })
     ).payload;
   } catch (e) {
-    console.error("Error verifying JWT", e);
+    // console.error("Error verifying JWT", e);
     if (isLoginPage) {
       return NextResponse.next();
     }
@@ -90,9 +90,9 @@ async function middleware(req: NextRequest) {
     if (isLoginPage) {
       return NextResponse.next();
     }
-    console.warn("User ID is required");
+    // console.warn("User ID is required");
     // clear the cookie
-    console.debug("Clearing cookie");
+    // console.debug("Clearing cookie");
     cookieJar.delete(AUTH_COOKIE_NAME);
     if (isAPIRoute) {
       return NextResponse.json(
@@ -121,7 +121,7 @@ async function middleware(req: NextRequest) {
   //   }
   const newToken = await implicitTokenRefresh(payload);
   if (newToken) {
-    console.debug("Setting new token");
+    // console.debug("Setting new token");
     cookieJar.set(AUTH_COOKIE_NAME, newToken, {
       httpOnly: true,
       sameSite: "lax",
