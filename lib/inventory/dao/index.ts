@@ -4,6 +4,7 @@ import GoodDAO from './good'
 import BuyerDAO from './buyer'
 import InvoiceDAO from './invoice'
 import InsightsDAO from './insights'
+import ExternalInvoiceDAO from './externalInvoice'
 
 const DAO = {
     Order: OrderDAO,
@@ -11,6 +12,7 @@ const DAO = {
     Good: GoodDAO,
     Buyer: BuyerDAO,
     Invoice: InvoiceDAO,
-    Insights: InsightsDAO
+    Insights: InsightsDAO,
+    ExternalInvoice: ExternalInvoiceDAO
 }
 export default DAO
