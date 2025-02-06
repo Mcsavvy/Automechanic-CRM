@@ -1,11 +1,11 @@
 
 import { FilterQuery, Types } from 'mongoose';
 import ExternalInvoiceModel, { ExternalInvoiceItem, IExternalInvoiceDocument } from '../models/externalInvoice';
-import { PageNotFound } from '@/lib/errors';
+import { EntityNotFound, PageNotFound } from '@/lib/errors';
 
-interface InvoiceParams {
+export interface InvoiceParams {
     discount: number;
-    items: ExternalInvoiceItem[];
+    items?: ExternalInvoiceItem[];
     tax: number;
     shipping: number;
 }
@@ -19,15 +19,15 @@ interface InvoiceCreateParams {
 }
 
 interface PaginatedExternalInvoice {
-  invoices: (IExternalInvoiceDocument & { id: string })[];
-  totalDocs: number;
-  limit: number;
-  page: number;
-  totalPages: number;
-  next: number | null;
-  prev: number | null;
-  hasPrevPage: boolean;
-  hasNextPage: boolean;
+    invoices: (IExternalInvoiceDocument & { id: string })[];
+    totalDocs: number;
+    limit: number;
+    page: number;
+    totalPages: number;
+    next: number | null;
+    prev: number | null;
+    hasPrevPage: boolean;
+    hasNextPage: boolean;
 }
 async function createExternalInvoice(params: InvoiceCreateParams) {
     const invoice = new ExternalInvoiceModel({ ...params });
@@ -37,17 +37,28 @@ async function createExternalInvoice(params: InvoiceCreateParams) {
 
 
 async function getExternalInvoiceById(id: Types.ObjectId) {
-    return await ExternalInvoiceModel.findById(id).exec();
+    const invoice = await ExternalInvoiceModel.findById(id).exec();
+    if (!invoice) {
+        EntityNotFound.throw("Invoice", id.toString());
+    }
+    return invoice;
 }
 
 async function deleteExternalInvoice(id: Types.ObjectId) {
-    await ExternalInvoiceModel.deleteOne({ _id: id });
+    const invoice = await ExternalInvoiceModel.findByIdAndDelete(id);
+    if (!invoice) {
+        EntityNotFound.throw("Invoice", id.toString());
+    }
+    return invoice;
 }
 
 async function updateExternalInvoice(id: Types.ObjectId, params: InvoiceParams) {
     const invoice = await ExternalInvoiceModel
         .findByIdAndUpdate(id, { ...params }, { new: true })
         .exec();
+    if (!invoice) {
+        EntityNotFound.throw("Invoice", id.toString());
+    }
     return invoice;
 }
 
