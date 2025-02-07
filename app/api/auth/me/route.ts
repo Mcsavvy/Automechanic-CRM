@@ -39,7 +39,6 @@ export const POST = permissionRequired(Permission.AllowAny())(async function (
   req
 ) {
   const payload: UpdateUser = await req.json();
-
   const user = await UserDAO.updateUser(this.user._id, payload);
   return NextResponse.json(user);
 });

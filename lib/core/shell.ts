@@ -1,10 +1,10 @@
 // A custom repl for the project
 import dotenv from "dotenv-flow";
-
 dotenv.config({
     node_env: process.env.NODE_ENV || "development",
     default_node_env: "development",
 });
+
 
 import packageJson from "../../package.json";
 import repl from "repl";

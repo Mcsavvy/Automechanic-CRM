@@ -85,6 +85,16 @@ const sections: Section[] = [
         icon: <ReceiptText size={20} strokeWidth={1.5} />,
         content: "Invoices",
         getIsActive: (pathname) => pathname.startsWith("/inventory/invoices"),
+        link: "/inventory/invoices",
+        ability: {
+          action: "read",
+          subject: "order",
+        },
+      },
+      {
+        icon: <ReceiptText size={20} strokeWidth={1.5} />,
+        content: "Orders",
+        getIsActive: (pathname) => pathname.startsWith("/inventory/orders"),
         link: "/inventory/orders",
         ability: {
           action: "read",

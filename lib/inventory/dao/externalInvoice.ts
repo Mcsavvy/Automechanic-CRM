@@ -1,12 +1,13 @@
 
 import { FilterQuery, Types } from 'mongoose';
 import ExternalInvoiceModel, { ExternalInvoiceItem, IExternalInvoiceDocument } from '../models/externalInvoice';
-import { EntityNotFound, PageNotFound } from '@/lib/errors';
+import { EntityNotFound, PageNotFound, ValueError } from '@/lib/errors';
 
 export interface InvoiceParams {
     discount: number;
     items?: ExternalInvoiceItem[];
     tax: number;
+    paymentMade: number;
     shipping: number;
 }
 
@@ -15,7 +16,14 @@ interface InvoiceCreateParams {
     items: ExternalInvoiceItem[];
     tax: number;
     shipping: number;
+    dueDate: string;
     loggedBy: Types.ObjectId;
+    client: {
+        fullName: string;
+        email: string;
+        address: string;
+        phone: string;
+    };
 }
 
 interface PaginatedExternalInvoice {
@@ -52,15 +60,29 @@ async function deleteExternalInvoice(id: Types.ObjectId) {
     return invoice;
 }
 
-async function updateExternalInvoice(id: Types.ObjectId, params: InvoiceParams) {
-    const invoice = await ExternalInvoiceModel
-        .findByIdAndUpdate(id, { ...params }, { new: true })
-        .exec();
-    if (!invoice) {
-        EntityNotFound.throw("Invoice", id.toString());
-    }
-    return invoice;
+    async function updateExternalInvoice(id: Types.ObjectId, params: InvoiceParams) {
+        if ("paymentMade" in params && params.paymentMade < 0) {
+            ValueError.throw("Payment made cannot be negative");
+        }
+        const updateQuery: any = { ...params };
+        if ('paymentMade' in params) {
+            updateQuery.$inc = { paymentMade: params.paymentMade };
+            delete updateQuery.paymentMade; 
+        }
+        const invoice = await ExternalInvoiceModel.findOneAndUpdate(
+            { _id: id },
+            updateQuery,
+            { new: true }
+        ).exec();
+    
+        if (!invoice) {
+            EntityNotFound.throw("Invoice", id.toString());
+        }
+        return invoice;
 }
+
+
+
 
 async function getExternalInvoices({
     filters, page = 1, limit = 10,

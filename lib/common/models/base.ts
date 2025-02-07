@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema } from "mongoose";
+import { config } from "dotenv";
 
 const dbUri = process.env.MONGODB_URI as string;
 let db: mongoose.Mongoose | undefined = undefined;

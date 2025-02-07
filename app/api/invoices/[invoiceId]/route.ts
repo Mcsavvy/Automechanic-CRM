@@ -9,9 +9,11 @@ import ExternalInvoiceDAO, { InvoiceParams } from "@/lib/inventory/dao/externalI
 
 interface UpdateInvoice {
     discount?: number;
+    dueDate?: string;
     // items: ExternalInvoiceItem[];
     tax?: number;
     shipping?: number;
+    paymentMade?: number;
 }
 
 export const GET = permissionRequired(Permission.AllowAny())(async function (
