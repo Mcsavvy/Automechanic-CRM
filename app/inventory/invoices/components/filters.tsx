@@ -77,11 +77,6 @@ export default function InvoiceFilters() {
     defaultValue: 1000000,
   });
 
-  const [dueDate, setDueDate] = useQueryState<Date>("invoice:dueDate", {
-    ...parseAsTimestamp,
-  });
-  const [dueDateMin, dueDateMax] = [null, null];
-
   const { applyFilter, filter } = useExternalInvoiceStore(state => state);
 
   // Handle tax range changes
@@ -117,18 +112,6 @@ export default function InvoiceFilters() {
     });
   };
 
-  // Handle due date changes
-  const handleDueDateChange = () => {
-    if (dueDate) {
-      applyFilter({
-        ...filter,
-        dueDate: {
-          before: dueDate.toISOString()
-        }
-      });
-    }
-  };
-
   return (
     <Popover>
       <PopoverTrigger className="flex flex-row items-center justify-start gap-3 border border-neu-3 p-[8px] rounded-md">
@@ -159,20 +142,10 @@ export default function InvoiceFilters() {
           min={0}
           max={1000000}
           step={10000}
-          label="Payment Made (₦)"
+          label="Amount (₦)"
           handleApply={handlePaymentChange}
           minState={[minPayment, setMinPayment]}
           maxState={[maxPayment, setMaxPayment]}
-        />
-
-        <DateRangeFilter
-          min={dueDateMin}
-          max={dueDateMax}
-          label="Due Date"
-          handleApply={handleDueDateChange}
-          minState={[dueDate, setDueDate]}
-          maxState={[null, () => { }]}
-          presets={dueDatePresets}
         />
       </PopoverContent>
     </Popover>

@@ -57,24 +57,6 @@ export const columns: ColumnDef<ExternalInvoice>[] = [
     },
   },
   {
-    id: "dueDate",
-    header: () => (
-      <span className="font-bold">Due Date</span>
-    ),
-    cell: ({ row }) => {
-      const date = new Date(row.original.dueDate);
-      return (
-        <div className="text-left ml-4 font-medium">
-          {date.toLocaleDateString("en-GB", {
-            day: "numeric",
-            month: "short",
-            year: "numeric",
-          })}
-        </div>
-      );
-    },
-  },
-  {
     id: "total",
     header: () => <span className="font-bold">Total Amount</span>,
     cell: ({ row }) => {
@@ -97,56 +79,4 @@ export const columns: ColumnDef<ExternalInvoice>[] = [
       );
     },
   },
-  {
-    id: "paymentMade",
-    header: () => (
-      <span className="font-bold">Amount Paid</span>
-    ),
-    cell: ({ row }) => {
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "NGN",
-        currencyDisplay: "code",
-        maximumFractionDigits: 0,
-      }).format(row.original.paymentMade);
-
-      return (
-        <div className="text-left ml-4 font-medium">
-          {formatted.replace("NGN", "₦")}
-        </div>
-      );
-    },
-  },
-  {
-    id: "status",
-    header: () => <span className="font-bold">Status</span>,
-    cell: ({ row }) => {
-      const invoice = row.original;
-      const dueDate = new Date(invoice.dueDate);
-      const isPaid = invoice.paymentMade >= invoice.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-      const isOverdue = !isPaid && dueDate < new Date();
-
-      if (isPaid) {
-        return (
-          <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">
-            paid
-          </span>
-        );
-      }
-
-      if (isOverdue) {
-        return (
-          <span className="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded">
-            overdue
-          </span>
-        );
-      }
-
-      return (
-        <span className="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded">
-          pending
-        </span>
-      );
-    },
-  }
 ];

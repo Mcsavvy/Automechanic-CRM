@@ -15,11 +15,11 @@ export default function ExternalInvoicePage() {
       <div className="flex flex-col absolute h-[calc(100vh-60px)] top-[60px] w-full">
         <div className="h-full relative">
           <div className="flex flex-row justify-between items-center p-4 px-[30px]">
-            <h1 className="text-xl font-quicksand font-semibold">Invoice</h1>
+            <h1 className="text-xl font-quicksand font-semibold">Receipt</h1>
             <Link href={"/inventory/invoices/new"}>
               <Button className="flex flex-row gap-2">
                 <Plus size={20} strokeWidth={1.5} />
-                New Invoice
+                New Receipt
               </Button>
             </Link>
           </div>

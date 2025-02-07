@@ -84,7 +84,7 @@ const sections: Section[] = [
       },
       {
         icon: <ReceiptText size={20} strokeWidth={1.5} />,
-        content: "Invoices",
+        content: "Point Of Sales",
         getIsActive: (pathname) => pathname.startsWith("/inventory/invoices"),
         link: "/inventory/invoices",
         ability: {
@@ -94,7 +94,7 @@ const sections: Section[] = [
       },
       {
         icon: <ShoppingCart size={20} strokeWidth={1.5} />,
-        content: "Orders",
+        content: "Invoices",
         getIsActive: (pathname) => pathname.startsWith("/inventory/orders"),
         link: "/inventory/orders",
         ability: {

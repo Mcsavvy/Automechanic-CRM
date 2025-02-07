@@ -1,4 +1,4 @@
-import { Fingerprint, UsersRound, Package, ReceiptText, ChevronRight, ChevronDown } from "lucide-react"
+import { Fingerprint, UsersRound, Package, ReceiptText, ChevronRight, ChevronDown, ShoppingCart } from "lucide-react"
 import React, { FC, useState } from "react"
 import Link from 'next/link'
 import { formatDateTime, formatInvoiceNumber } from '@/lib/utils';
@@ -117,8 +117,26 @@ const customMessages: any = {
             " placed a new payment for order ",
             " paid another installment for order "
         ],
+    },
+    Invoice: {
+        create: [
+            " generated invoice ",
+            " created invoice ",
+            " issued invoice "
+        ],
+        update: [
+            " updated invoice ",
+            " modified invoice ",
+            " changed invoice "
+        ],
+        delete: [
+            " deleted invoice ",
+            " voided invoice ",
+            " removed invoice "
+        ]
     }
 }
+
 const getRandomMessage = (messages: string[]) => {
     return messages[Math.floor(Math.random() * messages.length)];
 }
@@ -160,7 +178,7 @@ const parseLog = (log: LogProps) => {
             break
         }
         case 'Order': {
-            data.avatar = { icon: ReceiptText }
+            data.avatar = { icon: ShoppingCart }
             data.link = `/inventory/orders/${log.targetId}`
             data.display = [log.display[0], formatInvoiceNumber(log.display[1])]
             break
@@ -168,6 +186,12 @@ const parseLog = (log: LogProps) => {
         case 'Payment': {
             data.avatar = { name: log.display[0] }
             data.link = `/inventory/orders/${log.targetId}`
+            data.display = [log.display[0], formatInvoiceNumber(log.display[1])]
+            break
+        }
+        case "Invoice": {
+            data.avatar = { icon: ReceiptText }
+            data.link = `/inventory/invoices/${log.targetId}`
             data.display = [log.display[0], formatInvoiceNumber(log.display[1])]
             break
         }

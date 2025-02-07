@@ -55,7 +55,7 @@ function transformStaff(staff: IUserDocument): PaymentVerifier {
 async function transformPayment(
   payment: IOrderPaymentDocument
 ): Promise<Payment> {
-  const customer = await getDocument(
+  const customer = await getDocument<IBuyerDocument>(
     BuyerModel,
     payment.customer,
     {
@@ -74,7 +74,7 @@ async function transformPayment(
         : payment.customer.toString()
     );
   }
-  const order = await getDocument(
+  const order = await getDocument<IOrderDocument>(
     OrderModel,
     payment.order,
     {
@@ -92,7 +92,7 @@ async function transformPayment(
       payment: payment._id.toString(),
     });
   }
-  const confirmedBy = await getDocument(
+  const confirmedBy = await getDocument<IUserDocument>(
     User,
     payment.confirmedBy,
     {

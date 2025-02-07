@@ -1,165 +1,144 @@
-import React from 'react';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Download, Trash2 } from 'lucide-react';
+"use client";
 
-interface ExternalInvoiceItem {
-  name: string;
-  description?: string;
-  quantity: number;
-  price: number;
-}
+import { useEffect, useState } from "react";
+import { useExternalInvoiceStore } from "@/lib/providers/invoice-store-provider";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Download, MoveLeft } from "lucide-react";
+import Link from "next/link";
+import { formatCurrencyShort, formatDate } from "@/lib/utils";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import NumberInput from "@/components/ui/number-input";
+import { useRouter } from "next/navigation";
+import { ExternalInvoice } from "@/lib/@types/invoice";
+import { companyEmail, companyName, companyPhoneNumber } from "@/data";
 
-interface ExternalInvoice {
-  discount: number;
-  client: {
-    fullName: string;
-    email: string;
-    address: string;
-    phone: string;
-  };
-  items: ExternalInvoiceItem[];
-  tax: number;
-  shipping: number;
-  loggedBy: any;
-  total(): string;
-}
+export default function InvoiceViewPage({ params }: { params: { invoiceId: string } }) {
+  const router = useRouter();
+  const { getInvoice, updateInvoice, status } = useExternalInvoiceStore(s => s);
+  const [invoice, setInvoice] = useState<ExternalInvoice | null>(null);
+  const [paymentAmount, setPaymentAmount] = useState(0);
 
-interface InvoiceViewProps {
-  invoice: ExternalInvoice;
-  onDelete: () => void;
-}
+  useEffect(() => {
+    const fetchInvoice = async () => {
+      try {
+        const data = await getInvoice(params.invoiceId);
+        setInvoice(data);
+      } catch (error) {
+        console.error("Error fetching invoice:", error);
+      }
+    };
+    fetchInvoice();
+  }, [params.invoiceId, getInvoice]);
 
-const InvoiceView: React.FC<InvoiceViewProps> = ({ invoice, onDelete }) => {
-  const handleDownload = () => {
-    // Convert invoice data to a string
-    const invoiceString = JSON.stringify(invoice, null, 2);
-    // Create a blob
-    const blob = new Blob([invoiceString], { type: 'application/json' });
-    // Create download link
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `invoice-${invoice.client.fullName.replace(/\s+/g, '-')}.json`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
-  };
+  if (status === "loading" || !invoice) {
+    return <div>Loading...</div>;
+  }
 
-  const calculateSubtotal = () => {
-    return invoice.items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
-  };
+  const subtotal = invoice.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const discountAmount = (subtotal * invoice.discount) / 100;
+  const taxAmount = (subtotal * invoice.tax) / 100;
+  const total = subtotal - discountAmount + taxAmount + invoice.shipping;
+  const balance = total - invoice.paymentMade;
+  const isPaid = balance <= 0;
+  const isOverdue = new Date(invoice.dueDate) < new Date() && !isPaid;
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
-      <CardHeader className="flex flex-row justify-between items-center">
-        <div className="space-y-2">
-          <h2 className="text-2xl font-bold">Invoice</h2>
-          <p className="text-sm text-gray-500">Created by: {invoice.loggedBy}</p>
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            className="flex items-center gap-2"
-            onClick={handleDownload}
+    <main className="p-6 pt-10 pb-20 w-full">
+      <div className="flex justify-between items-center mb-6">
+        <div className="flex items-center gap-4">
+          <Link
+            href="/inventory/invoices"
+            className="text-black hover:text-pri-5 bg-white p-2 border-2 rounded-sm border-neu-4 transition"
           >
-            <Download className="w-4 h-4" /> Download
-          </Button>
-          <Button
-            variant="destructive"
-            className="flex items-center gap-2"
-            onClick={onDelete}
-          >
-            <Trash2 className="w-4 h-4" /> Delete
-          </Button>
-        </div>
-      </CardHeader>
-
-      <CardContent className="space-y-6">
-        {/* Client Information */}
-        <div className="border rounded-lg p-4">
-          <h3 className="font-semibold mb-2">Client Information</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-gray-500">Name</p>
-              <p>{invoice.client.fullName}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Email</p>
-              <p>{invoice.client.email}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Address</p>
-              <p>{invoice.client.address}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Phone</p>
-              <p>{invoice.client.phone}</p>
-            </div>
+            <MoveLeft size={20} />
+          </Link>
+          <div>
+            <h1 className="text-2xl font-bold">Receipt #{invoice.id.slice(0, 8)}</h1>
+            <p className="text-gray-500 text-sm">Created on {formatDate(invoice.createdAt)}</p>
           </div>
         </div>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={() => window.print()}>
+            <Download className="w-4 h-4 mr-2" /> Download PDF
+          </Button>
+        </div>
+      </div>
 
-        {/* Invoice Items */}
-        <div className="border rounded-lg p-4">
-          <h3 className="font-semibold mb-2">Items</h3>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b">
-                  <th className="text-left p-2">Item</th>
-                  <th className="text-left p-2">Description</th>
-                  <th className="text-right p-2">Quantity</th>
-                  <th className="text-right p-2">Price</th>
-                  <th className="text-right p-2">Total</th>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+        <Card className="p-6">
+          <h2 className="font-semibold mb-4">Bill From</h2>
+          <p className="text-gray-600">{companyName}</p>
+          <p className="text-gray-600">{companyEmail}</p>
+          <p className="text-gray-600">{companyPhoneNumber}</p>
+        </Card>
+
+        <Card className="p-6">
+          <h2 className="font-semibold mb-4">Bill To</h2>
+          <p className="text-gray-600">{invoice.client.fullName}</p>
+          <p className="text-gray-600">{invoice.client.email}</p>
+          <p className="text-gray-600">{invoice.client.phone}</p>
+          <p className="text-gray-600">{invoice.client.address}</p>
+        </Card>
+      </div>
+
+      <Card>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b">
+                <th className="text-left p-4">Item</th>
+                <th className="text-left p-4">Description</th>
+                <th className="text-right p-4">Quantity</th>
+                <th className="text-right p-4">Price</th>
+                <th className="text-right p-4">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {invoice.items.map((item, index) => (
+                <tr key={index} className="border-b">
+                  <td className="p-4">{item.name}</td>
+                  <td className="p-4">{item.description || '-'}</td>
+                  <td className="text-right p-4">{item.quantity}</td>
+                  <td className="text-right p-4">{formatCurrencyShort(item.price)}</td>
+                  <td className="text-right p-4">{formatCurrencyShort(item.price * item.quantity)}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {invoice.items.map((item, index) => (
-                  <tr key={index} className="border-b">
-                    <td className="p-2">{item.name}</td>
-                    <td className="p-2">{item.description || '-'}</td>
-                    <td className="text-right p-2">{item.quantity}</td>
-                    <td className="text-right p-2">${item.price.toFixed(2)}</td>
-                    <td className="text-right p-2">
-                      ${(item.quantity * item.price).toFixed(2)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
         </div>
 
-        {/* Summary */}
-        <div className="border rounded-lg p-4">
-          <h3 className="font-semibold mb-2">Summary</h3>
-          <div className="space-y-2">
+        <div className="p-6 border-t">
+          <div className="w-72 ml-auto space-y-2">
             <div className="flex justify-between">
-              <span>Subtotal</span>
-              <span>${calculateSubtotal().toFixed(2)}</span>
+              <span>Subtotal:</span>
+              <span>{formatCurrencyShort(subtotal)}</span>
             </div>
             <div className="flex justify-between">
-              <span>Discount ({invoice.discount}%)</span>
-              <span>-${((calculateSubtotal() * invoice.discount) / 100).toFixed(2)}</span>
+              <span>Discount ({invoice.discount}%):</span>
+              <span>{formatCurrencyShort(discountAmount)}</span>
             </div>
             <div className="flex justify-between">
-              <span>Tax ({invoice.tax}%)</span>
-              <span>${((calculateSubtotal() * invoice.tax) / 100).toFixed(2)}</span>
+              <span>Tax ({invoice.tax}%):</span>
+              <span>{formatCurrencyShort(taxAmount)}</span>
             </div>
             <div className="flex justify-between">
-              <span>Shipping</span>
-              <span>${invoice.shipping.toFixed(2)}</span>
+              <span>Shipping:</span>
+              <span>{formatCurrencyShort(invoice.shipping)}</span>
             </div>
             <div className="flex justify-between pt-2 border-t font-semibold">
-              <span>Total</span>
-              <span>${invoice.total()}</span>
+              <span>Total:</span>
+              <span>{formatCurrencyShort(total)}</span>
             </div>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </Card>
+    </main>
   );
-};
-
-export default InvoiceView;
+}

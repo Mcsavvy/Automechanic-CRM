@@ -4,7 +4,8 @@ import { NextResponse } from "next/server";
 import LogDAO, { logParams } from "@/lib/common/dao/log";
 import mongoose, { Types } from "mongoose";
 import { EntityNotFound } from "@/lib/errors";
-import ExternalInvoiceDAO, { InvoiceParams } from "@/lib/inventory/dao/externalInvoice";
+import ExternalInvoiceDAO from "@/lib/inventory/dao/externalInvoice";
+import { ExternalInvoiceModification } from "@/lib/@types/invoice";
 
 
 interface UpdateInvoice {
@@ -44,7 +45,7 @@ export const PUT = permissionRequired(Permission.AllowAny())(async function (
   } 
   const invoice = await ExternalInvoiceDAO.updateExternalInvoice(
     mongoose.Types.ObjectId.createFromHexString(params.invoiceId),
-    body as InvoiceParams
+    body as ExternalInvoiceModification
   );
   if (!invoice) {
       return EntityNotFound.construct("INvoice", params.invoiceId);

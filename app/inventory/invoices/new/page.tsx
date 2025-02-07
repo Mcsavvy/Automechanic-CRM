@@ -22,8 +22,9 @@ import { useRouter } from "next/navigation";
 import { useExternalInvoiceStore } from "@/lib/providers/invoice-store-provider";
 import { toast } from "react-toastify";
 import * as z from "zod";
+import { Label } from "@/components/ui/label";
 
-export const invoiceItemSchema = z.object({
+const invoiceItemSchema = z.object({
   name: z.string(
     {
       description: "Item name",
@@ -46,7 +47,7 @@ export const invoiceItemSchema = z.object({
   ).min(0, "Price must be 0 or greater")
 });
 
-export const invoiceSchema = z.object({
+const invoiceSchema = z.object({
   client: z.object({
     fullName: z.string(
       {
@@ -90,8 +91,8 @@ export const invoiceSchema = z.object({
   ).min(0, "Shipping must be 0 or greater")
 });
 
-export type InvoiceFormValues = z.infer<typeof invoiceSchema>;
-export type InvoiceItemFormValues = z.infer<typeof invoiceItemSchema>;
+type InvoiceFormValues = z.infer<typeof invoiceSchema>;
+type InvoiceItemFormValues = z.infer<typeof invoiceItemSchema>;
 
 const NewInvoice = () => {
   const router = useRouter();
@@ -107,7 +108,10 @@ const NewInvoice = () => {
         phone: "",
       },
       dueDate: new Date().toISOString().split("T")[0],
-      items: [{ name: "" }],
+      items: [{ name: "", quantity: 0, price: 0 }],
+      discount: 0,
+      tax: 0,
+      shipping: 0,
     },
   });
 
@@ -127,14 +131,14 @@ const NewInvoice = () => {
     try {
       const invoice = await createInvoice({
         ...data,
-        paymentMade: 0
+        paymentMade: total,
       });
-      console.log("Invoice created:", invoice);
-      toast.success("Invoice created successfully");
+      console.log("Receipt created:", invoice);
+      toast.success("Receipt created successfully");
       // router.push(`/inventory/invoices/${invoice.id}`);
     } catch (error) {
-      toast.error("Failed to create invoice");
-      console.error("Error creating invoice:", error);
+      toast.error("Failed to create receipt");
+      console.error("Error creating receipt:", error);
     }
   };
 
@@ -149,7 +153,7 @@ const NewInvoice = () => {
             <MoveLeft size={20} />
           </Link>
           <div className="flex flex-col items-start justify-center ml-2">
-            <h1 className="text-xl font-bold text-gray-800">Create Invoice</h1>
+            <h1 className="text-xl font-bold text-gray-800">Create Receipt</h1>
             <h6 className="text-gray-400 text-xs">
               {new Date().toLocaleDateString()}
             </h6>
@@ -211,27 +215,10 @@ const NewInvoice = () => {
           </div>
         </div>
 
-        {/* Due Date */}
-        <div className="space-y-2">
-          <h3 className="text-lg font-semibold">Due Date</h3>
-          <FormField
-            control={form.control}
-            name="dueDate"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input type="date" className="max-w-[200px]" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
         {/* Invoice Items */}
         <div className="space-y-2 w-full">
           <div className="flex items-center justify-between w-full gap-2">
-            <h3 className="text-lg font-semibold">Invoice Items</h3>
+            <h3 className="text-lg font-semibold">Receipt Items</h3>
             <Button
               type="button"
               onClick={() => append({ name: "", quantity: 0, price: 0 })}
@@ -251,6 +238,11 @@ const NewInvoice = () => {
                   name={`items.${index}.name`}
                   render={({ field }) => (
                     <FormItem>
+                      {
+                        index === 0 ? (
+                          <Label className="font-quicksand">Item Name</Label>
+                        ) : null
+                      }
                       <FormControl>
                         <Input placeholder="Item Name" {...field} {...field} />
                       </FormControl>
@@ -265,6 +257,11 @@ const NewInvoice = () => {
                   name={`items.${index}.description`}
                   render={({ field }) => (
                     <FormItem>
+                      {
+                        index === 0 ? (
+                          <Label className="font-quicksand">Item Description</Label>
+                        ) : null
+                      }
                       <FormControl>
                         <Input placeholder="Description" {...field} />
                       </FormControl>
@@ -279,6 +276,11 @@ const NewInvoice = () => {
                   name={`items.${index}.quantity`}
                   render={({ field }) => (
                     <FormItem>
+                      {
+                        index === 0 ? (
+                          <Label className="font-quicksand">Qty Sold</Label>
+                        ) : null
+                      }
                       <FormControl>
                         <NumberInput
                           placeholder="Quantity"
@@ -298,6 +300,11 @@ const NewInvoice = () => {
                   name={`items.${index}.price`}
                   render={({ field }) => (
                     <FormItem>
+                      {
+                        index === 0 ? (
+                          <Label className="font-quicksand">Price Per Unit</Label>
+                        ) : null
+                      }
                       <FormControl>
                         <NumberInput
                           prependSymbol
@@ -336,6 +343,7 @@ const NewInvoice = () => {
               name="discount"
               render={({ field }) => (
                 <FormItem>
+                  <Label className="font-quicksand">Discount (%)</Label>
                   <FormControl>
                     <NumberInput
                       placeholder="Discount %"
@@ -354,6 +362,7 @@ const NewInvoice = () => {
               name="tax"
               render={({ field }) => (
                 <FormItem>
+                  <Label className="font-quicksand">Tax (%)</Label>
                   <FormControl>
                     <NumberInput
                       placeholder="Tax %"
@@ -372,6 +381,7 @@ const NewInvoice = () => {
               name="shipping"
               render={({ field }) => (
                 <FormItem>
+                  <Label className="font-quicksand">Shipping (%)</Label>
                   <FormControl>
                     <NumberInput
                       prependSymbol
@@ -408,7 +418,7 @@ const NewInvoice = () => {
             <span>{formatCurrencyShort(total)}</span>
           </div>
           <Button type="submit" className="w-full mt-4">
-            Create Invoice
+            Create Receipt
           </Button>
         </div>
       </form>

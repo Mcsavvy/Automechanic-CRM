@@ -22,7 +22,7 @@ async function updateGroup(
   groupId: ObjectOrId<IGroupDocument>,
   data: Partial<createGroupParams>
 ) {
-  const group = await getDocument(Group, groupId);
+  const group = await getDocument<IGroupDocument>(Group, groupId);
   if (!group) {
     EntityNotFound.throw(
       "Group",
@@ -41,14 +41,14 @@ async function addMember(
   groupId: ObjectOrId<IGroupDocument>,
   userId: ObjectOrId<IUserDocument>
 ) {
-  const group = await getDocument(Group, groupId);
+  const group = await getDocument<IGroupDocument>(Group, groupId);
   if (!group) {
     EntityNotFound.throw(
       "Group",
       typeof groupId === "string" ? groupId : groupId._id.toString()
     );
   }
-  const user = await getDocument(User, userId);
+  const user = await getDocument<IUserDocument>(User, userId);
   if (!user) {
     EntityNotFound.throw(
       "User",
@@ -71,14 +71,14 @@ async function removeMember(
   groupId: ObjectOrId<IGroupDocument>,
   userId: ObjectOrId<IUserDocument>
 ) {
-  const group = await getDocument(Group, groupId);
+  const group = await getDocument<IGroupDocument>(Group, groupId);
   if (!group) {
     EntityNotFound.throw(
       "Group",
       typeof groupId === "string" ? groupId : groupId._id.toString()
     );
   }
-  const user = await getDocument(User, userId);
+  const user = await getDocument<IUserDocument>(User, userId);
   if (!user) {
     EntityNotFound.throw(
       "User",
@@ -105,7 +105,7 @@ async function setPermission(
     merge: boolean;
   }[]
 ) {
-  const group = await getDocument(Group, groupId);
+  const group = await getDocument<IGroupDocument>(Group, groupId);
   if (!group) {
     EntityNotFound.throw(
       "Group",

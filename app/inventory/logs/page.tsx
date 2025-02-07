@@ -5,7 +5,7 @@ import Filters from './components/filters'
 import axios from "@/lib/axios"
 import Log from '@/lib/@types/log'
 import { Button } from '@/components/ui/button'
-import { setRequestMeta } from 'next/dist/server/request-meta'
+
 const groupByDate = (logs: Log[]) => {
     return logs.reduce((acc: any, log) => {
         const date = new Date(log.createdAt).toDateString()
