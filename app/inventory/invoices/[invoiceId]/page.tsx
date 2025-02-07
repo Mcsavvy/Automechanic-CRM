@@ -10,7 +10,7 @@ interface ExternalInvoiceItem {
   price: number;
 }
 
-interface IExternalInvoiceDocument {
+interface ExternalInvoice {
   discount: number;
   client: {
     fullName: string;
@@ -26,7 +26,7 @@ interface IExternalInvoiceDocument {
 }
 
 interface InvoiceViewProps {
-  invoice: IExternalInvoiceDocument;
+  invoice: ExternalInvoice;
   onDelete: () => void;
 }
 

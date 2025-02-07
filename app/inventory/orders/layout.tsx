@@ -2,7 +2,7 @@ import React from 'react';
 import { OrderStoreProvider } from '@/lib/providers/order-store-provider';
 
 export const metadata = {
-  title: "Invoices",
+  title: "Orders",
 };
 
 

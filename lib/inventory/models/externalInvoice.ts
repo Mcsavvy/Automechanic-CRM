@@ -21,7 +21,7 @@ export interface IExternalInvoiceDocument extends IBaseDocument {
   shipping: number;
   paymentMade: number;
   loggedBy: any;
-  dueDate: string;
+  dueDate: Date;
   total(): string;
 }
 

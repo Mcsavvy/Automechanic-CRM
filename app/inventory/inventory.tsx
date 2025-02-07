@@ -19,6 +19,7 @@ import {
   CircleUser,
   LayoutDashboard,
   Lock,
+  ShoppingCart,
 } from "lucide-react";
 import InventoryProviders from "./providers";
 import AddGoodModal from "@/components/modals/AddGoodModal";
@@ -92,7 +93,7 @@ const sections: Section[] = [
         },
       },
       {
-        icon: <ReceiptText size={20} strokeWidth={1.5} />,
+        icon: <ShoppingCart size={20} strokeWidth={1.5} />,
         content: "Orders",
         getIsActive: (pathname) => pathname.startsWith("/inventory/orders"),
         link: "/inventory/orders",
