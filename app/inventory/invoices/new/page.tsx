@@ -6,7 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, ChevronDown, ChevronUp, MoveLeft } from "lucide-react";
-import { Collapsible, CollapsibleTrigger } from "@/components/ui/collapsible";
 import Link from "next/link";
 import NumberInput from "@/components/ui/number-input";
 import { formatCurrencyShort } from "@/lib/utils";
@@ -133,12 +132,12 @@ const NewInvoice = () => {
         ...data,
         paymentMade: total,
       });
-      console.log("Receipt created:", invoice);
-      toast.success("Receipt created successfully");
-      // router.push(`/inventory/invoices/${invoice.id}`);
+      console.log("Invoice created:", invoice);
+      toast.success("Invoice created successfully");
+      router.push(`/inventory/invoices/${invoice.id}`);
     } catch (error) {
-      toast.error("Failed to create receipt");
-      console.error("Error creating receipt:", error);
+      toast.error("Failed to create invoice");
+      console.error("Error creating invoice:", error);
     }
   };
 
@@ -153,7 +152,7 @@ const NewInvoice = () => {
             <MoveLeft size={20} />
           </Link>
           <div className="flex flex-col items-start justify-center ml-2">
-            <h1 className="text-xl font-bold text-gray-800">Create Receipt</h1>
+            <h1 className="text-xl font-bold text-gray-800">Create Invoice</h1>
             <h6 className="text-gray-400 text-xs">
               {new Date().toLocaleDateString()}
             </h6>
@@ -218,7 +217,7 @@ const NewInvoice = () => {
         {/* Invoice Items */}
         <div className="space-y-2 w-full">
           <div className="flex items-center justify-between w-full gap-2">
-            <h3 className="text-lg font-semibold">Receipt Items</h3>
+            <h3 className="text-lg font-semibold">Invoice Items</h3>
             <Button
               type="button"
               onClick={() => append({ name: "", quantity: 0, price: 0 })}
@@ -418,7 +417,7 @@ const NewInvoice = () => {
             <span>{formatCurrencyShort(total)}</span>
           </div>
           <Button type="submit" className="w-full mt-4">
-            Create Receipt
+            Create Invoice
           </Button>
         </div>
       </form>

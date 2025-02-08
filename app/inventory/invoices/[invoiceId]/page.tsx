@@ -19,9 +19,15 @@ import { useRouter } from "next/navigation";
 import { ExternalInvoice } from "@/lib/@types/invoice";
 import { companyEmail, companyName, companyPhoneNumber } from "@/data";
 
-export default function InvoiceViewPage({ params }: { params: { invoiceId: string } }) {
+export default function InvoiceViewPage({
+  params,
+}: {
+  params: { invoiceId: string };
+}) {
   const router = useRouter();
-  const { getInvoice, updateInvoice, status } = useExternalInvoiceStore(s => s);
+  const { getInvoice, updateInvoice, status } = useExternalInvoiceStore(
+    (s) => s
+  );
   const [invoice, setInvoice] = useState<ExternalInvoice | null>(null);
   const [paymentAmount, setPaymentAmount] = useState(0);
 
@@ -38,10 +44,17 @@ export default function InvoiceViewPage({ params }: { params: { invoiceId: strin
   }, [params.invoiceId, getInvoice]);
 
   if (status === "loading" || !invoice) {
-    return <div>Loading...</div>;
+    return (
+      <main className="p-6 pt-10 pb-20 w-full">
+        <div className="flex justify-center items-center mb-6">Loading...</div>
+      </main>
+    );
   }
 
-  const subtotal = invoice.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const subtotal = invoice.items.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
   const discountAmount = (subtotal * invoice.discount) / 100;
   const taxAmount = (subtotal * invoice.tax) / 100;
   const total = subtotal - discountAmount + taxAmount + invoice.shipping;
@@ -60,8 +73,12 @@ export default function InvoiceViewPage({ params }: { params: { invoiceId: strin
             <MoveLeft size={20} />
           </Link>
           <div>
-            <h1 className="text-2xl font-bold">Receipt #{invoice.id.slice(0, 8)}</h1>
-            <p className="text-gray-500 text-sm">Created on {formatDate(invoice.createdAt)}</p>
+            <h1 className="text-2xl font-bold">
+              Invoice #{invoice.id.slice(0, 8)}
+            </h1>
+            <p className="text-gray-500 text-sm">
+              Created on {formatDate(invoice.createdAt)}
+            </p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -104,10 +121,14 @@ export default function InvoiceViewPage({ params }: { params: { invoiceId: strin
               {invoice.items.map((item, index) => (
                 <tr key={index} className="border-b">
                   <td className="p-4">{item.name}</td>
-                  <td className="p-4">{item.description || '-'}</td>
+                  <td className="p-4">{item.description || "-"}</td>
                   <td className="text-right p-4">{item.quantity}</td>
-                  <td className="text-right p-4">{formatCurrencyShort(item.price)}</td>
-                  <td className="text-right p-4">{formatCurrencyShort(item.price * item.quantity)}</td>
+                  <td className="text-right p-4">
+                    {formatCurrencyShort(item.price)}
+                  </td>
+                  <td className="text-right p-4">
+                    {formatCurrencyShort(item.price * item.quantity)}
+                  </td>
                 </tr>
               ))}
             </tbody>
