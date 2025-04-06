@@ -84,9 +84,9 @@ const sections: Section[] = [
       },
       {
         icon: <ReceiptText size={20} strokeWidth={1.5} />,
-        content: "Invoices",
-        getIsActive: (pathname) => pathname.startsWith("/inventory/invoices"),
-        link: "/inventory/invoices",
+        content: "Quick Receipts",
+        getIsActive: (pathname) => pathname.startsWith("/inventory/quick-receipts"),
+        link: "/inventory/quick-receipts",
         ability: {
           action: "read",
           subject: "order",
@@ -94,9 +94,19 @@ const sections: Section[] = [
       },
       {
         icon: <ShoppingCart size={20} strokeWidth={1.5} />,
-        content: "Point of Sales",
+        content: "Orders",
         getIsActive: (pathname) => pathname.startsWith("/inventory/orders"),
         link: "/inventory/orders",
+        ability: {
+          action: "read",
+          subject: "order",
+        },
+      },
+      {
+        icon: <CircleDollarSign size={20} strokeWidth={1.5} />,
+        content: "Invoices",
+        getIsActive: (pathname) => pathname.startsWith("/inventory/invoices"),
+        link: "/inventory/invoices",
         ability: {
           action: "read",
           subject: "order",

@@ -100,7 +100,7 @@ const RecentActions: FC<Partial<DashboardProps>> = ({ before, after }) => {
                   else router.push(link);
                 }}
               >
-                <Button className="flex flex-row items-center justify-center">
+                <Button variant={"ghost"} className="hover:bg-transparent hover:text-white">
                   <Icon size={28} strokeWidth={2} />
                 </Button>
                 <p>{front}</p>
