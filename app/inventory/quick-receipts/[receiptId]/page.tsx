@@ -3,13 +3,13 @@
 import { useEffect, useState } from "react";
 import { useExternalInvoiceStore } from "@/lib/providers/invoice-store-provider";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Download, MoveLeft } from "lucide-react";
 import Link from "next/link";
 import { formatCurrencyShort, formatDate } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { ExternalInvoice } from "@/lib/@types/invoice";
 import { companyEmail, companyName, companyPhoneNumber } from "@/data";
+import { MoveLeft } from "lucide-react";
+import PDFReceipt from "../../components/pdf-receipt";
 
 export default function ReceiptViewPage({
   params,
@@ -71,9 +71,16 @@ export default function ReceiptViewPage({
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={() => window.print()}>
-            <Download className="w-4 h-4 mr-2" /> Download PDF
-          </Button>
+          <PDFReceipt
+            id={receipt.id}
+            createdAt={receipt.createdAt}
+            items={receipt.items}
+            client={receipt.client}
+            discount={receipt.discount}
+            tax={receipt.tax}
+            shipping={receipt.shipping}
+            type="receipt"
+          />
         </div>
       </div>
 

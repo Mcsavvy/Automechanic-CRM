@@ -170,7 +170,7 @@ export function formatCurrencyShort(value: number) {
   });
 
   return (
-    formatter.format(parseFloat(abbreviatedValue)).replace("NGN", "₦") + suffix
+    formatter.format(parseFloat(abbreviatedValue)).replace("NGN", "#") + suffix
   );
 }
 

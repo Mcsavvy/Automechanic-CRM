@@ -3,18 +3,10 @@
 import { useEffect, useState } from "react";
 import { useExternalInvoiceStore } from "@/lib/providers/invoice-store-provider";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Download, MoveLeft } from "lucide-react";
 import Link from "next/link";
 import { formatCurrencyShort, formatDate } from "@/lib/utils";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import NumberInput from "@/components/ui/number-input";
+import { MoveLeft } from "lucide-react";
+import PDFReceipt from "../../components/pdf-receipt";
 import { useRouter } from "next/navigation";
 import { ExternalInvoice } from "@/lib/@types/invoice";
 import { companyEmail, companyName, companyPhoneNumber } from "@/data";
@@ -82,9 +74,16 @@ export default function InvoiceViewPage({
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={() => window.print()}>
-            <Download className="w-4 h-4 mr-2" /> Download PDF
-          </Button>
+          <PDFReceipt
+            id={invoice.id}
+            createdAt={invoice.createdAt}
+            items={invoice.items}
+            client={invoice.client}
+            discount={invoice.discount}
+            tax={invoice.tax}
+            shipping={invoice.shipping}
+            type="invoice"
+          />
         </div>
       </div>
 

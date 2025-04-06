@@ -1,6 +1,7 @@
 import { PaginatedDocs } from "./pagination";
 
 export interface ExternalInvoiceItem {
+  id: string;
   name: string;
   description?: string;
   quantity: number;
