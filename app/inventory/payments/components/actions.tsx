@@ -21,11 +21,11 @@ export default function PaymentActions({ id }: Payment) {
       <PopoverContent className="w-[120px] px-0 flex flex-col gap-3">
         <a
           href={`#payment/receipt`}
-          className="px-4 py-2 hover:bg-gray-100 flex flex-row justify-start items-center gap-2"
+          className="px-4 hover:bg-gray-100 flex flex-row justify-start items-center gap-2"
           onClick={() => setPayment(id)}
         >
           <Receipt size={20} strokeWidth={1.5} />
-          Invoice
+          Receipt
         </a>
       </PopoverContent>
     </Popover>

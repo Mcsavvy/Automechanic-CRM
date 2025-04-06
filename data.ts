@@ -7,6 +7,7 @@ export const companyStreetAddress = "Adjacent azkol Oil, langbasa road, Ajah";
 export const companyAddress = `${companyStreetAddress}, ${companyRegion}, ${companyCountry}`;
 export const companyPhoneNumber = "+2349090060060";
 export const companyEmail = "faloreautocare@gmail.com";
+export const companyVatId = "123456789";
 
 export type Permissions = {
   [key: string]: string[] | boolean;

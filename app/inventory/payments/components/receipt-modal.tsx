@@ -1,40 +1,24 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useQueryState } from "nuqs";
 import Modal from "@/components/ui/modal";
 import { fetchPayment } from "@/lib/stores/payment-store";
 import { Payment } from "@/lib/@types/payments";
-import { formatInvoiceNumber, formatMoney } from "@/lib/utils";
+import { formatInvoiceNumber, formatMoney, formatDate } from "@/lib/utils";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Download, Phone } from "lucide-react";
-import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import Image from "next/image";
-import { companyAddress, companyName, companyPhoneNumber } from "@/data";
-
-async function downloadReceipt(element: HTMLDivElement, name: string) {
-  const canvas = await html2canvas(element, {
-    scale: 1,
-  });
-  const imgData = canvas.toDataURL("image/png");
-  const pdf = new jsPDF("landscape", "pt", "a4");
-  const imgProps = pdf.getImageProperties(imgData);
-  const pdfWidth = pdf.internal.pageSize.getWidth();
-  const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-  let heightLeft = imgProps.height;
-  const pageHeight = pdf.internal.pageSize.getHeight();
-  let position = 0;
-  pdf.addImage(imgData, "PNG", 0, position, pdfWidth, pdfHeight);
-  heightLeft -= pageHeight;
-  while (heightLeft >= 0) {
-    position = heightLeft - imgProps.height;
-    pdf.addPage();
-    pdf.addImage(imgData, "PNG", 0, position, pdfWidth, pdfHeight);
-    heightLeft -= pageHeight;
-  }
-  pdf.save(`${name}.pdf`);
-}
+import {
+  companyName,
+  companyPhoneNumber,
+  companyAddress,
+  companyStreetAddress,
+  companyRegion,
+  companyCountry,
+  companyVatId
+} from "@/data";
 
 export default function PaymentReceiptModal() {
   const [paymentId, setPaymentId] = useQueryState("payment", {
@@ -42,15 +26,128 @@ export default function PaymentReceiptModal() {
     clearOnDefault: true,
   });
   const [payment, setPayment] = useState<Payment | null>(null);
-  const receiptRef = React.useRef<HTMLDivElement>(null);
+  const receiptRef = useRef<HTMLDivElement>(null);
   const modalId = "payment/receipt";
 
   useEffect(() => {
-    const isOpen = paymentId;
-    if (isOpen) {
+    if (paymentId) {
       fetchPayment(paymentId).then(setPayment);
     }
   }, [paymentId]);
+
+  const generatePDF = () => {
+    if (!payment) return;
+
+    const doc = new jsPDF({
+      orientation: "portrait",
+      unit: "pt",
+      format: "a4"
+    });
+
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 50;
+
+    // Set accent color
+    const accentColor = "#444444";
+
+    // Add header
+    doc.setFontSize(20);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(accentColor);
+    doc.text(companyName, margin, margin + 7);
+
+    // Add company info on right
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text(companyName, pageWidth - margin, margin, { align: "right" });
+    doc.text(companyStreetAddress || companyAddress, pageWidth - margin, margin + 15, { align: "right" });
+    doc.text(companyRegion + ", " + companyCountry, pageWidth - margin, margin + 30, { align: "right" });
+    doc.text(companyPhoneNumber, pageWidth - margin, margin + 45, { align: "right" });
+
+    // Add receipt title
+    doc.setFontSize(24);
+    doc.setFont("helvetica", "bold");
+    doc.text("Payment Receipt", pageWidth / 2, 120, { align: "center" });
+
+    // Add invoice reference
+    doc.setFontSize(14);
+    doc.text(`Invoice ${formatInvoiceNumber(payment.order.orderNo)}`, pageWidth / 2, 150, { align: "center" });
+
+    // Add horizontal line
+    doc.setDrawColor(170, 170, 170);
+    doc.setLineWidth(1);
+    doc.line(margin, 170, pageWidth - margin, 170);
+
+    // Add receipt details
+    const startY = 200;
+    const lineHeight = 30;
+    let currentY = startY;
+
+    // Helper function to add a receipt line with label and value
+    const addReceiptLine = (label: string, value: string) => {
+      const labelWidth = 180;
+
+      doc.setFontSize(12);
+      doc.setFont("helvetica", "bold");
+      doc.text(label, margin, currentY);
+
+      doc.setFont("helvetica", "normal");
+      doc.text(value, margin + labelWidth, currentY);
+
+      // Add dotted line under value
+      doc.setLineDashPattern([2, 2], 0);
+      doc.line(margin + labelWidth - 10, currentY + 5, pageWidth - margin, currentY + 5);
+      doc.setLineDashPattern([], 0); // Reset to solid line
+
+      currentY += lineHeight;
+    };
+
+    // Date
+    addReceiptLine("Date:", formatDate(payment.createdAt));
+
+    // Customer
+    addReceiptLine("Received with thanks from:", payment.customer.name);
+
+    // Amount
+    addReceiptLine("Amount:", formatMoney(payment.amount));
+
+    // Invoice Number
+    addReceiptLine("Invoice:", formatInvoiceNumber(payment.order.orderNo));
+
+    // Received By
+    addReceiptLine("Received By:", payment.confirmedBy.name);
+
+    // Add horizontal line
+    currentY += 20;
+    doc.setDrawColor(170, 170, 170);
+    doc.setLineWidth(1);
+    doc.line(margin, currentY, pageWidth - margin, currentY);
+
+    // Add footer
+    const footerY = pageHeight - 50;
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text(
+      "Thank you for your payment.",
+      pageWidth / 2,
+      footerY,
+      { align: "center" }
+    );
+
+    // Add generation date
+    doc.setFontSize(8);
+    doc.text(
+      "Generated on " + formatDate(new Date().toISOString()),
+      pageWidth / 2,
+      footerY + 15,
+      { align: "center" }
+    );
+
+    // Save the PDF
+    doc.save(`Payment-Receipt-${formatInvoiceNumber(payment.order.orderNo)}.pdf`);
+  };
+
   const title = payment ? (
     <span>
       Payment Receipt For{" "}
@@ -76,14 +173,14 @@ export default function PaymentReceiptModal() {
         content: "max-w-screen overflow-y-auto",
       }}
     >
+      {/* Receipt Preview */}
       <div
-        className="w-[595px] mx-auto border border-[#ccc] h-[300px] font-nunito text-black pb-0"
+        className="w-[595px] mx-auto border border-[#ccc] min-h-[500px] font-nunito text-black p-12"
         ref={receiptRef}
       >
-        <div className="bg-pri-5 w-full h-6"></div>
-        <header className="flex flex-col items-center justify-start">
-          <div className="grid grid-cols-[2fr_6fr_3fr] w-full px-6 pt-2">
-            <div className="">
+        <header className="flex flex-col">
+          <div className="flex justify-between items-start w-full">
+            <div className="flex flex-col items-start justify-start gap-2">
               <Image
                 src="/logo.png"
                 width={50}
@@ -91,82 +188,87 @@ export default function PaymentReceiptModal() {
                 alt="logo"
                 className="rounded-full"
               />
-              <div className="flex items-center justify-start mt-2">
-                <p className="text-sm font-bold">Date:</p>
-
-                <p className="text-sm underline decoration-dotted ml-2">
-                  {payment &&
-                    new Date(payment.createdAt).toLocaleDateString("en-GB")}
-                </p>
-              </div>
+              <h1 className="text-3xl font-bold mt-4">Payment Receipt</h1>
             </div>
-            <div className="flex flex-col items-center justify-start">
-              <h1 className="text-3xl font-bold font-rambla pl-6">
-                Payment Receipt
-              </h1>
-              <p className="text-lg font-bold">
-                Invoice {payment && formatInvoiceNumber(payment.order.orderNo)}
-              </p>
-            </div>
-
-            <div className="flex flex-col items-start justify-start pt-1">
-              <h2 className="font-rambla font-semibold">{companyName}</h2>
-              <p className="text-[10px]">{companyAddress}</p>
-              <p className="text-xs">
-                <Phone
-                  size={12}
-                  strokeWidth={1.5}
-                  className="mr-1 pb-[2px] inline-block"
-                />
+            <div className="flex flex-col items-end justify-start">
+              <h2 className="font-semibold">{companyName}</h2>
+              <p className="text-xs">{companyAddress}</p>
+              <p className="text-xs">{companyRegion}, {companyCountry}</p>
+              <p className="text-xs flex items-center">
+                <Phone size={12} className="mr-1" />
                 {companyPhoneNumber}
               </p>
             </div>
           </div>
+
+          <div className="text-center mt-6 mb-2">
+            <p className="text-lg font-bold">
+              Invoice {payment && formatInvoiceNumber(payment.order.orderNo)}
+            </p>
+          </div>
+
+          <hr className="border-gray-300 my-8" />
+
+          <div className="mt-8 space-y-6">
+            <div className="flex">
+              <p className="font-bold w-48">Date:</p>
+              <div className="flex-grow border-b border-dotted border-gray-500">
+                <p className="text-center">
+                  {payment && formatDate(payment.createdAt)}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex">
+              <p className="font-bold w-48">Received with thanks from:</p>
+              <div className="flex-grow border-b border-dotted border-gray-500">
+                <p className="text-center">
+                  {payment?.customer.name}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex">
+              <p className="font-bold w-48">Amount:</p>
+              <div className="flex-grow border-b border-dotted border-gray-500">
+                <p className="text-center font-bold">
+                  {payment && formatMoney(payment.amount)}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex">
+              <p className="font-bold w-48">Invoice:</p>
+              <div className="flex-grow border-b border-dotted border-gray-500">
+                <p className="text-center">
+                  {payment && formatInvoiceNumber(payment.order.orderNo)}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex">
+              <p className="font-bold w-48">Received By:</p>
+              <div className="flex-grow border-b border-dotted border-gray-500">
+                <p className="text-center">
+                  {payment?.confirmedBy.name}
+                </p>
+              </div>
+            </div>
+          </div>
         </header>
-        <div className="bg-acc-5 w-full h-1 mt-2"></div>
-        <div className="flex flex-col items-center justify-start mt-7 mb-11">
-          <div className="flex w-full px-6">
-            <p className="font-bold mr-2">Received with thanks from</p>
-            <div className="w-[20rem] text-center">
-              {payment?.customer.name}
-              <hr className="border-dotted border-black" />
-            </div>
-          </div>
-          <div className="flex w-full px-6">
-            <p className="font-bold mr-2">Amount</p>
-            <div className="w-[27.2rem] text-center">
-              {payment && formatMoney(payment.amount)}
-              <hr className="border-dotted border-black" />
-            </div>
-          </div>
-          <div className="flex w-full px-6">
-            <p className="font-bold mr-2">Invoice</p>
-            <div className="w-[27.6rem] text-center">
-              {payment && formatInvoiceNumber(payment.order.orderNo)}
-              <hr className="border-dotted border-black" />
-            </div>
-          </div>
-          <div className="flex w-full px-6">
-            <p className="font-bold mr-2">Received By</p>
-            <div className="w-[25.7rem] text-center">
-              {payment?.confirmedBy.name}
-              <hr className="border-dotted border-black" />
-            </div>
-          </div>
-        </div>
-        <div className="bg-pri-5 w-full h-2 mt-auto mb-0"></div>
+
+        <footer className="mt-24 text-center">
+          <p className="text-sm text-gray-600 italic">
+            Thank you for your payment.
+          </p>
+          <p className="text-xs text-gray-500 mt-4">
+            Generated on {formatDate(new Date().toISOString())}
+          </p>
+        </footer>
       </div>
+
       <div className="flex items-center justify-end mt-4">
-        <Button
-          onClick={() =>
-            downloadReceipt(
-              receiptRef.current!,
-              `#${formatInvoiceNumber(payment?.order.id || 0)} payment-${
-                payment?.id
-              }`
-            )
-          }
-        >
+        <Button onClick={generatePDF}>
           <Download size={16} className="mr-2" />
           Download Receipt
         </Button>

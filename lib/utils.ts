@@ -71,7 +71,7 @@ export function formatMoney(amount: number) {
       style: "currency",
       currency: "NGN",
     })
-    .replace("NGN", "₦");
+    .replace("NGN", "#");
 }
 
 export function formatInvoiceNumber(invoiceNumber: number | string) {
