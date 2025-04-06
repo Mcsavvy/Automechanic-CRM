@@ -34,8 +34,10 @@ export interface PaginatedExternalInvoices extends PaginatedDocs {
 
 export type NewExternalInvoice = Omit<
   ExternalInvoice,
-  "id" | "createdAt" | "loggedBy"
->;
+  "id" | "createdAt" | "loggedBy" | "items"
+> & {
+  items: Omit<ExternalInvoiceItem, "id">[];
+};
 
 export type ExternalInvoiceModification = Partial<{
   discount: number;

@@ -20,6 +20,7 @@ function transformInvoice(doc: IExternalInvoiceDocument): ExternalInvoice {
       phone: doc.client.phone,
     },
     items: doc.items.map((item) => ({
+      id: item._id.toString(),
       name: item.name,
       description: item.description,
       quantity: item.quantity,

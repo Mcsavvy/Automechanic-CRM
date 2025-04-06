@@ -2,6 +2,7 @@ import { Schema } from 'mongoose';
 import { getBaseSchema, IBaseDocument, defineModel } from '../../common/models/base';
 
 export interface ExternalInvoiceItem {
+  _id: string;
   name: string;
   description?: string;
   quantity: number;
